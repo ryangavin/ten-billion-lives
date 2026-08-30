@@ -61,6 +61,12 @@ const projects = Object.fromEntries(
           passed: projectCases.filter(
             (testCase) => testCase.actualStatus === "passed" && testCase.ok,
           ).length,
+          skipped: projectCases.filter(
+            (testCase) =>
+              testCase.actualStatus === "skipped" &&
+              testCase.expectedStatus === "skipped" &&
+              testCase.ok,
+          ).length,
           total: projectCases.length,
           durationMs: projectCases.reduce(
             (sum, testCase) => sum + testCase.durationMs,
@@ -71,7 +77,13 @@ const projects = Object.fromEntries(
     }),
 );
 const failed = cases.filter(
-  (testCase) => testCase.actualStatus !== "passed" || !testCase.ok,
+  (testCase) =>
+    !testCase.ok ||
+    !(
+      testCase.actualStatus === "passed" ||
+      (testCase.actualStatus === "skipped" &&
+        testCase.expectedStatus === "skipped")
+    ),
 );
 assert.equal(
   cases.length >= 12,

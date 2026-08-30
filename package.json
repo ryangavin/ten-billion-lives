@@ -49,7 +49,9 @@
     "gate:m2:playwright": "node scripts/capture-playwright-summary.mjs",
     "gate:m2:replay": "pnpm build && node scripts/capture-m2-replay.mjs",
     "evidence:observatory": "pnpm build && node scripts/capture-observatory.mjs",
-    "evidence:observatory:playwright": "node scripts/capture-playwright-summary.mjs docs/evidence/issue-21"
+    "evidence:observatory:playwright": "node scripts/capture-playwright-summary.mjs docs/evidence/issue-21",
+    "evidence:compatibility": "pnpm build && node scripts/capture-compatibility.mjs && prettier --write docs/evidence/issue-23/*.json docs/evidence/issue-23/*.yml",
+    "evidence:compatibility:playwright": "node scripts/capture-playwright-summary.mjs docs/evidence/issue-23"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

@@ -1,0 +1,217 @@
+- main "Ten Billion Lives":
+    - paragraph: Local deterministic observatory
+    - heading "Ten Billion Lives" [level=1]
+    - paragraph:
+        - text: One fictional planet, exactly
+        - strong: 10,000,000,000 represented lives
+        - text: ", and no table of people. Zoom in to reconstruct one coherent life from compact fields."
+    - text: Local foundation ready
+    - status: Canvas fallback active; the complete local journey remains available
+    - region "Local observatory controls":
+        - article:
+            - paragraph: Local world time
+            - heading "Paused · day 0 · 10:00" [level=2]
+            - paragraph: Analytical time queries change semantic tick; camera motion never does.
+            - button "Play local time"
+            - button "Advance one tick"
+            - button "Set speed 1×" [pressed]: 1×
+            - button "Set speed 6×": 6×
+            - button "Set speed 24×": 24×
+        - article:
+            - paragraph: Find a place or event
+            - heading "Go somewhere meaningful" [level=2]
+            - paragraph: Search the small canonical guide; no remote index or network request is used.
+            - search "Place and event discovery":
+                - text: Find a place or event
+                - searchbox "Find a place or event"
+                - button "Open"
+                - status
+            - button "Brindle Bay"
+            - button "Harbor Street"
+            - button "Lantern Tide festival"
+    - region "Dara Grove":
+        - text: canvas2d · baseline quality · 50,000 visible · weights 1–256 0.68 ms · 1.19 MiB ·
+        - code: da55feb0
+        - text: · losses 0
+        - paragraph: Observer A · Person
+        - paragraph: Person · step 4 of 4
+        - heading "Dara Grove" [level=2]
+        - paragraph: This identity, household, itinerary, and events are reconstructed on demand.
+        - paragraph:
+            - text: Camera 0° · tick 10 ·
+            - code: b2007dbd631d0474
+        - paragraph:
+            - text: Viewing
+            - strong: Immutable baseline
+        - button "Visit Lantern Tide"
+        - button "Orbit camera"
+        - button "View planet"
+        - button "View settlement"
+        - button "View street"
+        - button "View person" [pressed]
+    - region "Independent observer comparison":
+        - article:
+            - paragraph: Observer A
+            - heading "Dara Grove" [level=2]
+            - paragraph:
+                - text: Manifestation
+                - code: 0b21e681edada68a
+                - text: Events
+                - code: b0bd84480511f52f
+            - term: Person ID
+            - definition: person_27yi09s_1obkbba
+            - term: Identity
+            - definition: Dara Grove · age 28 · adult age band
+            - term: Now
+            - definition: Tick 10 · work at North Works
+            - term: Semantic location
+            - definition:
+                - code: place_wrk_0vq6m09loyq6c_1oxppg2
+                - text: · 0‰
+            - term: Home / role
+            - definition:
+                - text: Field 0-12 · housemate ·
+                - code: household_0yojqkh506h6x_0855mue
+                - text: · 4 members
+            - term: Recurring place
+            - definition: North Works · 512/512
+            - term: Relationships
+            - definition: 2 coworker · 3 household · 1 recurring-contact
+            - term: Co-located encounters
+            - definition:
+                - text: 2 known ·
+                - code: encounter_50af54b2eb7c4b2e
+            - term: Field reconciliation
+            - definition: work · 20,465,338 in home-cell channel
+            - term: Route / destination
+            - definition: stationary at place_wrk_0vq6m09loyq6c_1oxppg2
+            - term: Local semantic events
+            - definition: meeting · place_wrk_0vq6m09loyq6c_1oxppg2 · arrival · place_wrk_0vq6m09loyq6c_1oxppg2 · meeting · place_wrk_0vq6m09loyq6c_1oxppg2
+            - term: Appearance
+            - definition: compact · light hair · quiet layers
+            - term: Semantic trace
+            - definition:
+                - code: trace-5182c8d2
+        - article:
+            - paragraph: Observer B · independent instance
+            - heading "Dara Grove" [level=2]
+            - paragraph:
+                - text: Manifestation
+                - code: 0b21e681edada68a
+                - text: Events
+                - code: b0bd84480511f52f
+            - term: Person ID
+            - definition: person_27yi09s_1obkbba
+            - term: Identity
+            - definition: Dara Grove · age 28 · adult age band
+            - term: Now
+            - definition: Tick 10 · work at North Works
+            - term: Semantic location
+            - definition:
+                - code: place_wrk_0vq6m09loyq6c_1oxppg2
+                - text: · 0‰
+            - term: Home / role
+            - definition:
+                - text: Field 0-12 · housemate ·
+                - code: household_0yojqkh506h6x_0855mue
+                - text: · 4 members
+            - term: Recurring place
+            - definition: North Works · 512/512
+            - term: Relationships
+            - definition: 2 coworker · 3 household · 1 recurring-contact
+            - term: Co-located encounters
+            - definition:
+                - text: 2 known ·
+                - code: encounter_50af54b2eb7c4b2e
+            - term: Field reconciliation
+            - definition: work · 20,465,338 in home-cell channel
+            - term: Route / destination
+            - definition: stationary at place_wrk_0vq6m09loyq6c_1oxppg2
+            - term: Local semantic events
+            - definition: meeting · place_wrk_0vq6m09loyq6c_1oxppg2 · arrival · place_wrk_0vq6m09loyq6c_1oxppg2 · meeting · place_wrk_0vq6m09loyq6c_1oxppg2
+            - term: Appearance
+            - definition: compact · light hair · quiet layers
+            - term: Semantic trace
+            - definition:
+                - code: trace-5182c8d2
+            - paragraph: ✓ Semantic match
+    - region "Procedural identity, not a stored agent":
+        - paragraph: Find and share a represented life
+        - heading "Procedural identity, not a stored agent" [level=2]
+        - paragraph: Each selected life is represented from compact fields—not an independently simulated mind. Facts are reconstructed from the same seed, snapshot, tick, and branch.
+        - search "Procedural person search":
+            - text: Procedural person ID
+            - searchbox "Procedural person ID": person_27yi09s_1obkbba
+            - button "Inspect person"
+            - alert
+        - link "Open this person at tick 10":
+            - /url: http://127.0.0.1:4178/?schema=1&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=10&person=person_27yi09s_1obkbba&branch=baseline&stage=person&location=L5%2F0%2F38
+        - button "Copy local link"
+        - status
+    - region "Analytical person time":
+        - paragraph:
+            - strong: Follow through the day
+            - text: · direct random access, no resident stepping or promoted agent
+        - button "Tick 0 · midnight"
+        - button "Tick 7 · commute"
+        - button "Tick 10 · primary activity" [pressed]
+        - button "Tick 19 · festival hour"
+        - button "Tick 23 · sleep"
+        - button "Tick 24 · identity epoch"
+    - region "Immutable baseline":
+        - paragraph: Reversible local scenario
+        - heading "Immutable baseline" [level=2]
+        - paragraph: The branch changes one scheduled route at tick 7. It never mutates the baseline checkpoint.
+        - term: Baseline macro flow
+        - definition: 8,180,688 on signature edge
+        - term: Closure macro flow
+        - definition: 0 on closed edge
+        - term: Baseline traveler route
+        - definition: 1 edge
+        - term: Closure traveler route
+        - definition: 31 edges
+        - term: Population fields
+        - definition: Identical field state
+        - term: Branch event hash
+        - definition:
+            - code: 7c4ef63b6c041f3b
+        - button "Explore closure branch"
+        - button "View immutable baseline"
+    - region "Replay and field controls":
+        - button "Rewind and replay"
+        - paragraph: Not run
+        - button "Reveal fields"
+        - button "Simulate renderer loss"
+        - button "Inspect debug world"
+    - paragraph: Reality budget · reveal available
+    - heading "10,000,000,000 represented lives" [level=2]
+    - paragraph: Authoritative integers stay compact; visible people are weighted, disposable projections.
+    - term: Authority
+    - definition: 2,048 integer cells · 191,056 checkpoint bytes
+    - term: Stored people
+    - definition: 0 person rows
+    - term: Visible / represented
+    - definition: 50,000 tokens · weights 1–256 · 80,219,543 people → 4,000 projected tokens
+    - term: Derived projection
+    - definition: 288,288 bytes · epoch 0 / 24 ticks
+    - term: Tick / state hash
+    - definition:
+        - text: 10 ·
+        - code: b2007dbd631d0474
+    - term: Event hash
+    - definition:
+        - code: b0bd84480511f52f
+        - text: · 3 local events
+    - term: Frame / backend
+    - definition: 0.68 ms · Canvas forced · sustained frame time remains inside the tier budget
+    - term: Observer contract
+    - definition: resident-home-cell-cohort-v1; camera and GPU quality excluded from hashes
+    - text: World seed
+    - code: ten-billion-lives/baseline/v1
+    - text: · hash
+    - code: ed66e344fcd7e737
+    - text: · vectors
+    - code: 050e18e9f2d20dff
+    - text: Run
+    - code: pnpm check
+    - text: from the repository root if a diagnostic fails.

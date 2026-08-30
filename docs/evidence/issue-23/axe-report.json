@@ -1,0 +1,19 @@
+{
+  "engine": {
+    "name": "axe-core",
+    "version": "4.13.0"
+  },
+  "testEnvironment": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+    "windowWidth": 1440,
+    "windowHeight": 1000,
+    "orientationAngle": 0,
+    "orientationType": "landscape-primary"
+  },
+  "url": "http://127.0.0.1:4178/?schema=1&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=10&person=person_27yi09s_1obkbba&branch=baseline&stage=person&location=L5%2F0%2F38",
+  "violations": [],
+  "seriousOrCritical": [],
+  "passCount": 40,
+  "incompleteCount": 2,
+  "passed": true
+}

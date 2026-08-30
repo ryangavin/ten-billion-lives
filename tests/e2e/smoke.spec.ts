@@ -415,7 +415,7 @@ test("keeps the forced Canvas fallback navigable through loss, resize, and reduc
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/?renderer=canvas");
+  await page.goto("/?renderer=canvas&quality=baseline");
   await expect(page.getByTestId("render-backend")).toHaveText("canvas2d");
   await expect(page.getByTestId("journey-renderer")).toHaveAttribute(
     "data-transition-ms",

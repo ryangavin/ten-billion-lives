@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "productionBuild": true,
+  "browsers": {
+    "chromium": {
+      "available": true,
+      "version": "151.0.7922.34",
+      "desktopKeyboard": "passed",
+      "mobileTouch": "passed",
+      "forcedColorsAndTextScaling": "passed"
+    },
+    "webkit": {
+      "available": true,
+      "version": "26.5",
+      "desktopKeyboard": "passed",
+      "canvasFallback": "passed"
+    },
+    "firefox": {
+      "available": false,
+      "result": "not run: no system Firefox app or Playwright Firefox browser is installed locally"
+    }
+  },
+  "reducedMotion": {
+    "transitionMs": 0,
+    "cssAnimationsAndTransitionsSuppressed": true
+  },
+  "keyboard": {
+    "focusSequence": [
+      {
+        "id": "",
+        "text": "Enter Harbor Street",
+        "tag": "button"
+      },
+      {
+        "id": "",
+        "text": "Meet a resident",
+        "tag": "button"
+      },
+      {
+        "id": "journey-title",
+        "text": "Dara Grove",
+        "tag": "h2"
+      }
+    ],
+    "ariaTranscript": "screen-reader-transcript.yml"
+  },
+  "accessibility": {
+    "seriousOrCritical": 0,
+    "passed": true
+  },
+  "touch": {
+    "personLink": "http://127.0.0.1:4178/?schema=1&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=10&person=person_27yi09s_1obkbba&branch=baseline&stage=person&location=L5%2F0%2F38",
+    "shareStatus": "Copy unavailable; open the link directly",
+    "exitedFollowModeAt": "Planet"
+  },
+  "resilience": {
+    "contextLosses": 1,
+    "tabResume": "passed",
+    "portraitLandscapeResize": "passed",
+    "semanticBefore": {
+      "personA": "person_27yi09s_1obkbba",
+      "personB": "person_27yi09s_1obkbba",
+      "state": "b2007dbd631d0474",
+      "manifestationA": "0b21e681edada68a",
+      "manifestationB": "0b21e681edada68a",
+      "eventA": "b0bd84480511f52f",
+      "eventB": "b0bd84480511f52f",
+      "match": "Semantic match"
+    },
+    "semanticAfter": {
+      "personA": "person_27yi09s_1obkbba",
+      "personB": "person_27yi09s_1obkbba",
+      "state": "b2007dbd631d0474",
+      "manifestationA": "0b21e681edada68a",
+      "manifestationB": "0b21e681edada68a",
+      "eventA": "b0bd84480511f52f",
+      "eventB": "b0bd84480511f52f",
+      "match": "Semantic match"
+    }
+  },
+  "fallbackPerformance": {
+    "visibleManifestations": 25000,
+    "frames": 60,
+    "frameP95Ms": 0.7300000190734863,
+    "frameBudgetMs": 33.333333333333336,
+    "passed": true
+  },
+  "scaledLayout": {
+    "clientWidth": 390,
+    "scrollWidth": 390
+  },
+  "passed": true
+}

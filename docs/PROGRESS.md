@@ -1,8 +1,8 @@
 # Progress
 
 - Current issue: #23 — local browser compatibility, accessibility, touch, and fallback resilience.
-- Last green commit: `4c10f6e` (#22 closed with root 15 files/76 tests, 16/16 Chromium/WebKit journeys, measured quality semantics, and a passing literal 30-minute wall-clock soak).
-- Evidence produced: #22 wall-clock run lasted 1,800,068.88 ms, rendered 1,800 baseline frames at 1.87 ms p95, peaked at 105.35 MiB, retained 49.35 MiB, and had a 0.984 last/first frame ratio. Fallback/baseline person, state, manifestation, event, and itinerary semantics matched.
-- Next action: inventory existing compatibility/a11y tooling and locally available browser engines; run the current matrix, then add the cheapest tests for keyboard/focus, touch/narrow, reduced motion, context loss/resume, zoom/contrast, and useful fallback disclosure.
-- Decisions: #23 follows closed dependencies #13, #21, and #22. Compatibility stays entirely local and uses reduced visual quality without changing semantic state.
+- Last green commit: `a526ad6` (#23 focus restoration, reduced motion, forced colors, 200% text reflow, axe, context-resume, and mobile-touch compatibility tests).
+- Evidence produced: production matrix passed 23/23 applicable cases across Chromium 151, WebKit 26.5, and mobile Chromium, with 8 intentional skips. Axe found zero violations/serious/critical findings. Context loss/resume preserved state, manifestation, event, and two-observer match. Canvas fallback rendered 25k at 0.73 ms p95. Four screenshots and two short recordings were inspected.
+- Next action: run the final root check, commit/push the #23 evidence and support boundary, close #23 with artifacts, then select the next unblocked local issue.
+- Decisions: Firefox is not installed locally and is documented as unvalidated rather than downloaded or claimed. Clipboard denial uses an honest direct-link fallback. Project-specific Playwright skips are accepted only when expected and never count as passes.
 - Blockers: none. Server deployment is outside the local-MVP goal.
