@@ -43,6 +43,8 @@ describe("stable weighted manifestations and local events", () => {
     expect(second.eventHash).toBe(first.eventHash);
     expect(second.tokens).toEqual(first.tokens);
     expect(second.events).toEqual(first.events);
+    expect(first.manifestationHash).toBe("b7d8ef2246775f8b");
+    expect(first.eventHash).toBe("b0bd84480511f52f");
   });
 
   it("reconciles every integer weight with exact home-cell cohort fields", () => {
@@ -78,6 +80,32 @@ describe("stable weighted manifestations and local events", () => {
       1n,
       1n,
     ]);
+  });
+
+  it("reconciles every planet-level cell/cohort stratum without remainder", () => {
+    const state = stateAt(10);
+    const projection = engine.project({
+      state,
+      tick: 10n,
+      scopeCellIds: state.field.cells.map((cell) => cell.cellId),
+      lod: "planet",
+      selectedPersonIds: [selectedPersonId],
+    });
+    const weights = new Map<string, bigint>();
+    for (const token of projection.tokens) {
+      expect(Number.isInteger(token.transform.xPermille)).toBe(true);
+      expect(Number.isInteger(token.transform.yPermille)).toBe(true);
+      expect(Number.isInteger(token.transform.headingMilliTurns)).toBe(true);
+      const key = `${token.cellId}/${token.cohort}`;
+      weights.set(key, (weights.get(key) ?? 0n) + token.weight);
+    }
+    for (const cell of state.field.cells)
+      for (const cohort of ["young", "adult", "older"] as const)
+        expect(weights.get(`${cell.cellId}/${cohort}`) ?? 0n).toBe(
+          cell.cohorts[cohort],
+        );
+    expect(projection.tokens).toHaveLength(8_192);
+    expect(projection.realityBudget.representedPeople).toBe(10_000_000_000n);
   });
 
   it("keeps selected identity stable across LOD departure and re-entry", () => {

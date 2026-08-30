@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "illusion-projection-v1",
+  "commit": "c834afba39099ea51bfb912c4be97a8f522e6b81",
+  "seed": "ten-billion-lives/baseline/v1",
+  "worldHash": "ed66e344fcd7e737",
+  "eventHash": "ec998bbac0999abc",
+  "workload": {
+    "representedPlanetPopulation": "10000000000",
+    "streetRepresentedPeople": "80219543",
+    "streetTokens": 25000,
+    "planetTokens": 8192,
+    "queryTick": "10",
+    "samplesPerLod": 7,
+    "independentlyInitializedObservers": 2
+  },
+  "metrics": {
+    "streetProjectionP50Ms": 223.71604200000002,
+    "streetProjectionP95Ms": 252.2242500000002,
+    "planetProjectionP50Ms": 80.00091599999996,
+    "planetProjectionP95Ms": 82.6804169999998,
+    "independentObserverPairMs": 473.8167089999997,
+    "retainedProjectionHeapMiB": 1.30853271484375,
+    "identityRetentionRatio": 0.875,
+    "estimatedStreetProjectionMiB": 1.716888427734375
+  },
+  "semanticEvidence": {
+    "independentObservers": {
+      "manifestationHash": "b7d8ef2246775f8b",
+      "eventHash": "b0bd84480511f52f",
+      "hashesMatch": true
+    },
+    "reconciliation": {
+      "young": {
+        "field": "17648299",
+        "manifested": "17648299",
+        "exact": true
+      },
+      "adult": {
+        "field": "49736117",
+        "manifested": "49736117",
+        "exact": true
+      },
+      "older": {
+        "field": "12835127",
+        "manifested": "12835127",
+        "exact": true
+      }
+    },
+    "lodSequence": [
+      {
+        "lod": "planet",
+        "manifestationHash": "7228cd2a2ca522b6",
+        "selectedPresent": true
+      },
+      {
+        "lod": "region",
+        "manifestationHash": "14296d6b27b5c392",
+        "selectedPresent": true
+      },
+      {
+        "lod": "street",
+        "manifestationHash": "b7d8ef2246775f8b",
+        "selectedPresent": true
+      },
+      {
+        "lod": "person",
+        "manifestationHash": "0b21e681edada68a",
+        "selectedPresent": true
+      },
+      {
+        "lod": "planet",
+        "manifestationHash": "7228cd2a2ca522b6",
+        "selectedPresent": true
+      }
+    ],
+    "epochTransition": {
+      "beforeEpoch": "0",
+      "afterEpoch": "1",
+      "beforeHash": "7dd8d1183696f0e5",
+      "afterHash": "3405583713ec89d9",
+      "retained": 7000,
+      "total": 8000,
+      "retainedPermille": 875,
+      "selectedPresent": true
+    }
+  },
+  "budgets": {
+    "streetProjectionP95MsMax": 500,
+    "planetProjectionP95MsMax": 500,
+    "independentObserverPairMsMax": 1000,
+    "retainedProjectionHeapMiBMax": 32,
+    "identityRetentionRatioMin": 0.875,
+    "estimatedStreetProjectionMiBMax": 2,
+    "passed": true
+  }
+}

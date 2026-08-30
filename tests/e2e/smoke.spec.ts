@@ -157,6 +157,14 @@ test("traces planet to person across two independent local observers", async ({
   await expect(page.getByTestId("manifestation-hash-a")).toHaveText(
     personManifestationHash ?? "",
   );
+  await page.getByRole("button", { name: "Tick 24 · identity epoch" }).click();
+  await expect(page.getByTestId("observer-a-person-id")).toHaveText(
+    "person_27yi09s_1obkbba",
+  );
+  await expect(page.getByTestId("observer-b-person-id")).toHaveText(
+    "person_27yi09s_1obkbba",
+  );
+  await expect(page.getByTestId("observer-match")).toHaveText("Semantic match");
 
   await page.getByRole("button", { name: "Tick 7 · commute" }).click();
   await expect(page.getByTestId("observer-a-itinerary")).toHaveText(

@@ -486,6 +486,7 @@ function render(root: HTMLElement): void {
             [10, "primary activity"],
             [19, "festival hour"],
             [23, "sleep"],
+            [24, "identity epoch"],
           ]
             .map(
               ([tick, label]) =>
