@@ -161,7 +161,7 @@ function validateInfluences(
   );
 }
 
-function hashState(state: Omit<FieldState, "stateHash">): string {
+export function fieldStateHash(state: Omit<FieldState, "stateHash">): string {
   const writer = new CanonicalWriter("population-activity-fields", 1)
     .text(state.seed)
     .u64(state.tick)
@@ -198,7 +198,7 @@ function hashState(state: Omit<FieldState, "stateHash">): string {
 }
 
 function freezeState(state: Omit<FieldState, "stateHash">): FieldState {
-  return Object.freeze({ ...state, stateHash: hashState(state) });
+  return Object.freeze({ ...state, stateHash: fieldStateHash(state) });
 }
 
 function initialState(

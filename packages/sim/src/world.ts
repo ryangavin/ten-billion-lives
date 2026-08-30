@@ -194,7 +194,9 @@ function createDraft(seed: bigint, row: number, column: number): CellDraft {
   });
 }
 
-export function generateWorld(seed = BASELINE_WORLD_SEED): FictionalWorld {
+export function generateWorld(
+  seed: string = BASELINE_WORLD_SEED,
+): FictionalWorld {
   if (seed.length === 0) throw new RangeError("world seed must not be empty");
   const numericSeed = seedWord(seed);
   const { rows, columns } = dimensions(WORLD_LEVEL);

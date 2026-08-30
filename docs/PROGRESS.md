@@ -1,8 +1,8 @@
 # Progress
 
-- Current issue: #9 — hierarchical transport capacity and deterministic planetary day.
-- Last green commit: `55ab951` (#8 closed with invariant, replay, browser, visual, and performance evidence).
-- Evidence produced: #9 focused suite has 6 green falsifiers and fixed graph/day hashes `784fcc1635c75fc3` / `c09cdd840c68bab2`. Nine-sample representative day is 100.85 ms p50 / 115.28 ms p95 against 500 ms, 237.99 ticks/s, 1.50 MiB retained heap. Production startup is 301.09 ms with 14.50 MiB heap and the regression gate passes. Six Chromium/WebKit journeys pass. Full-day rhythm, tick-7 closed route, tick-9 exact restoration, and tick-19 100,000-person festival peak captures were inspected.
-- Next action: commit the refreshed production profile, post closing evidence, close #9, then begin the M1 gate #10 outer loop.
-- Decisions: build aggregate neighborhood→settlement→region transport edges; allocate integer cohort demand exactly; process commands in tick/id order; route source demand across currently open outgoing capacity; represent festival attendance as a conserved subset rather than traveler records.
+- Current issue: #10 — M1 snapshot, event, replay, and frozen world-kernel gate.
+- Last green commit: `8b574c3` (#9 closed with deterministic day, intervention, browser, visual, and performance evidence).
+- Evidence produced: #10 focused suite has 5 green falsifiers: byte-stable checkpoint restore; identical genesis/tick-3/tick-9/tick-17 replay suffixes; independent full-day state/event hashes; actionable corrupt/truncated/version/order failures; and explicit world/event/checkpoint version 1. Local-only format and fail-closed migration policy documented.
+- Next action: run the full root check and commit the checkpoint kernel, then add golden fixtures, replay CLI/transcripts, snapshot/load/replay benchmark, and browser restore diagnostics before the clean-checkout outer loop.
+- Decisions: serialize only authoritative dynamic field rows plus seed/version/hash metadata; regenerate and verify static world data on restore; keep transport events as a sparse ordered local log; reject rather than guess migrations; design no network/deployment format.
 - Blockers: none. Server deployment is outside the local-MVP goal.

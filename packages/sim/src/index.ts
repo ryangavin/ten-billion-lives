@@ -50,6 +50,7 @@ export {
   FieldSimulationRunner,
   createFieldState,
   createSmallFieldState,
+  fieldStateHash,
   fieldPopulationAt,
   invariantReport,
   stepFieldState,
@@ -61,6 +62,18 @@ export {
   explainFlow,
   simulatePlanetaryDay,
 } from "./transport";
+export {
+  EVENT_FORMAT_VERSION,
+  LOCAL_CHECKPOINT_VERSION,
+  WORLD_FORMAT_VERSION,
+  advanceWorldKernel,
+  createWorldKernel,
+  hashKernelEvents,
+  replayKernelHashes,
+  restoreWorldKernel,
+  serializeWorldKernel,
+} from "./checkpoint";
+export type { KernelEvent, WorldKernel } from "./checkpoint";
 export type {
   ActivityCounts,
   DailyActivity,

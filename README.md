@@ -62,4 +62,4 @@ The root commands are:
 
 The workspace contains the local Vite app in `apps/web` and deterministic seams in `packages/sim`, `packages/manifest`, `packages/render`, and `packages/testkit`. There is no server package or remote runtime dependency.
 
-The [deterministic primitive contract](docs/DETERMINISM.md) documents authoritative arithmetic, encoding, hashing, domain separation, allocation, permutation, tick, failure, and cross-runtime golden guarantees.
+The [deterministic primitive contract](docs/DETERMINISM.md) documents authoritative arithmetic, encoding, hashing, domain separation, allocation, permutation, tick, failure, and cross-runtime golden guarantees. The [local format contract](docs/FORMATS.md) freezes world, event, and checkpoint version 1 plus its fail-closed migration policy.
