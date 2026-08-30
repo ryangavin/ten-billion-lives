@@ -54,6 +54,28 @@ export {
   invariantReport,
   stepFieldState,
 } from "./fields";
+export {
+  PLANETARY_DAY_TICKS,
+  buildTransportGraph,
+  createSignatureCommandLog,
+  explainFlow,
+  simulatePlanetaryDay,
+} from "./transport";
+export type {
+  ActivityCounts,
+  DailyActivity,
+  EdgeFlow,
+  FestivalOrigin,
+  PlanetaryDay,
+  PlanetaryDayTick,
+  SignatureFestival,
+  TransportCommand,
+  TransportEdge,
+  TransportGraph,
+  TransportMode,
+  TransportNode,
+  TransportNodeKind,
+} from "./transport";
 export type {
   ActivityField,
   CohortField,
