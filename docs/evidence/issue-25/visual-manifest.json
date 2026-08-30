@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "captureCommand": "pnpm qa:visual",
+  "inspectionDate": "2026-08-30",
+  "images": [
+    {
+      "state": "loading",
+      "file": "loading.png",
+      "size": "1440x1000",
+      "sha256": "c92ab45bfc63dcd70044bd5457328e031b22b502f80bcfafba2b920f970e068e",
+      "passed": true
+    },
+    {
+      "state": "globe",
+      "file": "landing-desktop.png",
+      "size": "1440x1000",
+      "sha256": "eab09179f3d6070f4b85429011ed625e4070b1e5ffea5f4b341255c0de6af139",
+      "passed": true
+    },
+    {
+      "state": "region",
+      "file": "settlement.png",
+      "size": "1440x1000",
+      "sha256": "e55b7747083e81cbd8ceb2307fa2e91136ea8f35bcdcfca0bfbbc5ecd99a0066",
+      "passed": true
+    },
+    {
+      "state": "street",
+      "file": "street.png",
+      "size": "1440x1000",
+      "sha256": "70fcfb2ef4fb8fd3fcf9d829c7985e357809bb2c6fb4387e342b78cd0a8638d7",
+      "passed": true
+    },
+    {
+      "state": "person",
+      "file": "person.png",
+      "size": "1440x1000",
+      "sha256": "18c890d30bbd1655fc1146a832a0cc39d998558a7362fe394c9619db57956e7c",
+      "passed": true
+    },
+    {
+      "state": "festival and two observers",
+      "file": "festival-two-observers.png",
+      "size": "1120x1124",
+      "sha256": "4c0efc51597f1f6a88bc1ad72d1ff78eaf1485ef28c33a70fe0da868f29246e8",
+      "passed": true
+    },
+    {
+      "state": "field reveal and replay",
+      "file": "replay-field-reveal.png",
+      "size": "1120x382",
+      "sha256": "69a216f12f75e57e1870991e29e3417be0e940d30a1308d2f9dc8c42a21b2691",
+      "passed": true
+    },
+    {
+      "state": "closure branch",
+      "file": "closure-branch.png",
+      "size": "1120x323",
+      "sha256": "ea790dcbf58bdbca91fc883571c4e7516703c3660e9f472716435ab9e2268fe5",
+      "passed": true
+    },
+    {
+      "state": "empty discovery",
+      "file": "empty-discovery.png",
+      "size": "1440x1000",
+      "sha256": "fe21aa8dd4c14227f1cead95494be83a6147cac6f9d8e27f20d30c1ccee91f8d",
+      "passed": true
+    },
+    {
+      "state": "invalid local link",
+      "file": "invalid-link.png",
+      "size": "1000x720",
+      "sha256": "a13554a7f187d69de85a167c0e5a515cacfcf0ab32eec7b8e770a004837cbc8c",
+      "passed": true
+    },
+    {
+      "state": "narrow landing",
+      "file": "landing-narrow.png",
+      "size": "390x844",
+      "sha256": "82e0913cbc672af2323261521a06fd41a2835c514ae6341aa00f8a5fe72c9b62",
+      "passed": true
+    },
+    {
+      "state": "complete narrow journey",
+      "file": "journey-narrow.png",
+      "size": "390x7234",
+      "sha256": "c1b53bc05c2c23fea7684f8aa0bc2c7fcaf78e2cc4f2d9ea1d46974f88304411",
+      "passed": true
+    },
+    {
+      "state": "24x time control",
+      "file": "time-24x.png",
+      "size": "1440x1000",
+      "sha256": "02c4bbb42265e1d37990428b83b2cc8b0e65015bceb20d35b0177557770280aa",
+      "passed": true
+    }
+  ],
+  "videos": [
+    {
+      "state": "desktop signature journey",
+      "file": "observatory-desktop.webm",
+      "durationSeconds": 8.36,
+      "bytes": 1179897,
+      "sha256": "1214f52a492227a75dd8783538d505b3a14fc243904e7954e4fe0293c4d9f41e",
+      "passed": true
+    },
+    {
+      "state": "narrow fallback journey",
+      "file": "observatory-narrow.webm",
+      "durationSeconds": 6.12,
+      "bytes": 325636,
+      "sha256": "cf5f94da3d6144f6a236ec824e272f2f43af95c79f15231c13b9180ca5aa0e9e",
+      "passed": true
+    }
+  ],
+  "inspection": {
+    "clipping": false,
+    "horizontalOverflow": false,
+    "staleIdentity": false,
+    "stateContradiction": false,
+    "misleadingAuthorityClaim": false
+  },
+  "passed": true
+}

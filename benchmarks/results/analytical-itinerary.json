@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "analytical-itinerary-v1",
-  "commit": "53c77c9e4c63007fbfc03e742e20cf89fae9cd29",
+  "commit": "551f0b008c2d83a3c0d7451c9b16b80edcc38b35",
   "seed": "ten-billion-lives/baseline/v1",
   "worldHash": "ed66e344fcd7e737",
   "eventHash": "ec998bbac0999abc",
@@ -13,12 +13,12 @@
     "retainedPersonRows": 0
   },
   "metrics": {
-    "indexBuildP50Ms": 12.564374999999984,
-    "indexBuildP95Ms": 21.237499999999955,
-    "fullQueriesPerSecondP50": 2710.460236224004,
-    "fullQueriesPerSecondP95": 2717.109379146012,
-    "tenThousandBulkQueriesMs": 3673.262208,
-    "retainedIndexHeapMiB": 0.38912200927734375
+    "indexBuildP50Ms": 11.470249999999965,
+    "indexBuildP95Ms": 17.51925,
+    "fullQueriesPerSecondP50": 2955.462000405934,
+    "fullQueriesPerSecondP95": 2983.774013133529,
+    "tenThousandBulkQueriesMs": 3435.9101250000003,
+    "retainedIndexHeapMiB": 0.33695220947265625
   },
   "budgets": {
     "indexBuildP95MsMax": 125,

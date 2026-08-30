@@ -1,8 +1,8 @@
 # Progress
 
 - Current issue: #25 — independent local end-to-end, deterministic, visual, exploratory, dependency, and security QA matrix.
-- Last green commit: `bd9472f` (#23 closed with 23/23 applicable production browser cases, zero axe violations, touch/keyboard recordings, and retained compatibility evidence).
-- Evidence produced: Chromium 151, WebKit 26.5, and mobile Chromium passed all applicable checks; Firefox was absent and explicitly unvalidated. Context loss/resume preserved state `b2007dbd631d0474`, manifestation `0b21e681edada68a`, event `b0bd84480511f52f`, and the two-observer match. Canvas fallback measured 0.73 ms p95.
-- Next action: inventory retained evidence against #25 lanes, then run clean-checkout install/check/build/preview, deterministic hashes, full browser/benchmark/security matrices, and an exploratory visual/copy audit. Commit a versioned evidence index with explicit pass/fail and skip disposition.
-- Decisions: evidence must be independently readable from files and commands. Expected project-specific skips are documented, never counted as passes. No remote service or deployment acceptance is in scope.
+- Last green commit: `ed917c4` (`test: retain canonical person visual`).
+- Evidence produced: Clean remote clone/install/check/build/production journey at `551f0b0`; byte-identical replay; 24/24 applicable Chromium/WebKit/mobile cases with zero flaky/unexpected results; all benchmark budgets plus retained 30-minute soak; inspected canonical desktop/narrow/error visuals and recordings; zero dependency advisories; restrictive local CSP/network boundary; no unresolved local P0 defect. Versioned evidence index and machine-readable dispositions are under `docs/evidence/issue-25`.
+- Next action: validate the evidence index with the root check, commit and push it, post objective closing evidence, close #25, then read and start its next dependency-ordered issue.
+- Decisions: Project-specific browser skips are explicit and covered by an applicable profile. Chromium plus WebKit are the required local cross-engine matrix; unavailable Firefox is recorded and not counted as passed. The fixed-port benchmark failure was treated as a real evidence-integrity defect and fixed at `551f0b0`.
 - Blockers: none. Server deployment is outside the local-MVP goal.

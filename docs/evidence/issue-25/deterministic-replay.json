@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "command": "pnpm gate:m2:replay",
+  "method": "Each canonical JSON vector was generated twice in independent processes and compared byte-for-byte.",
+  "results": {
+    "world": {
+      "command": "node scripts/replay-world.mjs",
+      "runs": 2,
+      "byteLength": 1536,
+      "sha256": "6255989f9c23bc2ff0c5b9c30617f1b7fa396000cc142c679b908d5946a85b05",
+      "identical": true,
+      "semanticHashes": {
+        "worldHash": "ed66e344fcd7e737",
+        "eventHash": "ec998bbac0999abc",
+        "initialFieldHash": "4e04868f72dfe574",
+        "initialKernelHash": "f999e3b156e1c63b",
+        "finalKernelHash": "6e190d289164581d",
+        "population": "10000000000"
+      }
+    },
+    "projection": {
+      "command": "node scripts/projection-vector.mjs",
+      "runs": 2,
+      "byteLength": 3556,
+      "sha256": "85e3565a45b0672e39dd778f68d4155418d5c022e87de44ee65d5ba48132122b",
+      "identical": true,
+      "semanticHashes": {
+        "worldHash": "ed66e344fcd7e737"
+      }
+    },
+    "person": {
+      "command": "node scripts/person-vector.mjs",
+      "runs": 2,
+      "byteLength": 900,
+      "sha256": "56622fb390119eadff050711929e057f9574577a8ae0878705b97462c49aabc3",
+      "identical": true,
+      "semanticHashes": {
+        "worldHash": "ed66e344fcd7e737",
+        "semanticHash": "036aeda537b40d7e"
+      }
+    },
+    "itinerary": {
+      "command": "node scripts/itinerary-vector.mjs",
+      "runs": 2,
+      "byteLength": 40442,
+      "sha256": "a10d12c3c6ef6ae9961f2a04d41f63ee80a9f9cdd6d2216f1448a8adf492fc92",
+      "identical": true,
+      "semanticHashes": {
+        "worldHash": "ed66e344fcd7e737",
+        "eventHash": "ec998bbac0999abc"
+      }
+    }
+  },
+  "passed": true
+}

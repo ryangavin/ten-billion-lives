@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "source": "https://github.com/ryangavin/ten-billion-lives.git",
+  "commit": "551f0b008c2d83a3c0d7451c9b16b80edcc38b35",
+  "temporaryCheckoutRetainedAt": "/var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-qa-AiWnyA/repo",
+  "environment": {
+    "node": "v24.18.0",
+    "pnpm": "11.24.0",
+    "lockfileSha256": "ffd7fa0a19816030641c113a6ef686d7c2e42ec4866cd7ebacc53aff9a96e100"
+  },
+  "commands": [
+    {
+      "command": "git clone --quiet --branch main --single-branch https://github.com/ryangavin/ten-billion-lives.git /var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-qa-AiWnyA/repo",
+      "durationMs": 3427.6760830000003,
+      "exitCode": 0,
+      "outputTail": "",
+      "passed": true
+    },
+    {
+      "command": "pnpm install --frozen-lockfile",
+      "durationMs": 848.7187920000001,
+      "exitCode": 0,
+      "outputTail": "Scope: all 6 workspace projects\n✓ Lockfile passes supply-chain policies (verified 34m ago)\nLockfile is up to date, resolution step is skipped\nProgress: resolved 1, reused 0, downloaded 0, added 0\nPackages: +139\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nPackages are cloned from the content-addressable store to the virtual store.\n  Content-addressable store is at: /Users/ryan/Library/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nProgress: resolved 139, reused 139, downloaded 0, added 139, done\n\ndevDependencies:\n+ @axe-core/playwright 4.13.0\n+ @eslint/js 10.0.1\n+ @playwright/test 1.62.1\n+ @types/node 24.13.3\n+ eslint 10.9.1\n+ globals 17.11.0\n+ prettier 3.9.6\n+ typescript 6.0.3\n+ typescript-eslint 8.68.0\n+ vite 8.2.2\n+ vitest 4.1.11\n\nDone in 787ms using pnpm v11.24.0",
+      "passed": true
+    },
+    {
+      "command": "pnpm check",
+      "durationMs": 20677.295416,
+      "exitCode": 0,
+      "outputTail": "Checking formatting...\nAll matched files use Prettier code style!\nScope: 5 of 6 workspace projects\npackages/render typecheck$ tsc --noEmit -p tsconfig.json\npackages/sim typecheck$ tsc --noEmit -p tsconfig.json\npackages/testkit typecheck$ tsc --noEmit -p tsconfig.json\npackages/render typecheck: Done\npackages/sim typecheck: Done\npackages/testkit typecheck: Done\npackages/manifest typecheck$ tsc --noEmit -p tsconfig.json\npackages/manifest typecheck: Done\napps/web typecheck$ tsc --noEmit -p tsconfig.json\napps/web typecheck: Done\nProduct contract check passed.\nArchitecture contract check passed.\n\n RUN  v4.1.11 /private/var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-qa-AiWnyA/repo\n\n\n Test Files  15 passed (15)\n      Tests  76 passed (76)\n   Start at  18:33:10\n   Duration  4.44s (transform 775ms, setup 0ms, import 2.63s, tests 14.74s, environment 1ms)\n\nScope: 5 of 6 workspace projects\npackages/render build$ tsc -p tsconfig.json\npackages/sim build$ tsc -p tsconfig.json\npackages/testkit build$ tsc -p tsconfig.json\npackages/sim build: Done\npackages/testkit build: Done\npackages/render build: Done\npackages/manifest build$ tsc -p tsconfig.json\npackages/manifest build: Done\napps/web build$ tsc --noEmit -p tsconfig.json && vite build\napps/web build: vite v8.2.2 building client environment for production...\napps/web build: transforming...\napps/web build: ✓ 23 modules transformed.\napps/web build: rendering chunks...\napps/web build: computing gzip size...\napps/web build: dist/index.html                  1.27 kB │ gzip:  0.63 kB\napps/web build: dist/assets/index-CmeXLcDR.css  15.23 kB │ gzip:  4.27 kB\napps/web build: dist/assets/index-CPOO8sXF.js   98.58 kB │ gzip: 31.48 kB\napps/web build: ✓ built in 338ms\napps/web build: Done\n$ pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build\n$ prettier --check .\n$ eslint .\n$ pnpm -r --if-present typecheck\n$ pnpm test:contracts && vitest run\n$ node scripts/check-product-contract.mjs && node scripts/check-architecture-contract.mjs\n$ pnpm -r --if-present build",
+      "passed": true
+    },
+    {
+      "command": "pnpm audit --audit-level high --json",
+      "durationMs": 513.8237500000032,
+      "exitCode": 0,
+      "outputTail": "{\"vulnerabilities\":{\"info\":0,\"low\":0,\"moderate\":0,\"high\":0,\"critical\":0},\"dependencies\":0,\"devDependencies\":163,\"optionalDependencies\":28,\"totalDependencies\":163}",
+      "passed": true
+    }
+  ],
+  "productionPreview": {
+    "command": "pnpm preview --host 127.0.0.1 --port 4180",
+    "status": 200,
+    "journeyMs": 1743.099000000002,
+    "requests": 3,
+    "externalRequests": [],
+    "consoleErrors": [],
+    "browserEvidence": {
+      "title": "Ten Billion Lives",
+      "secureContext": true,
+      "population": "10,000,000,000",
+      "personA": "person_27yi09s_1obkbba",
+      "personB": "person_27yi09s_1obkbba",
+      "stateHash": "b2007dbd631d0474",
+      "manifestationA": "0b21e681edada68a",
+      "manifestationB": "0b21e681edada68a",
+      "eventA": "b0bd84480511f52f",
+      "eventB": "b0bd84480511f52f",
+      "observerMatch": "Semantic match",
+      "backend": "canvas2d",
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'"
+    },
+    "passed": true
+  },
+  "cleanWorktreeAfterValidation": true,
+  "passed": true
+}

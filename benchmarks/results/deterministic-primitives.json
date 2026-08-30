@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "deterministic-primitives-v1",
-  "commit": "e0814980093123659c4920629834adda94d8ae6b",
+  "commit": "551f0b008c2d83a3c0d7451c9b16b80edcc38b35",
   "seed": "benchmark/42",
   "workload": {
     "operation": "domain-separated randomU32",
@@ -9,8 +9,8 @@
     "samples": 7
   },
   "metrics": {
-    "operationsPerSecondP50": 570253.0355281896,
-    "operationsPerSecondP95": 574418.5578828051
+    "operationsPerSecondP50": 622715.4128291829,
+    "operationsPerSecondP95": 631188.439718083
   },
   "vectorHash": "050e18e9f2d20dff"
 }

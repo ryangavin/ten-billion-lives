@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "method": "Manual inspection of every retained PNG, the desktop and narrow WebM recordings, and the linked automated invariants on 2026-08-30.",
+  "checks": [
+    {
+      "challenge": "Identity contradictions between independent observers",
+      "observation": "Both tick-19 festival panes show Eli Vale, the same person ID, manifestation hash, event hash, household, itinerary, encounters, route, appearance, and semantic trace; the UI reports Semantic match.",
+      "artifacts": [
+        "festival-two-observers.png",
+        "clean-checkout.json",
+        "playwright-summary.json"
+      ],
+      "passed": true
+    },
+    {
+      "challenge": "Camera-driven authoritative or semantic effects",
+      "observation": "The browser journey changes camera from 0 to 45 degrees while asserting unchanged state, manifestation, and event hashes. Visual camera controls are consistently labeled as viewing actions.",
+      "artifacts": [
+        "playwright-summary.json",
+        "landing-desktop.png",
+        "person.png"
+      ],
+      "passed": true
+    },
+    {
+      "challenge": "Misleading ten-billion or person-simulation claims",
+      "observation": "First-run copy says represented lives and no table of people. Field reveal shows exactly 10,000,000,000 represented lives, 2,048 integer cells, zero person rows, weighted disposable projections, and a camera/GPU-excluded observer contract.",
+      "artifacts": [
+        "landing-desktop.png",
+        "replay-field-reveal.png",
+        "benchmark-summary.json"
+      ],
+      "passed": true
+    },
+    {
+      "challenge": "Broken emotional or comprehension pacing",
+      "observation": "The inspected sequence establishes the premise before controls, preserves a visible four-step Planet/Settlement/Street/Person orientation, names Brindle Bay and Harbor Street before Dara Grove, then introduces Eli Vale at Lantern Tide before exposing verification details.",
+      "artifacts": [
+        "observatory-desktop.webm",
+        "landing-desktop.png",
+        "settlement.png",
+        "street.png",
+        "person.png",
+        "festival-two-observers.png",
+        "comprehension-checklist.json"
+      ],
+      "passed": true
+    },
+    {
+      "challenge": "Branch or replay presentation implies mutation of the baseline",
+      "observation": "Replay is explicitly verified; the closure branch is labeled reversible, reports identical population fields, and contrasts one scheduled route without mutating the immutable baseline.",
+      "artifacts": [
+        "replay-field-reveal.png",
+        "closure-branch.png",
+        "playwright-summary.json"
+      ],
+      "passed": true
+    },
+    {
+      "challenge": "Failure and empty states strand the user",
+      "observation": "An unknown search preserves semantic state and names the available local choices. An incompatible person link gives a visible alert and Return to baseline recovery link.",
+      "artifacts": [
+        "empty-discovery.png",
+        "invalid-link.png",
+        "playwright-summary.json"
+      ],
+      "passed": true
+    },
+    {
+      "challenge": "Narrow or fallback presentation loses content",
+      "observation": "The 390 by 7,234 full-page journey contains the complete experience without horizontal overflow; Canvas fallback remains explicit and all semantic checks pass after renderer loss and resize.",
+      "artifacts": [
+        "journey-narrow.png",
+        "observatory-narrow.webm",
+        "playwright-summary.json"
+      ],
+      "passed": true
+    }
+  ],
+  "blockingFindings": [],
+  "passed": true
+}

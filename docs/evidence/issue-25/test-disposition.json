@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "source": "playwright-summary.json",
+  "applicablePassed": 24,
+  "unexpected": 0,
+  "flaky": 0,
+  "projectSpecificSkips": 10,
+  "groups": [
+    {
+      "test": "restores keyboard focus and honors reduced motion",
+      "runsOn": ["chromium", "webkit"],
+      "skipsOn": ["mobile-chromium"],
+      "reason": "Desktop keyboard behavior is exercised on both desktop engines; touch behavior has its own mobile case.",
+      "passed": true
+    },
+    {
+      "test": "has no serious or critical automated accessibility findings",
+      "runsOn": ["chromium"],
+      "skipsOn": ["webkit", "mobile-chromium"],
+      "reason": "Axe is the single canonical DOM audit; keyboard, reflow, touch, and semantic checks cover the other profiles independently.",
+      "passed": true
+    },
+    {
+      "test": "supports the complete touch journey, local share, and follow exit",
+      "runsOn": ["mobile-chromium"],
+      "skipsOn": ["chromium", "webkit"],
+      "reason": "This is the dedicated Pixel 7 touch-profile case; both desktop projects run the full pointer/keyboard journey elsewhere.",
+      "passed": true
+    },
+    {
+      "test": "preserves semantics through context loss, tab resume, and orientation",
+      "runsOn": ["chromium", "webkit"],
+      "skipsOn": ["mobile-chromium"],
+      "reason": "The desktop resume/context-loss matrix runs on both browser engines; mobile orientation and journey behavior are exercised by the touch case.",
+      "passed": true
+    },
+    {
+      "test": "remains legible with forced colors and 200 percent text",
+      "runsOn": ["chromium"],
+      "skipsOn": ["webkit", "mobile-chromium"],
+      "reason": "Forced-colors emulation is the canonical Chromium audit; narrow mobile reflow is separately exercised at 390 by 844.",
+      "passed": true
+    },
+    {
+      "test": "keeps the production browser boundary local and restrictive",
+      "runsOn": ["chromium"],
+      "skipsOn": ["webkit", "mobile-chromium"],
+      "reason": "The same static production document and CSP serve every engine, so one canonical network-boundary capture avoids duplicating an engine-independent assertion.",
+      "passed": true
+    }
+  ],
+  "browserCoverage": {
+    "chromium": "complete journey, fallback, deterministic semantics, accessibility, resilience, reflow, and security",
+    "webkit": "complete journey, fallback, deterministic semantics, keyboard, and resilience",
+    "mobileChromium": "complete touch journey at a Pixel 7 profile",
+    "firefox": "Not installed on the validation machine and not counted as passed; Chromium plus WebKit satisfy the required local cross-engine smoke matrix."
+  },
+  "silentlySkippedRequiredTests": 0,
+  "passed": true
+}

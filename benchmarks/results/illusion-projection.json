@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "illusion-projection-v1",
-  "commit": "a6b7b39b2898df2556012d3ffd9067a410bde1c5",
+  "commit": "551f0b008c2d83a3c0d7451c9b16b80edcc38b35",
   "seed": "ten-billion-lives/baseline/v1",
   "worldHash": "ed66e344fcd7e737",
   "eventHash": "ec998bbac0999abc",
@@ -15,12 +15,12 @@
     "independentlyInitializedObservers": 2
   },
   "metrics": {
-    "streetProjectionP50Ms": 219.94462499999986,
-    "streetProjectionP95Ms": 282.97395800000004,
-    "planetProjectionP50Ms": 79.63120800000002,
-    "planetProjectionP95Ms": 92.29333299999962,
-    "independentObserverPairMs": 472.4336250000001,
-    "retainedProjectionHeapMiB": 1.289886474609375,
+    "streetProjectionP50Ms": 185.88433299999997,
+    "streetProjectionP95Ms": 195.01358299999993,
+    "planetProjectionP50Ms": 66.81383299999993,
+    "planetProjectionP95Ms": 67.37537500000008,
+    "independentObserverPairMs": 389.769667,
+    "retainedProjectionHeapMiB": 1.2989044189453125,
     "identityRetentionRatio": 0.875,
     "estimatedStreetProjectionMiB": 1.716888427734375
   },

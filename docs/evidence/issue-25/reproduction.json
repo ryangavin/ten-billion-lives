@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "productRevision": "551f0b008c2d83a3c0d7451c9b16b80edcc38b35",
+  "visualHarnessRevision": "ed917c4",
+  "environment": {
+    "node": "v24.18.0",
+    "pnpm": "11.24.0",
+    "chromium": "151.0.7922.34",
+    "webkit": "26.5",
+    "profile": "benchmarks/profiles/apple-m1-max.json"
+  },
+  "canonicalInputs": {
+    "seed": "ten-billion-lives/baseline/v1",
+    "initialTick": 10,
+    "advancedTick": 34,
+    "festivalTick": 19,
+    "identityEpochTick": 24,
+    "baselineUrl": "http://127.0.0.1:4173/?renderer=canvas&quality=baseline",
+    "personUrl": "http://127.0.0.1:4173/?schema=1&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=10&person=person_27yi09s_1obkbba&branch=baseline&stage=person&location=L5%2F0%2F38",
+    "invalidUrl": "http://127.0.0.1:4173/?schema=2&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=19&person=person_0000a4q_0yrj2dd&branch=baseline"
+  },
+  "commands": [
+    "pnpm qa:clean",
+    "pnpm qa:replay",
+    "node scripts/capture-playwright-summary.mjs docs/evidence/issue-25",
+    "pnpm qa:benchmarks",
+    "pnpm qa:visual",
+    "pnpm check"
+  ],
+  "failureCapture": {
+    "playwrightTrace": "retain-on-failure",
+    "playwrightScreenshot": "only-on-failure",
+    "caseLog": "playwright-summary.json contains title, project, expected/actual status, duration, retry count, and pass flag",
+    "benchmarkLog": "benchmark-commands.json retains command, duration, exit status, and output tail",
+    "deterministicLog": "deterministic-replay.json retains command, run count, transcript byte length, SHA-256, and semantic hashes",
+    "cleanLog": "clean-checkout.json retains clone path, exact commit, command output tails, URL/network/console observations, and worktree state"
+  },
+  "passed": true
+}

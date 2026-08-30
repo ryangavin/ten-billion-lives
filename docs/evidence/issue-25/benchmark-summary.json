@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "551f0b008c2d83a3c0d7451c9b16b80edcc38b35",
+  "cleanCheckoutCommand": "git clone --branch main --single-branch <origin> <temp>/repo",
+  "command": "pnpm benchmark",
+  "profile": {
+    "schemaVersion": 1,
+    "profileId": "apple-m1-max-32gb-chromium",
+    "device": {
+      "model": "MacBook Pro MacBookPro18,2",
+      "cpu": "Apple M1 Max, 10 cores",
+      "memoryGiB": 32,
+      "architecture": "arm64",
+      "os": "macOS 26.5.2 (25F84)"
+    },
+    "browser": {
+      "engine": "Chromium",
+      "driver": "Playwright 1.62.1",
+      "mode": "headless desktop"
+    }
+  },
+  "browser": {
+    "version": "151.0.7922.34"
+  },
+  "hashes": {
+    "deterministicVector": "050e18e9f2d20dff",
+    "world": "ed66e344fcd7e737",
+    "initialField": "4e04868f72dfe574",
+    "planetaryDay": "c09cdd840c68bab2",
+    "event": "ec998bbac0999abc",
+    "finalKernel": "6e190d289164581d",
+    "streetManifestation": "b7d8ef2246775f8b",
+    "streetEvents": "b0bd84480511f52f"
+  },
+  "conservation": {
+    "representedPopulation": "10000000000",
+    "residentPopulation": "10000000000",
+    "presentPopulation": "10000000000",
+    "valid": true,
+    "retainedPersonRows": 0
+  },
+  "measurements": {
+    "deterministicOperationsPerSecondP50": 622715.4128291829,
+    "worldGenerationP95Ms": 43.169833,
+    "worldRetainedHeapMiB": 0.684539794921875,
+    "fieldCellTicksPerSecondP50": 416452.9166772964,
+    "fieldRetainedHeapMiB": 0.8115921020507812,
+    "planetaryDayP95Ms": 106.41616600000003,
+    "planetaryDayP95MsMax": 500,
+    "kernelReplayTicksPerSecondP50": 61.752345060741796,
+    "kernelRetainedHeapMiB": 1.909393310546875,
+    "manifestationPersonQueriesPerSecondP50": 32134.790484122444,
+    "millionIdentityGenerationMs": 3310.485917,
+    "itineraryQueriesPerSecondP50": 2955.462000405934,
+    "streetProjectionP95Ms": 195.01358299999993,
+    "streetProjectionP95MsMax": 500,
+    "observerPairMs": 389.769667,
+    "observerPairMsMax": 1000,
+    "identityRetentionRatio": 0.875,
+    "fallbackFrameTimeP95Ms": 3.685000002384186,
+    "fallbackFrameTimeP95MsMax": 16.67,
+    "rendererBrowserMemoryMiB": 42.629241943359375,
+    "rendererBrowserMemoryMiBMax": 256,
+    "planetToPersonMs": 1679.9361670000003,
+    "planetToPersonMsMax": 5000,
+    "followTickP95Ms": 253.15812499999993,
+    "followTickP95MsMax": 1500,
+    "secondObserverMs": 92.26241700000037,
+    "deepLinkLoadMs": 923.4354579999999,
+    "experienceBrowserHeapMiB": 82.3974609375,
+    "experienceBrowserHeapMiBMax": 128
+  },
+  "budgetResults": {
+    "baselineProfile": "passed by benchmark:check",
+    "transport": true,
+    "kernel": true,
+    "manifestation": true,
+    "itinerary": true,
+    "projection": true,
+    "renderer": true,
+    "experience": true
+  },
+  "passed": true
+}

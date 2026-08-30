@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "manifestation-v1",
-  "commit": "b48cf81f35345480ef81975e0ac208b7ad0bc044",
+  "commit": "551f0b008c2d83a3c0d7451c9b16b80edcc38b35",
   "seed": "ten-billion-lives/baseline/v1",
   "worldHash": "ed66e344fcd7e737",
   "workload": {
@@ -14,13 +14,13 @@
     "collisionCount": 0
   },
   "metrics": {
-    "indexBuildP50Ms": 9.187417000000039,
-    "indexBuildP95Ms": 13.447499999999991,
-    "personQueriesPerSecondP50": 28486.71453557085,
-    "personQueriesPerSecondP95": 29129.483560589513,
-    "relationshipQueriesPerSecondP50": 15412.159521892569,
-    "millionIdGenerationMs": 3407.925625,
-    "retainedIndexHeapMiB": 0.34876251220703125
+    "indexBuildP50Ms": 8.816833000000031,
+    "indexBuildP95Ms": 12.967917000000028,
+    "personQueriesPerSecondP50": 32134.790484122444,
+    "personQueriesPerSecondP95": 32678.32805438907,
+    "relationshipQueriesPerSecondP50": 17426.586973490364,
+    "millionIdGenerationMs": 3310.485917,
+    "retainedIndexHeapMiB": 0.31268310546875
   },
   "budgets": {
     "indexBuildP95MsMax": 100,

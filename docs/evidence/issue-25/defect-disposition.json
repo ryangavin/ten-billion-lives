@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "queriedAt": "2026-08-30T22:39:00Z",
+  "query": "gh issue list --state open --label priority:p0",
+  "openP0Issues": [
+    { "number": 25, "kind": "active quality gate", "defect": false },
+    {
+      "number": 26,
+      "kind": "pending local documentation work",
+      "defect": false
+    },
+    { "number": 27, "kind": "pending local MVP gate", "defect": false }
+  ],
+  "discoveredDuringGate": [
+    {
+      "summary": "Browser benchmarks used fixed localhost ports and could fail or measure a stale preview.",
+      "reproduction": "Leave another listener on 127.0.0.1:4173, then run pnpm qa:benchmarks; the renderer preview fails to become ready.",
+      "originalFailure": "Preview did not become ready: http://127.0.0.1:4173",
+      "resolution": "Production benchmark previews now use an OS-assigned localhost port and close the Vite server directly.",
+      "commit": "551f0b008c2d83a3c0d7451c9b16b80edcc38b35",
+      "verification": [
+        "pnpm benchmark:renderer",
+        "pnpm benchmark:experience",
+        "pnpm benchmark",
+        "pnpm qa:benchmarks",
+        "pnpm check"
+      ],
+      "status": "fixed"
+    }
+  ],
+  "unresolvedLocalP0Defects": 0,
+  "deferredIssue28Excluded": true,
+  "passed": true
+}
