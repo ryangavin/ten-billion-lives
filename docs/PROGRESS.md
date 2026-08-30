@@ -1,8 +1,8 @@
 # Progress
 
-- Current issue: #3 — local TypeScript app and reproducible quality workflow.
+- Current issue: #4 — local benchmark harnesses, profiles, and budgets.
 - Last green commit: `d8de3f3` (#3 scaffold; root check, browser smoke, and clean-clone validation pass).
 - Evidence produced: clean remote clone installed from the frozen lockfile, passed `pnpm check` in 11.84 s and Chromium E2E in 6.61 s; dev/preview returned loopback HTML; production audit found no known vulnerabilities; retained screenshot inspected.
-- Next action: commit/push the #3 evidence, close #3, then read #4 and its direct dependencies.
-- Decisions: Node 24.18.0 LTS, pnpm 11.24.0, TypeScript 6.0.3, Vite, Vitest, Playwright, ESLint, and Prettier are exact-pinned; the smoke fixture uses seed/tick only; no package-level AGENTS file is needed.
+- Next action: validate the harness/checker, commit it, generate the baseline from that commit, prove the degraded fixture fails, and retain the JSON/report.
+- Decisions: three tiers target 25k/30 FPS fallback, 250k/60 FPS baseline, and 1m/30 FPS showcase; 256 MiB remains the browser-memory aspiration; coarse catastrophic limits are separate from aspirations; M0 workload results are explicitly scaffold—not final kernel—claims.
 - Blockers: none. Server deployment is outside the local-MVP goal.

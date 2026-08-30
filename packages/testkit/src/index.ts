@@ -12,3 +12,6 @@ export function createSmokeFixture(): SmokeFixture {
     tick: 0,
   });
 }
+
+export { evaluateBudgets } from "./regression";
+export type { BudgetLimit, BudgetMap, MetricMap } from "./regression";

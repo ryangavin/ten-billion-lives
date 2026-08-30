@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "qualityTiers": {
+    "fallback": { "renderedManifestations": 25000, "targetFps": 30 },
+    "baseline": { "renderedManifestations": 250000, "targetFps": 60 },
+    "showcase": { "renderedManifestations": 1000000, "targetFps": 30 }
+  },
+  "aspirations": {
+    "baselineFrameTimeP95Ms": 16.67,
+    "baselineRenderedManifestations": 250000,
+    "browserMemoryMiB": 256
+  },
+  "catastrophic": {
+    "simulationCellsPerSecond": { "direction": "min", "catastrophic": 100000 },
+    "snapshotSerializeMiBPerSecond": { "direction": "min", "catastrophic": 5 },
+    "replaySnapshotsPerSecond": { "direction": "min", "catastrophic": 100 },
+    "identitiesPerSecond": { "direction": "min", "catastrophic": 100000 },
+    "baselineFrameTimeP95Ms": { "direction": "max", "catastrophic": 300 },
+    "browserMemoryMiB": { "direction": "max", "catastrophic": 256 },
+    "startupMs": { "direction": "max", "catastrophic": 5000 }
+  }
+}

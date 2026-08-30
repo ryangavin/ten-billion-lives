@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "profileId": "apple-m1-max-32gb-chromium",
+  "device": {
+    "model": "MacBook Pro MacBookPro18,2",
+    "cpu": "Apple M1 Max, 10 cores",
+    "memoryGiB": 32,
+    "architecture": "arm64",
+    "os": "macOS 26.5.2 (25F84)"
+  },
+  "browser": {
+    "engine": "Chromium",
+    "driver": "Playwright 1.62.1",
+    "mode": "headless desktop"
+  }
+}

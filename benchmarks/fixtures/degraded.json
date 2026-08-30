@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "metrics": {
+    "simulationCellsPerSecond": 1,
+    "snapshotSerializeMiBPerSecond": 0.1,
+    "replaySnapshotsPerSecond": 1,
+    "identitiesPerSecond": 1,
+    "baselineFrameTimeP95Ms": 1000,
+    "browserMemoryMiB": 1024,
+    "startupMs": 10000
+  }
+}
