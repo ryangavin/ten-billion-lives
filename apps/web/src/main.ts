@@ -47,12 +47,14 @@ import {
 import { createSmokeModel } from "./smoke";
 import {
   CLOSURE_PERSON_ID,
+  EXPERIENCE_MAX_TICK,
   EXPERIENCE_LINK_SCHEMA,
   FESTIVAL_PERSON_ID,
   buildExperienceLink,
   createExperienceKernel,
   parseExperienceLink,
   type ExperienceBranch,
+  type ExperienceStage,
 } from "./experience";
 
 const stages = ["Planet", "Settlement", "Street", "Person"] as const;
@@ -114,6 +116,11 @@ let selectedCellId = "L5/12/0";
 let selectedDayTick = 7;
 let selectedPersonTick = 10;
 let checkpointResult = "Not restored";
+let discoveryStatus = "";
+let clockPlaying = false;
+let clockRate: 1 | 6 | 24 = 1;
+let clockTimer: ReturnType<typeof setInterval> | null = null;
+let replayVerified = false;
 let journeyRenderer: BrowserJourneyRenderer | null = null;
 let journeyResizeObserver: ResizeObserver | null = null;
 let journeyRenderGeneration = 0;
@@ -122,6 +129,22 @@ const projectionCache = new WeakMap<
   IllusionEngine,
   Map<string, IllusionProjection>
 >();
+const forceCanvasRenderer =
+  new URLSearchParams(location.search).get("renderer") === "canvas";
+
+function stageKey(stage: (typeof stages)[number]): ExperienceStage {
+  return stage.toLowerCase() as ExperienceStage;
+}
+
+function stageLocationId(stage: (typeof stages)[number]): string {
+  const settlement = world.settlements[0];
+  if (settlement === undefined)
+    throw new Error("Baseline world requires a local journey settlement");
+  if (stage === "Planet") return "world";
+  if (stage === "Settlement") return `settlement/${settlement.id}`;
+  if (stage === "Street") return settlement.neighborhoodIds[0] ?? settlement.id;
+  return manifestationIndex.person(selectedPersonId).cellId;
+}
 
 function kernelStateAt(tick: number, branch = activeBranch) {
   const states = kernelStates[branch];
@@ -247,8 +270,21 @@ function updateRenderDiagnostics(
   const losses = root.querySelector<HTMLElement>(
     "[data-testid=render-context-losses]",
   );
+  const budgetTiming = root.querySelector<HTMLElement>(
+    "[data-testid=budget-frame-time]",
+  );
+  const support = root.querySelector<HTMLElement>(
+    "[data-testid=render-support]",
+  );
   if (backend !== null) backend.textContent = status.backend;
   if (timing !== null) timing.textContent = `${status.frameMs.toFixed(2)} ms`;
+  if (budgetTiming !== null)
+    budgetTiming.textContent = `${status.frameMs.toFixed(2)} ms`;
+  if (support !== null)
+    support.textContent =
+      status.backend === "webgpu"
+        ? "WebGPU active; Canvas fallback ready"
+        : "Canvas fallback active; the complete local journey remains available";
   if (losses !== null)
     losses.textContent = status.lifecycle.contextLosses.toString();
 }
@@ -268,12 +304,10 @@ async function mountJourneyRenderer(
   );
   const stack = root.querySelector<HTMLElement>("[data-render-stack]");
   if (fallbackCanvas === null || gpuCanvas === null || stack === null) return;
-  const forceCanvas =
-    new URLSearchParams(location.search).get("renderer") === "canvas";
   const renderer = new BrowserJourneyRenderer(
     { fallbackCanvas, gpuCanvas },
     scene.transition.durationMs === 0,
-    forceCanvas,
+    forceCanvasRenderer,
   );
   journeyRenderer = renderer;
   const resize = (): BrowserRendererStatus | null => {
@@ -425,16 +459,71 @@ function personCard(
   </dl>`;
 }
 
-function synchronizePersonUrl(): void {
-  if (stageIndex !== stages.length - 1 || personA === null) return;
+function synchronizeExperienceUrl(): void {
+  const stage = stages[stageIndex] ?? "Planet";
   const href = buildExperienceLink(location.href, {
     schema: EXPERIENCE_LINK_SCHEMA,
     seed: BASELINE_WORLD_SEED,
     tick: selectedPersonTick,
     personId: selectedPersonId,
     branch: activeBranch,
+    stage: stageKey(stage),
+    locationId: stageLocationId(stage),
   });
   history.replaceState(null, "", href);
+}
+
+function refreshSelectedPeople(): void {
+  if (personA !== null) personA = queryPerson(snapshotA);
+  if (observerBEngine !== null && personB !== null)
+    personB = queryPerson(
+      createPlaceholderSnapshot(),
+      observerBEngine.itinerary,
+    );
+}
+
+function stopClock(): void {
+  clockPlaying = false;
+  if (clockTimer !== null) clearInterval(clockTimer);
+  clockTimer = null;
+}
+
+function advanceLocalTime(root: HTMLElement, ticks: number): void {
+  selectedPersonTick = (selectedPersonTick + ticks) % (EXPERIENCE_MAX_TICK + 1);
+  selectedDayTick = selectedPersonTick % FIELD_TICKS_PER_DAY;
+  replayVerified = false;
+  replayResult = "Not run";
+  refreshSelectedPeople();
+  render(root);
+}
+
+function startClock(root: HTMLElement): void {
+  if (clockTimer !== null) clearInterval(clockTimer);
+  clockPlaying = true;
+  clockTimer = setInterval(() => advanceLocalTime(root, clockRate), 1_000);
+}
+
+function discover(root: HTMLElement, requested: string): void {
+  const query = requested.trim().toLocaleLowerCase("en-US");
+  stopClock();
+  if (query === "brindle bay" || query === "settlement") {
+    stageIndex = 1;
+    discoveryStatus = "Opened Brindle Bay settlement.";
+  } else if (query === "harbor street" || query === "street") {
+    stageIndex = 2;
+    discoveryStatus = "Opened Harbor Street.";
+  } else if (
+    query === "lantern tide" ||
+    query === "lantern confluence" ||
+    query === "festival"
+  ) {
+    selectExperience(FESTIVAL_PERSON_ID, 19, "baseline");
+    discoveryStatus = "Opened Lantern Tide at festival peak.";
+  } else {
+    discoveryStatus =
+      "No local match. Try Brindle Bay, Harbor Street, or Lantern Tide.";
+  }
+  render(root);
 }
 
 function selectExperience(
@@ -455,6 +544,7 @@ function selectExperience(
     );
   personSearchError = "";
   replayResult = "Not run";
+  replayVerified = false;
 }
 
 function personTimeControls(): readonly (readonly [number, string])[] {
@@ -540,8 +630,18 @@ function transportDebugPanel(): string {
 function render(root: HTMLElement): void {
   const smoke = createSmokeModel();
   const stage = stages[stageIndex] ?? "Planet";
-  synchronizePersonUrl();
+  synchronizeExperienceUrl();
   const nextLabel = nextLabels[stageIndex];
+  const currentKernel = kernelStateAt(selectedPersonTick);
+  const authorityBytes = serializeWorldKernel(currentKernel).length;
+  const localHour = selectedPersonTick % FIELD_TICKS_PER_DAY;
+  const localDay = Math.floor(selectedPersonTick / FIELD_TICKS_PER_DAY);
+  const experienceMode =
+    activeBranch === "closure"
+      ? "Local closure branch"
+      : replayVerified
+        ? "Immutable baseline · replay verified"
+        : "Immutable baseline";
   const semanticProjectionA = projectionFor(illusionEngine, stage);
   const semanticProjectionB =
     observerBEngine === null ? null : projectionFor(observerBEngine, stage);
@@ -556,7 +656,7 @@ function render(root: HTMLElement): void {
     semanticProjectionA.eventHash === semanticProjectionB.eventHash;
   const tracerProjection = createTracerProjection({
     stage: stage.toLowerCase() as "planet" | "settlement" | "street" | "person",
-    stateHash: snapshotA.stateHash,
+    stateHash: currentKernel.kernelHash,
     ...(personA ? { traceHash: personA.traceHash } : {}),
   });
   const renderScene = renderSceneFor(
@@ -570,6 +670,8 @@ function render(root: HTMLElement): void {
     tick: selectedPersonTick,
     personId: selectedPersonId,
     branch: activeBranch,
+    stage: "person",
+    locationId: manifestationIndex.person(selectedPersonId).cellId,
   }).replaceAll("&", "&amp;");
   const cameraShift = Math.sin((cameraDegrees * Math.PI) / 180) * 8;
   const selectedCell = getCell(world, selectedCellId);
@@ -592,17 +694,18 @@ function render(root: HTMLElement): void {
   );
 
   root.innerHTML = `<main class="observatory" aria-labelledby="app-title">
-    <header class="tracer-header"><div><p class="eyebrow"><span aria-hidden="true"></span> Deterministic world / M2</p><h1 id="app-title">Ten Billion Lives</h1></div><div class="status" data-testid="smoke-status"><span aria-hidden="true"></span>${smoke.status}</div></header>
+    <header class="tracer-header"><div><p class="eyebrow"><span aria-hidden="true"></span> Local deterministic observatory</p><h1 id="app-title">Ten Billion Lives</h1><p class="first-run-claim" data-testid="first-run-claim">One fictional planet, exactly <strong>${world.totalPopulation.toLocaleString("en-US")} represented lives</strong>, and no table of people. Zoom in to reconstruct one coherent life from compact fields.</p></div><div class="header-status"><div class="status" data-testid="smoke-status"><span aria-hidden="true"></span>${smoke.status}</div><p data-testid="render-support" role="status">Checking WebGPU; Canvas fallback is ready</p></div></header>
+    <section class="command-deck" aria-label="Local observatory controls"><article class="time-console"><div><p class="kicker">Local world time</p><h2 data-testid="time-status">${clockPlaying ? `Playing · ${clockRate}×` : "Paused"} · day ${localDay} · ${localHour.toString().padStart(2, "0")}:00</h2><p>Analytical time queries change semantic tick; camera motion never does.</p></div><div class="time-actions"><button type="button" data-action="clock-toggle">${clockPlaying ? "Pause local time" : "Play local time"}</button><button type="button" class="secondary" data-action="clock-step">Advance one tick</button>${([1, 6, 24] as const).map((rate) => `<button type="button" class="secondary" data-clock-rate="${rate}" aria-label="Set speed ${rate}×" aria-pressed="${clockRate === rate}">${rate}×</button>`).join("")}</div></article><article class="discovery-console"><div><p class="kicker">Find a place or event</p><h2>Go somewhere meaningful</h2><p>Search the small canonical guide; no remote index or network request is used.</p></div><form role="search" aria-label="Place and event discovery" data-discovery-search><label for="discovery-search">Find a place or event</label><div class="search-row"><input id="discovery-search" type="search" name="discovery" autocomplete="off"><button type="submit">Open</button></div><p class="discovery-status" data-testid="discovery-status" role="status">${discoveryStatus}</p></form><div class="discovery-shortcuts" aria-label="Suggested destinations"><button type="button" class="secondary" data-discover="Brindle Bay">Brindle Bay</button><button type="button" class="secondary" data-discover="Harbor Street">Harbor Street</button><button type="button" class="secondary" data-discover="Lantern Tide">Lantern Tide festival</button></div></article></section>
     <section class="tracer-world" aria-labelledby="journey-title">
       <div class="journey-renderer ${tracerProjection.cssStage}" style="--camera-shift: ${cameraShift.toFixed(2)}px" data-render-stack data-projection-key="${semanticProjectionA.manifestationHash}" data-selection-id="${renderScene.selectionId}" data-camera-degrees="${cameraDegrees}" data-transition-ms="${renderScene.transition.durationMs}" data-testid="journey-renderer" ${stage === "Street" ? 'role="button" tabindex="0" aria-label="Inspect highlighted resident"' : ""}><canvas width="768" height="480" data-render-surface="canvas2d" aria-label="${stage} Canvas fallback visualization"></canvas><canvas width="768" height="480" data-render-surface="webgpu" aria-label="${stage} WebGPU visualization" hidden></canvas><div class="render-hud"><span><b data-testid="render-backend">probing</b> · <b data-testid="render-visible">${renderScene.draw.visibleCount.toLocaleString("en-US")}</b> visible · weights ${renderScene.debug.minimumTokenWeight}–${renderScene.debug.maximumTokenWeight}</span><span><b data-testid="render-frame-time">pending</b> · ${(renderScene.buffer.byteLength / 1_048_576).toFixed(2)} MiB · <code>${renderScene.debug.bufferHash.slice(0, 8)}</code> · losses <b data-testid="render-context-losses">0</b></span></div></div>
-      <div class="journey-copy"><p class="kicker">Observer A · <span data-testid="observer-a-stage">${stage}</span></p><h2 id="journey-title">${stage === "Planet" ? "Seeded fictional planet" : stage === "Settlement" ? (world.settlements[0]?.name ?? "Settlement") : stage === "Street" ? (world.settlements[0]?.neighborhoodIds[0] ?? "Neighborhood") : (personA?.name ?? "Resident")}</h2><p>Camera ${cameraDegrees}° · tick <span data-testid="person-tick">${personA?.itinerary.tick ?? snapshotA.tick}</span> · <code data-testid="state-hash">${snapshotA.stateHash}</code></p>
-      <p class="branch-label">Viewing <strong>${activeBranch === "baseline" ? "immutable baseline" : "local closure branch"}</strong></p><div class="tracer-actions">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}<button type="button" data-action="festival">Visit Lantern Tide</button><button type="button" class="secondary" data-action="camera">Orbit camera</button>${personA ? stages.map((candidate, index) => `<button type="button" class="secondary" data-stage-index="${index}" aria-pressed="${stage === candidate}">View ${candidate.toLowerCase()}</button>`).join("") : ""}</div></div>
+      <div class="journey-copy"><p class="kicker">Observer A · <span data-testid="observer-a-stage">${stage}</span></p><p class="journey-progress" data-testid="journey-progress">${stage} · step ${stageIndex + 1} of ${stages.length}</p><h2 id="journey-title">${stage === "Planet" ? "Seeded fictional planet" : stage === "Settlement" ? (world.settlements[0]?.name ?? "Settlement") : stage === "Street" ? (world.settlements[0]?.neighborhoodIds[0] ?? "Neighborhood") : (personA?.name ?? "Resident")}</h2><p>${stage === "Planet" ? "Start at the whole field; each closer view is a deterministic query, not another simulation." : stage === "Settlement" ? "One conserved region becomes legible without changing the world beneath it." : stage === "Street" ? "Weighted manifestations resolve locally; choose the highlighted resident to continue." : "This identity, household, itinerary, and events are reconstructed on demand."}</p><p>Camera ${cameraDegrees}° · tick <span data-testid="person-tick">${selectedPersonTick}</span> · <code data-testid="state-hash">${currentKernel.kernelHash}</code></p>
+      <p class="branch-label">Viewing <strong data-testid="experience-mode">${experienceMode}</strong></p><div class="tracer-actions">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}<button type="button" data-action="festival">Visit Lantern Tide</button><button type="button" class="secondary" data-action="camera">Orbit camera</button>${personA ? stages.map((candidate, index) => `<button type="button" class="secondary" data-stage-index="${index}" aria-pressed="${stage === candidate}">View ${candidate.toLowerCase()}</button>`).join("") : ""}</div></div>
     </section>
     <section class="observer-grid" aria-label="Independent observer comparison">
       <article><p class="kicker">Observer A</p><h2>${personA?.name ?? "Journey in progress"}</h2><p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-a">${semanticProjectionA.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-a">${semanticProjectionA.eventHash}</code></p>${personCard(personA, "a", semanticProjectionA)}</article>
       <article><p class="kicker">Observer B · independent instance</p><h2>${personB?.name ?? "Not initialized"}</h2>${semanticProjectionB ? `<p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-b">${semanticProjectionB.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-b">${semanticProjectionB.eventHash}</code></p>` : ""}${personCard(personB, "b", semanticProjectionB)}${personA && !personB ? '<button type="button" data-action="observer-b">Initialize observer B</button>' : ""}${semanticMatch ? '<p class="match" data-testid="observer-match">Semantic match</p>' : ""}</article>
     </section>
-    <section class="person-tools" aria-labelledby="person-tools-title"><div><p class="kicker">Find and share a represented life</p><h2 id="person-tools-title">Procedural identity, not a stored agent</h2><p id="experience-claim" data-testid="experience-claim">Each selected life is represented from compact fields—not an independently simulated mind. Facts are reconstructed from the same seed, snapshot, tick, and branch.</p></div><form role="search" data-person-search><label for="person-search">Procedural person ID</label><div class="search-row"><input id="person-search" name="person" type="search" value="${selectedPersonId}" aria-describedby="person-search-error"><button type="submit">Inspect person</button></div><p id="person-search-error" class="form-error" role="alert">${personSearchError}</p></form>${personA ? `<div class="share-row"><a data-testid="person-deep-link" href="${personLink}">Open this person at tick ${selectedPersonTick}</a><button type="button" class="secondary" data-action="copy-link">Copy local link</button><span role="status">${shareStatus}</span></div>` : ""}</section>
+    <section class="person-tools" aria-labelledby="person-tools-title"><div><p class="kicker">Find and share a represented life</p><h2 id="person-tools-title">Procedural identity, not a stored agent</h2><p id="experience-claim" data-testid="experience-claim">Each selected life is represented from compact fields—not an independently simulated mind. Facts are reconstructed from the same seed, snapshot, tick, and branch.</p></div><form role="search" aria-label="Procedural person search" data-person-search><label for="person-search">Procedural person ID</label><div class="search-row"><input id="person-search" name="person" type="search" value="${selectedPersonId}" aria-describedby="person-search-error"><button type="submit">Inspect person</button></div><p id="person-search-error" class="form-error" role="alert">${personSearchError}</p></form>${personA ? `<div class="share-row"><a data-testid="person-deep-link" href="${personLink}">Open this person at tick ${selectedPersonTick}</a><button type="button" class="secondary" data-action="copy-link">Copy local link</button><span role="status">${shareStatus}</span></div>` : ""}</section>
     ${
       personA
         ? `<section class="trace-controls" aria-label="Analytical person time"><p><strong>Follow through the day</strong> · direct random access, no resident stepping or promoted agent</p>${personTimeControls()
@@ -615,12 +718,13 @@ function render(root: HTMLElement): void {
     }
     ${branchComparisonPanel()}
     <section class="trace-controls" aria-label="Replay and field controls"><button type="button" data-action="replay" ${personA ? "" : "disabled"}>Rewind and replay</button><p data-testid="replay-result">${replayResult}</p><button type="button" class="secondary" data-action="fields">Reveal fields</button><button type="button" class="secondary" data-action="render-loss">Simulate renderer loss</button><button type="button" class="secondary" data-action="debug" aria-expanded="${debugVisible}">${debugVisible ? "Hide debug world" : "Inspect debug world"}</button></section>
-    <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Authoritative world budget</p><h2><span data-testid="represented-population">${world.totalPopulation.toLocaleString("en-US")}</span> represented lives</h2></div><dl><div><dt>Authority</dt><dd>${world.cells.length.toLocaleString("en-US")} integer cells</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Projected scope</dt><dd><span data-testid="projection-represented">${semanticProjectionA.realityBudget.representedPeople.toLocaleString("en-US")}</span> people → <span data-testid="projection-tokens">${semanticProjectionA.realityBudget.materializedTokens.toLocaleString("en-US")}</span> weighted tokens</dd></div><div><dt>Derived bytes</dt><dd>${semanticProjectionA.realityBudget.estimatedBytes.toLocaleString("en-US")} · epoch ${semanticProjectionA.identityEpoch} / ${semanticProjectionA.realityBudget.continuityHorizonTicks} ticks</dd></div><div><dt>Manifestation hash</dt><dd><code>${semanticProjectionA.manifestationHash}</code></dd></div><div><dt>Event hash</dt><dd><code>${semanticProjectionA.eventHash}</code> · ${semanticProjectionA.events.length} local events</dd></div><div><dt>Sampling contract</dt><dd>${semanticProjectionA.realityBudget.samplingContract}</dd></div><div><dt>Observer state</dt><dd>Camera and GPU quality excluded from hashes</dd></div></dl></section>
+    <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Reality budget · ${fieldsRevealed ? "field revealed" : "reveal available"}</p><h2><span data-testid="represented-population">${world.totalPopulation.toLocaleString("en-US")}</span> represented lives</h2><p>Authoritative integers stay compact; visible people are weighted, disposable projections.</p></div><dl><div><dt>Authority</dt><dd data-testid="authority-bytes">${world.cells.length.toLocaleString("en-US")} integer cells · ${authorityBytes.toLocaleString("en-US")} checkpoint bytes</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Visible / represented</dt><dd data-testid="budget-visible">${renderScene.draw.visibleCount.toLocaleString("en-US")} tokens · weights ${renderScene.debug.minimumTokenWeight}–${renderScene.debug.maximumTokenWeight} · <span data-testid="projection-represented">${semanticProjectionA.realityBudget.representedPeople.toLocaleString("en-US")}</span> people → <span data-testid="projection-tokens">${semanticProjectionA.realityBudget.materializedTokens.toLocaleString("en-US")}</span> projected tokens</dd></div><div><dt>Derived projection</dt><dd>${semanticProjectionA.realityBudget.estimatedBytes.toLocaleString("en-US")} bytes · epoch ${semanticProjectionA.identityEpoch} / ${semanticProjectionA.realityBudget.continuityHorizonTicks} ticks</dd></div><div><dt>Tick / state hash</dt><dd><span data-testid="budget-tick">${selectedPersonTick}</span> · <code data-testid="budget-state-hash">${currentKernel.kernelHash}</code></dd></div><div><dt>Event hash</dt><dd><code data-testid="budget-event-hash">${semanticProjectionA.eventHash}</code> · ${semanticProjectionA.events.length} local events</dd></div><div><dt>Frame / backend</dt><dd><span data-testid="budget-frame-time">pending</span> · ${forceCanvasRenderer ? "Canvas forced" : "automatic quality"}</dd></div><div><dt>Observer contract</dt><dd>${semanticProjectionA.realityBudget.samplingContract}; camera and GPU quality excluded from hashes</dd></div></dl></section>
     ${debugVisible ? `<section class="debug-world" aria-labelledby="debug-title"><div class="debug-heading"><div><p class="kicker">Seeded semantic atlas</p><h2 id="debug-title">Debug globe · L${debugLevel}</h2><p>Fictional geography; orange edges are the wrapped seam. Cell population brightens land.</p></div><div class="debug-controls" aria-label="Debug world level"><button type="button" class="secondary" data-debug-level="2" aria-pressed="${debugLevel === 2}">L2 regions</button><button type="button" class="secondary" data-debug-level="3" aria-pressed="${debugLevel === 3}">L3</button><button type="button" class="secondary" data-debug-level="5" aria-pressed="${debugLevel === 5}">L5 cells</button></div></div><canvas width="768" height="384" data-testid="debug-globe" aria-label="Fictional world cell map" aria-describedby="debug-cell-details">A deterministic map of fictional geography and population.</canvas><div class="debug-inspector" id="debug-cell-details"><div><dt>Selected cell</dt><dd data-testid="debug-cell-id">${selectedCell.id}</dd></div><div><dt>Hierarchy</dt><dd>${selectedParent} → ${selectedCell.id}</dd></div><div><dt>Geography</dt><dd>${selectedCell.biome} · ${selectedCell.elevationMeters.toLocaleString("en-US")} m</dd></div><div><dt>Population</dt><dd>${selectedCell.population.toLocaleString("en-US")}</dd></div><div><dt>Region</dt><dd>${selectedCell.regionId}</dd></div></div><div class="debug-probes"><button type="button" data-debug-cell="L5/12/0">Inspect seam</button><button type="button" data-debug-cell="L5/0/3">Inspect north pole</button></div><article class="field-debug" aria-labelledby="field-debug-title"><div class="field-debug-heading"><div><p class="kicker">Conservative field simulation</p><h2 id="field-debug-title">Tick <span data-testid="field-tick">${fieldState.tick}</span> · <code data-testid="field-hash">${fieldState.stateHash}</code></h2></div><div class="debug-controls"><button type="button" data-action="field-step">Single-step</button><button type="button" class="secondary" data-action="field-day">Advance one day</button></div></div><dl class="field-channels"><div><dt>Resident cohorts</dt><dd>${selectedFieldCell.cohorts.young.toLocaleString("en-US")} young · ${selectedFieldCell.cohorts.adult.toLocaleString("en-US")} adult · ${selectedFieldCell.cohorts.older.toLocaleString("en-US")} older</dd></div><div><dt>Activity channels</dt><dd>sleep ${selectedFieldCell.activities.sleep.toLocaleString("en-US")} · home ${selectedFieldCell.activities.home.toLocaleString("en-US")} · work ${selectedFieldCell.activities.work.toLocaleString("en-US")} · transit ${selectedFieldCell.activities.transit.toLocaleString("en-US")} · community ${selectedFieldCell.activities.community.toLocaleString("en-US")}</dd></div><div><dt>Capacity / amenity</dt><dd>${selectedFieldCell.capacityPermille}‰ / ${selectedFieldCell.amenityPermille}‰ · demand ${selectedFieldCell.flowDemand.toLocaleString("en-US")}</dd></div><div><dt>Sparse active regions</dt><dd>${fieldState.activeCellIds.length}</dd></div><div><dt>Flux ledger</dt><dd>${fieldState.lastFluxes.length.toLocaleString("en-US")} transfers; ${selectedFluxes.length} touch this cell${selectedFluxes[0] ? ` · #${selectedFluxes[0].processingOrder} ${selectedFluxes[0].sourceCellId} → ${selectedFluxes[0].destinationCellId} (${selectedFluxes[0].count.toLocaleString("en-US")})` : ""}</dd></div><div><dt>Invariant failures</dt><dd class="${fieldInvariant.valid ? "valid" : "invalid"}" data-testid="field-invariants">${fieldInvariant.valid ? "None — exact conservation" : fieldInvariant.issues.join("; ")}</dd></div></dl></article>${transportDebugPanel()}</section>` : ""}
     <footer><span>World seed <code>${world.seed}</code> · hash <code data-testid="world-hash">${world.worldHash}</code> · vectors <code data-testid="deterministic-vector-hash">${deterministicVectorHash()}</code></span><span>Run <code>pnpm check</code> from the repository root if a diagnostic fails.</span></footer>
   </main>`;
 
   root.querySelector('[data-action="next"]')?.addEventListener("click", () => {
+    stopClock();
     stageIndex = Math.min(stageIndex + 1, stages.length - 1);
     if (stages[stageIndex] === "Person") personA = queryPerson(snapshotA);
     render(root);
@@ -642,6 +746,7 @@ function render(root: HTMLElement): void {
   root
     .querySelector('[data-action="festival"]')
     ?.addEventListener("click", () => {
+      stopClock();
       selectExperience(FESTIVAL_PERSON_ID, 19, "baseline");
       render(root);
     });
@@ -661,6 +766,45 @@ function render(root: HTMLElement): void {
       );
       render(root);
     });
+  root
+    .querySelector('[data-action="clock-toggle"]')
+    ?.addEventListener("click", () => {
+      if (clockPlaying) stopClock();
+      else startClock(root);
+      render(root);
+    });
+  root
+    .querySelector('[data-action="clock-step"]')
+    ?.addEventListener("click", () => {
+      stopClock();
+      advanceLocalTime(root, 1);
+    });
+  for (const control of root.querySelectorAll<HTMLButtonElement>(
+    "[data-clock-rate]",
+  )) {
+    control.addEventListener("click", () => {
+      const requested = Number(control.dataset["clockRate"]);
+      if (requested !== 1 && requested !== 6 && requested !== 24) return;
+      clockRate = requested;
+      if (clockPlaying) startClock(root);
+      render(root);
+    });
+  }
+  root
+    .querySelector<HTMLFormElement>("[data-discovery-search]")
+    ?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (!(form instanceof HTMLFormElement)) return;
+      discover(root, String(new FormData(form).get("discovery") ?? ""));
+    });
+  for (const control of root.querySelectorAll<HTMLButtonElement>(
+    "[data-discover]",
+  )) {
+    control.addEventListener("click", () =>
+      discover(root, control.dataset["discover"] ?? ""),
+    );
+  }
   root
     .querySelector<HTMLFormElement>("[data-person-search]")
     ?.addEventListener("submit", (event) => {
@@ -687,6 +831,8 @@ function render(root: HTMLElement): void {
         tick: selectedPersonTick,
         personId: selectedPersonId,
         branch: activeBranch,
+        stage: "person",
+        locationId: manifestationIndex.person(selectedPersonId).cellId,
       });
       void navigator.clipboard
         .writeText(href)
@@ -702,20 +848,24 @@ function render(root: HTMLElement): void {
   root
     .querySelector('[data-action="closure-branch"]')
     ?.addEventListener("click", () => {
+      stopClock();
       selectExperience(CLOSURE_PERSON_ID, 7, "closure");
       render(root);
     });
   root
     .querySelector('[data-action="baseline-branch"]')
     ?.addEventListener("click", () => {
+      stopClock();
       selectExperience(CLOSURE_PERSON_ID, 7, "baseline");
       render(root);
     });
   root
     .querySelector('[data-action="replay"]')
     ?.addEventListener("click", () => {
+      stopClock();
       personA = queryPerson(replayPlaceholder(snapshotA, 0));
       replayResult = `${personA.traceHash} restored`;
+      replayVerified = true;
       render(root);
     });
   root
@@ -761,6 +911,7 @@ function render(root: HTMLElement): void {
     "[data-stage-index]",
   )) {
     control.addEventListener("click", () => {
+      stopClock();
       const requested = Number(control.dataset["stageIndex"]);
       if (
         Number.isSafeInteger(requested) &&
@@ -803,6 +954,7 @@ function render(root: HTMLElement): void {
     "[data-person-tick]",
   )) {
     control.addEventListener("click", () => {
+      stopClock();
       selectedPersonTick = Number(control.dataset["personTick"]);
       personA = queryPerson(snapshotA);
       if (observerBEngine !== null)
@@ -811,6 +963,7 @@ function render(root: HTMLElement): void {
           observerBEngine.itinerary,
         );
       replayResult = "Not run";
+      replayVerified = false;
       render(root);
     });
   }
@@ -879,12 +1032,24 @@ if (!deepLink.ok) {
   root.innerHTML = `<main class="smoke-error"><p class="kicker">Local link recovery</p><h1>Incompatible local link</h1><p role="alert">${deepLink.message}</p><p><a class="button-link" href="${location.pathname}">Return to baseline</a></p></main>`;
 } else {
   try {
-    if (deepLink.value !== null)
+    if (deepLink.value !== null) {
       selectExperience(
         deepLink.value.personId,
         deepLink.value.tick,
         deepLink.value.branch,
       );
+      const requestedStage = stages.findIndex(
+        (stage) => stageKey(stage) === deepLink.value?.stage,
+      );
+      if (requestedStage < 0) throw new Error("Unknown local journey stage");
+      stageIndex = requestedStage;
+      const stage = stages[stageIndex] ?? "Planet";
+      if (deepLink.value.locationId !== stageLocationId(stage))
+        throw new Error(
+          "Local link location does not match this baseline view",
+        );
+      if (stage !== "Person") personA = null;
+    }
     render(root);
   } catch (error: unknown) {
     const reason =

@@ -29,6 +29,8 @@ describe("local person experience contract", () => {
       tick: 10,
       personId,
       branch: "baseline",
+      stage: "person",
+      locationId: engine.manifestation.person(personId).cellId,
     });
     const url = new URL(href);
     expect(url.pathname).toBe("/observatory");
@@ -40,6 +42,54 @@ describe("local person experience contract", () => {
         tick: 10,
         personId,
         branch: "baseline",
+        stage: "person",
+        locationId: engine.manifestation.person(personId).cellId,
+      },
+    });
+  });
+
+  it("preserves stage and semantic location while accepting legacy schema-1 person links", () => {
+    const locationId = engine.manifestation.person(personId).cellId;
+    const href = buildExperienceLink("http://127.0.0.1:4173/", {
+      schema: 1,
+      seed: BASELINE_WORLD_SEED,
+      tick: 19,
+      personId,
+      branch: "baseline",
+      stage: "street",
+      locationId,
+    });
+    const url = new URL(href);
+    expect(url.searchParams.get("stage")).toBe("street");
+    expect(url.searchParams.get("location")).toBe(locationId);
+    expect(parseExperienceLink(url.search, engine.manifestation)).toEqual({
+      ok: true,
+      value: {
+        schema: 1,
+        seed: BASELINE_WORLD_SEED,
+        tick: 19,
+        personId,
+        branch: "baseline",
+        stage: "street",
+        locationId,
+      },
+    });
+
+    expect(
+      parseExperienceLink(
+        `?schema=1&seed=${encodeURIComponent(BASELINE_WORLD_SEED)}&tick=10&person=${personId}&branch=baseline`,
+        engine.manifestation,
+      ),
+    ).toEqual({
+      ok: true,
+      value: {
+        schema: 1,
+        seed: BASELINE_WORLD_SEED,
+        tick: 10,
+        personId,
+        branch: "baseline",
+        stage: "person",
+        locationId,
       },
     });
   });
@@ -65,6 +115,18 @@ describe("local person experience contract", () => {
       [
         `?schema=1&seed=${encodeURIComponent(BASELINE_WORLD_SEED)}&tick=10&person=${personId}&branch=remote`,
         "branch",
+      ],
+      [
+        `?schema=1&seed=${encodeURIComponent(BASELINE_WORLD_SEED)}&tick=10&person=${personId}&branch=baseline&stage=person`,
+        "location",
+      ],
+      [
+        `?schema=1&seed=${encodeURIComponent(BASELINE_WORLD_SEED)}&tick=10&person=${personId}&branch=baseline&stage=remote&location=world`,
+        "stage",
+      ],
+      [
+        `?schema=1&seed=${encodeURIComponent(BASELINE_WORLD_SEED)}&tick=10&person=${personId}&branch=baseline&stage=person&location=world`,
+        "location",
       ],
     ] as const) {
       const result = parseExperienceLink(query, engine.manifestation);

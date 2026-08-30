@@ -302,6 +302,77 @@ test("follows festival meetings and departure, then compares the local closure b
   );
 });
 
+test("guides a first visit through time, discovery, truthful diagnostics, and location links", async ({
+  page,
+  context,
+}) => {
+  await page.goto("/");
+  await expect(page.getByTestId("first-run-claim")).toContainText(
+    "exactly 10,000,000,000 represented lives",
+  );
+  await expect(page.getByTestId("journey-progress")).toHaveText(
+    "Planet · step 1 of 4",
+  );
+  await expect(page.getByTestId("time-status")).toContainText("Paused");
+  await page.getByRole("button", { name: "Play local time" }).click();
+  await expect(page.getByTestId("time-status")).toContainText("Playing · 1×");
+  await page.getByRole("button", { name: "Pause local time" }).click();
+  await page.getByRole("button", { name: "Advance one tick" }).click();
+  await expect(page.getByTestId("person-tick")).toHaveText("11");
+
+  const discovery = page.getByRole("searchbox", {
+    name: "Find a place or event",
+  });
+  await discovery.fill("Brindle Bay");
+  await discovery.press("Enter");
+  await expect(page.getByTestId("observer-a-stage")).toHaveText("Settlement");
+  await expect(page.getByTestId("discovery-status")).toContainText(
+    "Opened Brindle Bay",
+  );
+  await expect(page).toHaveURL(/stage=settlement/);
+  await expect(page).toHaveURL(/location=settlement%2Fsettlement-00/);
+
+  const stateBeforeEmpty = await page.getByTestId("state-hash").textContent();
+  await discovery.fill("Atlantis");
+  await discovery.press("Enter");
+  await expect(page.getByTestId("discovery-status")).toContainText(
+    "No local match",
+  );
+  await expect(page.getByTestId("state-hash")).toHaveText(
+    stateBeforeEmpty ?? "",
+  );
+
+  await discovery.fill("Lantern Tide");
+  await discovery.press("Enter");
+  await expect(page.getByTestId("observer-a-itinerary")).toContainText(
+    "Tick 19 · festival",
+  );
+  await expect(page).toHaveURL(/stage=person/);
+  await expect(page).toHaveURL(/location=L5%2F/);
+
+  await page.getByRole("button", { name: "Reveal fields" }).click();
+  await expect(page.getByTestId("authority-bytes")).toContainText("bytes");
+  await expect(page.getByTestId("budget-visible")).toContainText("tokens");
+  await expect(page.getByTestId("budget-tick")).toHaveText("19");
+  await expect(page.getByTestId("budget-state-hash")).not.toBeEmpty();
+  await expect(page.getByTestId("budget-event-hash")).not.toBeEmpty();
+  await expect(page.getByTestId("budget-frame-time")).toHaveText(/ms/);
+  await expect(page.getByTestId("experience-mode")).toHaveText(
+    "Immutable baseline",
+  );
+
+  const href = await page.getByTestId("person-deep-link").getAttribute("href");
+  expect(href).toContain("stage=person");
+  expect(href).toContain("location=L5%2F");
+  const fresh = await context.newPage();
+  await fresh.goto(href ?? "/");
+  await expect(fresh.getByTestId("observer-a-stage")).toHaveText("Person");
+  await expect(fresh.getByTestId("observer-a-person-id")).toHaveText(
+    "person_0000a4q_0yrj2dd",
+  );
+  await expect(fresh.getByTestId("person-tick")).toHaveText("19");
+});
+
 test("keeps the forced Canvas fallback navigable through loss, resize, and reduced motion", async ({
   page,
 }) => {

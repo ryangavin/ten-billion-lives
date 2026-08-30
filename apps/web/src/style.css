@@ -291,6 +291,21 @@ footer code {
   background: #251414;
 }
 
+.loading-state {
+  max-width: 680px;
+  margin: 64px auto;
+  padding: 32px;
+  color: #dff2e8;
+}
+
+.loading-state h1 {
+  font-size: clamp(2.4rem, 8vw, 5rem);
+}
+
+.loading-state p:last-child {
+  color: #92cbb3;
+}
+
 .smoke-error h1 {
   font-size: 2rem;
   letter-spacing: -0.03em;
@@ -307,6 +322,109 @@ footer code {
 .tracer-header h1 {
   margin-bottom: 0;
   font-size: clamp(2.8rem, 7vw, 5.5rem);
+}
+
+.first-run-claim {
+  max-width: 720px;
+  margin: 18px 0 0;
+  color: #a9beb5;
+  font-size: clamp(1rem, 1.8vw, 1.18rem);
+  line-height: 1.55;
+}
+
+.first-run-claim strong {
+  color: #dff2e8;
+  font-weight: 650;
+}
+
+.header-status {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+  max-width: 270px;
+  text-align: right;
+}
+
+.header-status p {
+  margin: 0;
+  color: #789087;
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.command-deck {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.time-console,
+.discovery-console {
+  display: grid;
+  gap: 18px;
+  align-content: space-between;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid rgba(199, 226, 213, 0.13);
+  border-radius: 18px;
+  background: rgba(15, 32, 27, 0.72);
+}
+
+.time-console h2,
+.discovery-console h2 {
+  margin-bottom: 8px;
+  font-size: 1.35rem;
+}
+
+.time-console p:not(.kicker),
+.discovery-console p:not(.kicker) {
+  margin-bottom: 0;
+  color: #8fa69d;
+  line-height: 1.5;
+}
+
+.time-actions,
+.discovery-shortcuts {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.time-actions button,
+.discovery-shortcuts button {
+  padding: 9px 13px;
+}
+
+.time-actions button[aria-pressed="true"] {
+  border-color: #fff0a8;
+  color: #fff0a8;
+}
+
+.discovery-console form label {
+  display: block;
+  margin-bottom: 8px;
+  color: #a8c7b9;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.discovery-console input {
+  min-width: min(100%, 220px);
+  flex: 1;
+  padding: 11px 14px;
+  border: 1px solid rgba(177, 224, 202, 0.35);
+  border-radius: 999px;
+  color: #e7f7ef;
+  background: rgba(3, 17, 13, 0.7);
+}
+
+.discovery-status {
+  min-height: 1.5em;
+  margin-top: 8px !important;
+  color: #b9d8ca !important;
 }
 
 .tracer-world {
@@ -465,6 +583,18 @@ footer code {
 
 .journey-copy > p:not(.kicker) {
   color: #93a9a0;
+}
+
+.journey-copy .journey-progress {
+  display: inline-flex;
+  margin-bottom: 12px;
+  padding: 6px 10px;
+  border: 1px solid rgba(140, 227, 185, 0.24);
+  border-radius: 999px;
+  color: #b9e4d0;
+  background: rgba(33, 81, 61, 0.22);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .tracer-actions,
@@ -896,6 +1026,7 @@ button:disabled {
 
   .world-card,
   .diagnostics,
+  .command-deck,
   .tracer-world,
   .observer-grid,
   .person-tools,
@@ -931,6 +1062,12 @@ button:disabled {
 
   .tracer-header {
     flex-direction: column;
+  }
+
+  .header-status {
+    justify-items: start;
+    max-width: none;
+    text-align: left;
   }
 
   .world-card {

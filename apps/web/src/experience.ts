@@ -11,6 +11,7 @@ export const FESTIVAL_PERSON_ID = "person_0000a4q_0yrj2dd";
 export const CLOSURE_PERSON_ID = "person_1iy9k0p_1by3xrw";
 
 export type ExperienceBranch = "baseline" | "closure";
+export type ExperienceStage = "planet" | "settlement" | "street" | "person";
 
 export interface ExperienceSelection {
   readonly schema: typeof EXPERIENCE_LINK_SCHEMA;
@@ -18,6 +19,8 @@ export interface ExperienceSelection {
   readonly tick: number;
   readonly personId: string;
   readonly branch: ExperienceBranch;
+  readonly stage: ExperienceStage;
+  readonly locationId: string;
 }
 
 export type ExperienceLinkResult =
@@ -59,11 +62,33 @@ export function parseExperienceLink(
   if (branch !== "baseline" && branch !== "closure")
     return linkError("This person-link branch is incompatible.");
   const personId = parameters.get("person") ?? "";
+  let personCellId: string;
   try {
-    manifestation.person(personId);
+    personCellId = manifestation.person(personId).cellId;
   } catch {
     return linkError("This person ID is invalid for the baseline world.");
   }
+  const stageParameter = parameters.get("stage");
+  const locationParameter = parameters.get("location");
+  if ((stageParameter === null) !== (locationParameter === null))
+    return linkError("This person link has incomplete location context.");
+  const stage = stageParameter ?? "person";
+  if (
+    stage !== "planet" &&
+    stage !== "settlement" &&
+    stage !== "street" &&
+    stage !== "person"
+  )
+    return linkError("This person-link stage is incompatible.");
+  const locationId = locationParameter ?? personCellId;
+  if (
+    locationId.length === 0 ||
+    locationId.length > 128 ||
+    !/^[A-Za-z0-9/_-]+$/.test(locationId)
+  )
+    return linkError("This person-link location is invalid.");
+  if (stage === "person" && locationId !== personCellId)
+    return linkError("This person-link location does not match the person.");
   return Object.freeze({
     ok: true,
     value: Object.freeze({
@@ -72,6 +97,8 @@ export function parseExperienceLink(
       tick,
       personId,
       branch,
+      stage,
+      locationId,
     }),
   });
 }
@@ -88,6 +115,8 @@ export function buildExperienceLink(
   url.searchParams.set("tick", String(selection.tick));
   url.searchParams.set("person", selection.personId);
   url.searchParams.set("branch", selection.branch);
+  url.searchParams.set("stage", selection.stage);
+  url.searchParams.set("location", selection.locationId);
   return url.toString();
 }
 

@@ -1,8 +1,8 @@
 # Progress
 
-- Current issue: #16 — M2 complete local vertical-slice gate.
-- Last green commit: `c098ae6` (#15 closed with complete local person journey, branch, browser, performance, copy, and visual evidence).
-- Evidence produced: fresh origin/main clone at `c098ae6` passed frozen install, root check (15 files/73 tests), production build, 12/12 Chromium/WebKit journeys, byte-identical double replay for four vectors, every committed performance/memory budget, and exact 10,000,000,000 conservation. The retained uninterrupted browser recording, inspected final frame, hash transcript, Playwright summary, benchmark summary, and accessibility smoke all pass.
-- Next action: run the root check over the gate tooling and evidence, commit/push #16, revalidate the final commit from a fresh clone, then close #16 with the artifact links and begin the smallest unblocked M3 local issue.
-- Decisions: the M2 gate changes no product semantics. Its repeatable capture scripts assert keyboard access, camera independence, person continuity, independent observer equality, replay, field overlays, festival behavior, and baseline/closure contrast. The accessibility result is explicitly a scoped smoke, not formal certification.
+- Current issue: #21 — local observatory, time controls, narrative, and reality-budget polish.
+- Last green commit: `97b9f20` (#16 closed after two clean checkouts, exact double replay, 12/12 Chromium/WebKit, all budgets, inspected recording, and passing accessibility smoke).
+- Evidence produced: M2 #11–#16 closed; final clean origin/main install/root check passed 15 files/73 tests and production build; four replay vectors matched byte-for-byte twice; uninterrupted signature journey and a11y capture passed; all performance/memory budgets passed; zero open defect issues.
+- Next action: falsify #21 against the current production first-run journey, add acceptance tests for the smallest missing behavior, then implement local time/scenario clarity, discovery, complete reality-budget diagnostics, location-aware links, and resilient product states.
+- Decisions: reuse the established deterministic kernel, illusion engine, renderer, and local URL version rather than introducing another authority or navigation system. Product polish must preserve semantic hashes and camera-independent state.
 - Blockers: none. Server deployment is outside the local-MVP goal.

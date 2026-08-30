@@ -73,7 +73,11 @@ const projects = Object.fromEntries(
 const failed = cases.filter(
   (testCase) => testCase.actualStatus !== "passed" || !testCase.ok,
 );
-assert.equal(cases.length, 12, "expected six journeys in each of two browsers");
+assert.equal(
+  cases.length >= 12,
+  true,
+  "expected at least the six M2 journeys in each of two browsers",
+);
 assert.deepEqual(failed, []);
 
 const summary = {
