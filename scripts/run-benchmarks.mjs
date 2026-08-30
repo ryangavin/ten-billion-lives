@@ -134,9 +134,14 @@ async function measureBrowser(qualityTiers) {
     const measured = await page.evaluate(async (tiers) => {
       const navigation = performance.getEntriesByType("navigation")[0];
       const startupMs = navigation ? navigation.duration : performance.now();
-      const detailedMemory = performance.measureUserAgentSpecificMemory
-        ? await performance.measureUserAgentSpecificMemory()
-        : null;
+      let detailedMemory = null;
+      if (performance.measureUserAgentSpecificMemory) {
+        try {
+          detailedMemory = await performance.measureUserAgentSpecificMemory();
+        } catch {
+          // Some Chromium modes expose the API but reject collection.
+        }
+      }
       const memory =
         detailedMemory?.bytes ?? performance.memory?.usedJSHeapSize ?? 0;
       const memoryMethod = detailedMemory
