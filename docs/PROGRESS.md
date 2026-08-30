@@ -1,8 +1,8 @@
 # Progress
 
 - Current issue: #15 — person inspection, following, sharing, festival, and peaceful intervention UX.
-- Last green commit: `0dfb326` (#14 stable weighted projection closed with CPU, browser, reconciliation, continuity, and performance evidence).
-- Evidence produced: #14 root check passed 14 files/69 tests and production build; Chromium/WebKit passed 8/8; independent process vector SHA-256 `85e3565a45b0672e39dd778f68d4155418d5c022e87de44ee65d5ba48132122b`; exact 10,000,000,000→8,192 planet reconciliation; street p95 282.97 ms; 87.5% epoch retention; four inspected screenshots.
-- Next action: add #15 browser-first tests for validated person/tick deep links across fresh sessions, selection/search/follow, independently initialized observer agreement, canonical festival meetings/departure, and unambiguous immutable baseline versus local closure branch.
-- Decisions: URL state will be a validated local view over procedural queries, never stored person authority; branch choice will be explicit and reversible; festival and intervention evidence must pair macro field/flow effects with itinerary-level consequences.
+- Last green commit: `5aa84e1` (#15 selectable/shareable person journey, festival, local branch, two observers, and projection caching; final evidence pending commit).
+- Evidence produced: #15 root check passed 15 files/73 tests and production build; Chromium/WebKit passed 12/12; fresh-session deep link and invalid-link recovery passed; planet-to-person 1.88 s, follow p95 262.07 ms, Observer B 129.69 ms, deep-link load 1.04 s, browser heap 82.40 MiB, zero person rows; seven inspected screenshots; copy audit passed.
+- Next action: run the final root checks over the evidence scripts, commit and push #15 evidence, post the closing comment, close #15, then begin the #16 M2 gate outer loop from a clean checkout.
+- Decisions: URL schema 1 is a validated local view over procedural queries; the no-event kernel is immutable baseline and the two-event signature log is a reversible closure branch; immutable semantic projections may be cached by state/person/LOD without promoting a person into authority.
 - Blockers: none. Server deployment is outside the local-MVP goal.

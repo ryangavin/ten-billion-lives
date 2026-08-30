@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "local-person-experience-v1",
+  "commit": "5aa84e1c7a2f1bed6ceb147fdbec576dbe60ac5a",
+  "browser": "151.0.7922.34",
+  "seed": "ten-billion-lives/baseline/v1",
+  "workload": {
+    "productionBuild": true,
+    "independentlyInitializedObservers": 2,
+    "followQueries": 4,
+    "retainedPersonRows": 0,
+    "deepLink": "http://127.0.0.1:4174/?schema=1&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=10&person=person_27yi09s_1obkbba&branch=baseline"
+  },
+  "metrics": {
+    "planetToPersonMs": 1876.504459,
+    "followTickP50Ms": 229.8413330000003,
+    "followTickP95Ms": 262.073625,
+    "initializeSecondObserverMs": 129.68587500000012,
+    "freshDeepLinkLoadMs": 1037.2785000000003,
+    "browserHeapMiB": 82.3974609375
+  },
+  "semanticEvidence": {
+    "festival": {
+      "personId": "person_0000a4q_0yrj2dd",
+      "itinerary": "Tick 19 · festival",
+      "events": "festival · festival/lantern-confluence · arrival · festival/lantern-confluence",
+      "departure": "intercity · 16 graph edges · festival return → region/region-0-0"
+    },
+    "closure": {
+      "activeBranch": "Closure branch",
+      "personId": "person_1iy9k0p_1by3xrw",
+      "baselineRoute": "1 edge",
+      "closureRoute": "31 edges",
+      "fieldComparison": "Identical field state",
+      "travelerRoute": "intercity · 31 graph edges · closure detour → region/region-0-1"
+    }
+  },
+  "budgets": {
+    "planetToPersonMsMax": 5000,
+    "followTickP95MsMax": 1500,
+    "initializeSecondObserverMsMax": 2000,
+    "freshDeepLinkLoadMsMax": 3000,
+    "browserHeapMiBMax": 128,
+    "passed": true
+  }
+}
