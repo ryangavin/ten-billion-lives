@@ -1,8 +1,8 @@
 # Progress
 
-- Current issue: #6 — deterministic integer math, hashing, allocation, and golden vectors.
-- Last green commit: `e081498` (#6 complete deterministic primitive API; root and two-browser checks pass).
-- Evidence produced: 6 files / 16 tests; vector digest `050e18e9f2d20dff` matches in two Node processes, Chromium, and WebKit; versioned primitive benchmark is 570,253 ops/s p50; public semantic/failure contract documented.
-- Next action: commit/push #6 evidence, close #6, then read #7 and its direct dependencies.
-- Decisions: #6 will use explicit bigint/uint32 operations and canonical little-endian bytes; all randomness is counter-based and domain-separated; browser equality is semantic byte/hash equality, not timing or pixels.
+- Current issue: #7 — seeded fictional planet, geography, settlements, and exact population.
+- Last green commit: `f8c594e` (#6 complete with process/browser/performance evidence).
+- Evidence produced: #6 closed; #7 falsifiers cover repeatability, exact ten-billion conservation, hierarchy, seam/pole neighbors, land-only settlements, and query metadata. Three settlement-ranking runs exposed latitude clustering (6 rows, then 8 with region-first selection); the fallback now reserves each inhabited latitude band before global ranking.
+- Next action: validate the latitude-band fallback, then add the generation benchmark and browser debug-globe evidence.
+- Decisions: use hierarchical latitude/longitude cells with wrapped seams and reflected pole neighbors; authoritative geographic bounds are integer microdegrees; geography is fictional integer multiscale noise; population uses exact largest-remainder weights and no real demographic input.
 - Blockers: none. Server deployment is outside the local-MVP goal.

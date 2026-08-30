@@ -26,3 +26,22 @@ export {
   u32Mul,
 } from "./deterministic";
 export type { U64Words } from "./deterministic";
+export {
+  BASELINE_WORLD_SEED,
+  WORLD_LEVEL,
+  WORLD_POPULATION,
+  childrenOf,
+  generateWorld,
+  getCell,
+  neighborsOf,
+  parentOf,
+  populationAt,
+} from "./world";
+export type {
+  Biome,
+  CellBounds,
+  FictionalWorld,
+  Region,
+  Settlement,
+  WorldCell,
+} from "./world";
