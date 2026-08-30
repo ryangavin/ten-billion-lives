@@ -15,7 +15,8 @@ describe("seeded fictional world", () => {
     const first = generateWorld(BASELINE_WORLD_SEED);
     const second = generateWorld(BASELINE_WORLD_SEED);
     expect(first).toEqual(second);
-    expect(first.worldHash).toBe(second.worldHash);
+    expect(first.worldHash).toBe("ed66e344fcd7e737");
+    expect(second.worldHash).toBe(first.worldHash);
     expect(first.totalPopulation).toBe(10_000_000_000n);
     expect(first.cells.reduce((sum, cell) => sum + cell.population, 0n)).toBe(
       10_000_000_000n,
@@ -26,6 +27,15 @@ describe("seeded fictional world", () => {
           cell.population >= 0n && cell.population <= 0xffff_ffff_ffff_ffffn,
       ),
     ).toBe(true);
+  });
+
+  it("domain-separates other seeds while reproducing each one", () => {
+    const first = generateWorld("fictional-world/alternate/v1");
+    const second = generateWorld("fictional-world/alternate/v1");
+    expect(first.worldHash).toBe(second.worldHash);
+    expect(first.worldHash).not.toBe(
+      generateWorld(BASELINE_WORLD_SEED).worldHash,
+    );
   });
 
   it("covers seam wrapping and reflected pole traversal", () => {

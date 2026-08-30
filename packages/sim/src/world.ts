@@ -3,7 +3,7 @@ import {
   fnv1a64,
   largestRemainder,
   randomU32,
-} from "./deterministic";
+} from "./deterministic.js";
 
 export const BASELINE_WORLD_SEED = "ten-billion-lives/baseline/v1" as const;
 export const WORLD_LEVEL = 5 as const;
