@@ -157,3 +157,24 @@ test("remains legible with forced colors and 200 percent text", async ({
   await page.getByRole("button", { name: "View planet" }).focus();
   await expect(page.getByRole("button", { name: "View planet" })).toBeFocused();
 });
+
+test("keeps the production browser boundary local and restrictive", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "chromium", "canonical security audit");
+  const requests: string[] = [];
+  page.on("request", (request) => requests.push(request.url()));
+  await page.goto("/?renderer=canvas");
+  await reachPerson(page);
+  expect(
+    requests.filter((url) => new URL(url).origin !== "http://127.0.0.1:4173"),
+  ).toEqual([]);
+  expect(await page.evaluate(() => globalThis.isSecureContext)).toBe(true);
+  const csp = await page
+    .locator('meta[http-equiv="Content-Security-Policy"]')
+    .getAttribute("content");
+  expect(csp).toContain("default-src 'self'");
+  expect(csp).toContain("object-src 'none'");
+  expect(csp).toContain("base-uri 'none'");
+  expect(csp).toContain("form-action 'self'");
+});

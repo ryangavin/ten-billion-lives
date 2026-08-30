@@ -1,8 +1,8 @@
 # Progress
 
-- Current issue: #23 — local browser compatibility, accessibility, touch, and fallback resilience.
-- Last green commit: `a526ad6` (#23 focus restoration, reduced motion, forced colors, 200% text reflow, axe, context-resume, and mobile-touch compatibility tests).
-- Evidence produced: production matrix passed 23/23 applicable cases across Chromium 151, WebKit 26.5, and mobile Chromium, with 8 intentional skips. Axe found zero violations/serious/critical findings. Context loss/resume preserved state, manifestation, event, and two-observer match. Canvas fallback rendered 25k at 0.73 ms p95. Four screenshots and two short recordings were inspected.
-- Next action: run the final root check, commit/push the #23 evidence and support boundary, close #23 with artifacts, then select the next unblocked local issue.
-- Decisions: Firefox is not installed locally and is documented as unvalidated rather than downloaded or claimed. Clipboard denial uses an honest direct-link fallback. Project-specific Playwright skips are accepted only when expected and never count as passes.
+- Current issue: #25 — independent local end-to-end, deterministic, visual, exploratory, dependency, and security QA matrix.
+- Last green commit: `bd9472f` (#23 closed with 23/23 applicable production browser cases, zero axe violations, touch/keyboard recordings, and retained compatibility evidence).
+- Evidence produced: Chromium 151, WebKit 26.5, and mobile Chromium passed all applicable checks; Firefox was absent and explicitly unvalidated. Context loss/resume preserved state `b2007dbd631d0474`, manifestation `0b21e681edada68a`, event `b0bd84480511f52f`, and the two-observer match. Canvas fallback measured 0.73 ms p95.
+- Next action: inventory retained evidence against #25 lanes, then run clean-checkout install/check/build/preview, deterministic hashes, full browser/benchmark/security matrices, and an exploratory visual/copy audit. Commit a versioned evidence index with explicit pass/fail and skip disposition.
+- Decisions: evidence must be independently readable from files and commands. Expected project-specific skips are documented, never counted as passes. No remote service or deployment acceptance is in scope.
 - Blockers: none. Server deployment is outside the local-MVP goal.
