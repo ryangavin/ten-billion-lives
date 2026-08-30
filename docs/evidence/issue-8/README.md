@@ -23,6 +23,8 @@ The focused suite checks immutable cohort allocation, nonnegative activity count
 
 The initial profile measured 65,214 cell-ticks/s and identified canonical hashing as the dominant cost. Hashing only the observable endpoint of an accelerated batch—while retaining a hash for every single step—preserved the three-day final hash and raised throughput above the committed 100,000 cell-ticks/s catastrophic floor. A batch/single-step equality test prevents semantic drift.
 
+`pnpm benchmark` also passed the production-browser regression gate at `8ba96464fcfd7c17b7726d37663a5c146adb7d74`: 166.48 ms startup, 9.54 MiB browser heap, and 87.99 ms p95 for the pre-existing 250k Canvas2D scaffold. Startup and heap remain well inside the 5,000 ms / 256 MiB catastrophic limits; the known 60 FPS rendering aspiration remains owned by later rendering work.
+
 ## Browser and visual checks
 
 `pnpm test:e2e` passes six journeys in Chromium and WebKit. The field journey verifies the fixed initial hash, exact-conservation status, a single step with exposed transfers, and a 24× accelerated fake-clock advance.
@@ -34,6 +36,7 @@ The initial profile measured 65,214 cell-ticks/s and identified canonical hashin
 ```sh
 pnpm exec vitest run packages/sim/src/fields.test.ts
 pnpm benchmark:fields
+pnpm benchmark
 pnpm check
 pnpm test:e2e
 ```
