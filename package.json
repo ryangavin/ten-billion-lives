@@ -17,6 +17,7 @@
     "benchmark:check": "node scripts/check-benchmark.mjs",
     "benchmark:degraded": "node scripts/check-benchmark.mjs benchmarks/fixtures/degraded.json",
     "preview": "pnpm --filter @ten-billion-lives/web preview",
+    "replay:tracer": "node scripts/replay-tracer.mjs",
     "test": "pnpm test:contracts && vitest run",
     "test:contracts": "node scripts/check-product-contract.mjs && node scripts/check-architecture-contract.mjs",
     "test:e2e": "playwright test",

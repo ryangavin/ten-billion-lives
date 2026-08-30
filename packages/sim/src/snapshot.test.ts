@@ -11,6 +11,7 @@ describe("placeholder snapshot contract", () => {
     expect(Object.isFrozen(snapshot)).toBe(true);
     expect(first).toEqual(second);
     expect(first.stateHash).toBe("state-42f76c85");
+    expect(first.eventHash).toBe("event-811c9dc5");
     expect(first.representedPopulation).toBe(10_000_000_000n);
   });
 });

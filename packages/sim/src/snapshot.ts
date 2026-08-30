@@ -15,6 +15,7 @@ export interface LocalSnapshot {
   readonly representedPopulation: typeof BASELINE_POPULATION;
   readonly cells: readonly PopulationCell[];
   readonly stateHash: "state-42f76c85";
+  readonly eventHash: "event-811c9dc5";
 }
 
 export function createPlaceholderSnapshot(): LocalSnapshot {
@@ -33,6 +34,7 @@ export function createPlaceholderSnapshot(): LocalSnapshot {
     representedPopulation: BASELINE_POPULATION,
     cells,
     stateHash: "state-42f76c85",
+    eventHash: "event-811c9dc5",
   });
 }
 

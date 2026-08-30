@@ -18,6 +18,7 @@ export interface PlaceholderManifestation {
   readonly activity: "Walking to Lantern Square";
   readonly representedWeight: 128;
   readonly stateHash: LocalSnapshot["stateHash"];
+  readonly eventHash: LocalSnapshot["eventHash"];
   readonly traceHash: "trace-b11350f7";
 }
 
@@ -39,6 +40,7 @@ export function manifestPlaceholder(
     activity: "Walking to Lantern Square",
     representedWeight: 128,
     stateHash: query.checkpoint.stateHash,
+    eventHash: query.checkpoint.eventHash,
     traceHash: "trace-b11350f7",
   });
 }
