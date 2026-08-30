@@ -15,7 +15,7 @@ This repository will first deliver a local browser-based interactive observatory
 
 The project does **not** claim to simulate ten billion independent minds. Its subject is the emergence of consistent apparent individuality from a compact shared field.
 
-The frozen [local MVP product contract](docs/PRODUCT.md) defines the honest claim and non-claim, five-minute journey, continuity rules, success metrics, evidence owners, and explicit non-goals.
+The frozen [local MVP product contract](docs/PRODUCT.md) defines the honest claim and non-claim, five-minute journey, continuity rules, success metrics, evidence owners, and explicit non-goals. The [local architecture contract](docs/ARCHITECTURE.md) records authoritative state, deterministic manifestation/replay, package boundaries, and the exact two-observer semantic guarantee.
 
 ## Status
 
@@ -35,4 +35,5 @@ Until issue #3 establishes the complete application workflow, validate the produ
 
 ```sh
 node scripts/check-product-contract.mjs
+node scripts/check-architecture-contract.mjs
 ```
