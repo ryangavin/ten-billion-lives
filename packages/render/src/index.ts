@@ -4,3 +4,18 @@ export type RenderCapability = "webgpu" | "fallback";
 
 export { createTracerProjection } from "./tracer";
 export type { TracerProjection, TracerProjectionInput } from "./tracer";
+export {
+  RenderLifecycle,
+  createRenderScene,
+  sceneBufferHash,
+  selectRenderBackend,
+} from "./renderer";
+export type {
+  RenderBackend,
+  RenderCapabilityProbe,
+  RenderLifecycleSnapshot,
+  RenderQuality,
+  RenderScene,
+  RenderSceneInput,
+  RenderStage,
+} from "./renderer";
