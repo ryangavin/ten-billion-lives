@@ -19,3 +19,5 @@ export type {
   RenderSceneInput,
   RenderStage,
 } from "./renderer";
+export { BrowserJourneyRenderer, drawCanvasScene } from "./browser";
+export type { BrowserRendererElements, BrowserRendererStatus } from "./browser";

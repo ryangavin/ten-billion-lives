@@ -381,6 +381,86 @@ footer code {
   background: rgba(115, 220, 171, 0.16);
 }
 
+.journey-renderer {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 8 / 5;
+  overflow: hidden;
+  border: 1px solid rgba(144, 230, 188, 0.3);
+  border-radius: 38% / 18%;
+  background: #071411;
+  box-shadow:
+    inset 0 0 48px rgba(0, 0, 0, 0.6),
+    0 22px 64px rgba(35, 133, 92, 0.14);
+  transition:
+    border-radius 240ms ease,
+    transform 240ms ease,
+    opacity 240ms ease;
+  animation: renderer-enter 240ms ease both;
+}
+
+@keyframes renderer-enter {
+  from {
+    opacity: 0.35;
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.journey-renderer.stage-settlement {
+  border-radius: 26px;
+  transform: scale(1.02);
+}
+
+.journey-renderer.stage-street {
+  border-radius: 18px;
+  transform: scale(1.025);
+}
+
+.journey-renderer.stage-person {
+  border-radius: 14px;
+  transform: scale(1.03);
+}
+
+.journey-renderer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.journey-renderer canvas[hidden] {
+  display: none;
+}
+
+.render-hud {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 1px solid rgba(211, 239, 226, 0.16);
+  border-radius: 9px;
+  color: #a6c2b5;
+  background: rgba(3, 14, 11, 0.78);
+  font:
+    600 0.66rem/1.35 "SFMono-Regular",
+    Consolas,
+    monospace;
+  backdrop-filter: blur(8px);
+}
+
+.render-hud b {
+  color: #dff2e8;
+  font-weight: 700;
+}
+
 .journey-copy > p:not(.kicker) {
   color: #93a9a0;
 }

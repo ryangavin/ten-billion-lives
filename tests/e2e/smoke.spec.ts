@@ -19,6 +19,14 @@ test("production build exposes the deterministic local smoke surface", async ({
     "050e18e9f2d20dff",
   );
   await expect(page.getByTestId("world-hash")).toHaveText("ed66e344fcd7e737");
+  await expect(page.getByTestId("render-backend")).toHaveText(
+    /canvas2d|webgpu/,
+  );
+  await expect(page.getByTestId("render-visible")).toHaveText("65,536");
+  await expect(page.getByTestId("journey-renderer")).toHaveAttribute(
+    "data-selection-id",
+    "person_27yi09s_1obkbba",
+  );
   await expect(
     page.getByText("Run pnpm check from the repository root"),
   ).toBeVisible();
@@ -83,9 +91,16 @@ test("traces planet to person across two independent local observers", async ({
   await expect(page.getByTestId("state-hash")).toHaveText(stateHash ?? "");
   await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Settlement");
+  await expect(page.getByTestId("render-visible")).toHaveText("125,000");
   await page.getByRole("button", { name: "Enter Harbor Street" }).click();
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Street");
+  await expect(page.getByTestId("render-visible")).toHaveText("250,000");
   await page.getByRole("button", { name: "Meet a resident" }).click();
+  await expect(page.getByTestId("render-visible")).toHaveText("50,000");
+  await expect(page.getByTestId("journey-renderer")).toHaveAttribute(
+    "data-selection-id",
+    "person_27yi09s_1obkbba",
+  );
   await expect(page.getByTestId("observer-a-person-id")).toHaveText(
     "person_27yi09s_1obkbba",
   );
@@ -128,4 +143,25 @@ test("traces planet to person across two independent local observers", async ({
   await expect(page.getByTestId("reality-budget")).toContainText(
     "2,048 integer cells",
   );
+});
+
+test("keeps the forced Canvas fallback navigable through loss, resize, and reduced motion", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/?renderer=canvas");
+  await expect(page.getByTestId("render-backend")).toHaveText("canvas2d");
+  await expect(page.getByTestId("journey-renderer")).toHaveAttribute(
+    "data-transition-ms",
+    "0",
+  );
+  await page.getByRole("button", { name: "Simulate renderer loss" }).click();
+  await expect(page.getByTestId("render-backend")).toHaveText("canvas2d");
+  await expect(page.getByTestId("render-context-losses")).toHaveText("1");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByTestId("journey-renderer")).toBeVisible();
+  await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
+  await page.getByRole("button", { name: "Enter Harbor Street" }).click();
+  await expect(page.getByTestId("render-visible")).toHaveText("250,000");
+  await expect(page.getByTestId("render-backend")).toHaveText("canvas2d");
 });

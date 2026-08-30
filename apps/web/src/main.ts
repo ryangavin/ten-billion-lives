@@ -33,7 +33,14 @@ import {
   type FictionalWorld,
   type LocalSnapshot,
 } from "@ten-billion-lives/sim";
-import { createTracerProjection } from "@ten-billion-lives/render";
+import {
+  BrowserJourneyRenderer,
+  createRenderScene,
+  createTracerProjection,
+  drawCanvasScene,
+  type BrowserRendererStatus,
+  type RenderScene,
+} from "@ten-billion-lives/render";
 
 import { createSmokeModel } from "./smoke";
 
@@ -81,6 +88,20 @@ let selectedCellId = "L5/12/0";
 let selectedDayTick = 7;
 let selectedPersonTick = 10;
 let checkpointResult = "Not restored";
+let journeyRenderer: BrowserJourneyRenderer | null = null;
+let journeyResizeObserver: ResizeObserver | null = null;
+let journeyRenderGeneration = 0;
+const renderSceneCache = new Map<string, RenderScene>();
+
+type LocalRenderBenchmark = (
+  width: number,
+  height: number,
+  frames: number,
+) => Readonly<{
+  frameTimesMs: readonly number[];
+  visibleCount: number;
+  bufferBytes: number;
+}>;
 
 const biomeColors = {
   ocean: "#0d3441",
@@ -91,6 +112,95 @@ const biomeColors = {
   desert: "#a8864c",
   rainforest: "#176044",
 } as const;
+
+function renderSceneFor(
+  stage: (typeof stages)[number],
+  stateHash: string,
+): RenderScene {
+  const renderStage: RenderScene["stage"] =
+    stage === "Planet"
+      ? "planet"
+      : stage === "Settlement"
+        ? "region"
+        : stage === "Street"
+          ? "street"
+          : "person";
+  const key = `${renderStage}/${stateHash}/${manifestationPersonId}`;
+  const cached = renderSceneCache.get(key);
+  if (cached !== undefined) return cached;
+  const scene = createRenderScene({
+    worldSeed: world.seed,
+    stateHash,
+    selectionId: manifestationPersonId,
+    stage: renderStage,
+    quality: "baseline",
+    viewport: { width: 768, height: 480 },
+    reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+  });
+  renderSceneCache.set(key, scene);
+  return scene;
+}
+
+function updateRenderDiagnostics(
+  root: HTMLElement,
+  status: BrowserRendererStatus,
+): void {
+  const backend = root.querySelector<HTMLElement>(
+    "[data-testid=render-backend]",
+  );
+  const timing = root.querySelector<HTMLElement>(
+    "[data-testid=render-frame-time]",
+  );
+  const losses = root.querySelector<HTMLElement>(
+    "[data-testid=render-context-losses]",
+  );
+  if (backend !== null) backend.textContent = status.backend;
+  if (timing !== null) timing.textContent = `${status.frameMs.toFixed(2)} ms`;
+  if (losses !== null)
+    losses.textContent = status.lifecycle.contextLosses.toString();
+}
+
+async function mountJourneyRenderer(
+  root: HTMLElement,
+  scene: RenderScene,
+): Promise<void> {
+  journeyResizeObserver?.disconnect();
+  journeyRenderer?.destroy();
+  const generation = ++journeyRenderGeneration;
+  const fallbackCanvas = root.querySelector<HTMLCanvasElement>(
+    "[data-render-surface=canvas2d]",
+  );
+  const gpuCanvas = root.querySelector<HTMLCanvasElement>(
+    "[data-render-surface=webgpu]",
+  );
+  const stack = root.querySelector<HTMLElement>("[data-render-stack]");
+  if (fallbackCanvas === null || gpuCanvas === null || stack === null) return;
+  const forceCanvas =
+    new URLSearchParams(location.search).get("renderer") === "canvas";
+  const renderer = new BrowserJourneyRenderer(
+    { fallbackCanvas, gpuCanvas },
+    scene.transition.durationMs === 0,
+    forceCanvas,
+  );
+  journeyRenderer = renderer;
+  const resize = (): BrowserRendererStatus | null => {
+    const width = Math.max(320, Math.round(stack.clientWidth));
+    const height = Math.max(240, Math.round(width * 0.625));
+    return renderer.resize(width, height);
+  };
+  resize();
+  const status = await renderer.initialize(scene);
+  if (generation !== journeyRenderGeneration || !stack.isConnected) {
+    renderer.destroy();
+    return;
+  }
+  updateRenderDiagnostics(root, status);
+  journeyResizeObserver = new ResizeObserver(() => {
+    const resized = resize();
+    if (resized !== null) updateRenderDiagnostics(root, resized);
+  });
+  journeyResizeObserver.observe(stack);
+}
 
 function debugCellId(level: number, row: number, column: number): string {
   return `L${level}/${row}/${column}`;
@@ -270,6 +380,7 @@ function render(root: HTMLElement): void {
     stateHash: snapshotA.stateHash,
     ...(personA ? { traceHash: personA.traceHash } : {}),
   });
+  const renderScene = renderSceneFor(stage, projection.semanticKey);
   const selectedCell = getCell(world, selectedCellId);
   const fieldState = fieldRunner.state;
   const selectedFieldCell = fieldState.cells.find(
@@ -292,7 +403,7 @@ function render(root: HTMLElement): void {
   root.innerHTML = `<main class="observatory" aria-labelledby="app-title">
     <header class="tracer-header"><div><p class="eyebrow"><span aria-hidden="true"></span> Deterministic world / M2</p><h1 id="app-title">Ten Billion Lives</h1></div><div class="status" data-testid="smoke-status"><span aria-hidden="true"></span>${smoke.status}</div></header>
     <section class="tracer-world" aria-labelledby="journey-title">
-      <div class="mini-globe ${projection.cssStage}" data-projection-key="${projection.semanticKey}" aria-hidden="true"><i></i><b></b></div>
+      <div class="journey-renderer ${projection.cssStage}" data-render-stack data-projection-key="${projection.semanticKey}" data-selection-id="${renderScene.selectionId}" data-transition-ms="${renderScene.transition.durationMs}" data-testid="journey-renderer"><canvas width="768" height="480" data-render-surface="canvas2d" aria-label="${stage} Canvas fallback visualization"></canvas><canvas width="768" height="480" data-render-surface="webgpu" aria-label="${stage} WebGPU visualization" hidden></canvas><div class="render-hud"><span><b data-testid="render-backend">probing</b> · <b data-testid="render-visible">${renderScene.draw.visibleCount.toLocaleString("en-US")}</b> visible · weights ${renderScene.debug.minimumTokenWeight}–${renderScene.debug.maximumTokenWeight}</span><span><b data-testid="render-frame-time">pending</b> · ${(renderScene.buffer.byteLength / 1_048_576).toFixed(2)} MiB · <code>${renderScene.debug.bufferHash.slice(0, 8)}</code> · losses <b data-testid="render-context-losses">0</b></span></div></div>
       <div class="journey-copy"><p class="kicker">Observer A · <span data-testid="observer-a-stage">${stage}</span></p><h2 id="journey-title">${stage === "Planet" ? "Seeded fictional planet" : stage === "Settlement" ? (world.settlements[0]?.name ?? "Settlement") : stage === "Street" ? (world.settlements[0]?.neighborhoodIds[0] ?? "Neighborhood") : (personA?.name ?? "Resident")}</h2><p>Camera ${cameraDegrees}° · tick <span data-testid="person-tick">${personA?.itinerary.tick ?? snapshotA.tick}</span> · <code data-testid="state-hash">${snapshotA.stateHash}</code></p>
       <div class="tracer-actions">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}<button type="button" class="secondary" data-action="camera">Orbit camera</button></div></div>
     </section>
@@ -316,7 +427,7 @@ function render(root: HTMLElement): void {
             .join("")}</section>`
         : ""
     }
-    <section class="trace-controls" aria-label="Replay and field controls"><button type="button" data-action="replay" ${personA ? "" : "disabled"}>Rewind and replay</button><p data-testid="replay-result">${replayResult}</p><button type="button" class="secondary" data-action="fields">Reveal fields</button><button type="button" class="secondary" data-action="debug" aria-expanded="${debugVisible}">${debugVisible ? "Hide debug world" : "Inspect debug world"}</button></section>
+    <section class="trace-controls" aria-label="Replay and field controls"><button type="button" data-action="replay" ${personA ? "" : "disabled"}>Rewind and replay</button><p data-testid="replay-result">${replayResult}</p><button type="button" class="secondary" data-action="fields">Reveal fields</button><button type="button" class="secondary" data-action="render-loss">Simulate renderer loss</button><button type="button" class="secondary" data-action="debug" aria-expanded="${debugVisible}">${debugVisible ? "Hide debug world" : "Inspect debug world"}</button></section>
     <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Authoritative world budget</p><h2><span data-testid="represented-population">${world.totalPopulation.toLocaleString("en-US")}</span> represented lives</h2></div><dl><div><dt>Authority</dt><dd>${world.cells.length.toLocaleString("en-US")} integer cells</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Manifested query</dt><dd>${personA ? `${personA.name} · ${personA.semanticHash}` : "none"}</dd></div><div><dt>Observer state</dt><dd>Camera excluded from hash</dd></div></dl></section>
     ${debugVisible ? `<section class="debug-world" aria-labelledby="debug-title"><div class="debug-heading"><div><p class="kicker">Seeded semantic atlas</p><h2 id="debug-title">Debug globe · L${debugLevel}</h2><p>Fictional geography; orange edges are the wrapped seam. Cell population brightens land.</p></div><div class="debug-controls" aria-label="Debug world level"><button type="button" class="secondary" data-debug-level="2" aria-pressed="${debugLevel === 2}">L2 regions</button><button type="button" class="secondary" data-debug-level="3" aria-pressed="${debugLevel === 3}">L3</button><button type="button" class="secondary" data-debug-level="5" aria-pressed="${debugLevel === 5}">L5 cells</button></div></div><canvas width="768" height="384" data-testid="debug-globe" aria-label="Fictional world cell map" aria-describedby="debug-cell-details">A deterministic map of fictional geography and population.</canvas><div class="debug-inspector" id="debug-cell-details"><div><dt>Selected cell</dt><dd data-testid="debug-cell-id">${selectedCell.id}</dd></div><div><dt>Hierarchy</dt><dd>${selectedParent} → ${selectedCell.id}</dd></div><div><dt>Geography</dt><dd>${selectedCell.biome} · ${selectedCell.elevationMeters.toLocaleString("en-US")} m</dd></div><div><dt>Population</dt><dd>${selectedCell.population.toLocaleString("en-US")}</dd></div><div><dt>Region</dt><dd>${selectedCell.regionId}</dd></div></div><div class="debug-probes"><button type="button" data-debug-cell="L5/12/0">Inspect seam</button><button type="button" data-debug-cell="L5/0/3">Inspect north pole</button></div><article class="field-debug" aria-labelledby="field-debug-title"><div class="field-debug-heading"><div><p class="kicker">Conservative field simulation</p><h2 id="field-debug-title">Tick <span data-testid="field-tick">${fieldState.tick}</span> · <code data-testid="field-hash">${fieldState.stateHash}</code></h2></div><div class="debug-controls"><button type="button" data-action="field-step">Single-step</button><button type="button" class="secondary" data-action="field-day">Advance one day</button></div></div><dl class="field-channels"><div><dt>Resident cohorts</dt><dd>${selectedFieldCell.cohorts.young.toLocaleString("en-US")} young · ${selectedFieldCell.cohorts.adult.toLocaleString("en-US")} adult · ${selectedFieldCell.cohorts.older.toLocaleString("en-US")} older</dd></div><div><dt>Activity channels</dt><dd>sleep ${selectedFieldCell.activities.sleep.toLocaleString("en-US")} · home ${selectedFieldCell.activities.home.toLocaleString("en-US")} · work ${selectedFieldCell.activities.work.toLocaleString("en-US")} · transit ${selectedFieldCell.activities.transit.toLocaleString("en-US")} · community ${selectedFieldCell.activities.community.toLocaleString("en-US")}</dd></div><div><dt>Capacity / amenity</dt><dd>${selectedFieldCell.capacityPermille}‰ / ${selectedFieldCell.amenityPermille}‰ · demand ${selectedFieldCell.flowDemand.toLocaleString("en-US")}</dd></div><div><dt>Sparse active regions</dt><dd>${fieldState.activeCellIds.length}</dd></div><div><dt>Flux ledger</dt><dd>${fieldState.lastFluxes.length.toLocaleString("en-US")} transfers; ${selectedFluxes.length} touch this cell${selectedFluxes[0] ? ` · #${selectedFluxes[0].processingOrder} ${selectedFluxes[0].sourceCellId} → ${selectedFluxes[0].destinationCellId} (${selectedFluxes[0].count.toLocaleString("en-US")})` : ""}</dd></div><div><dt>Invariant failures</dt><dd class="${fieldInvariant.valid ? "valid" : "invalid"}" data-testid="field-invariants">${fieldInvariant.valid ? "None — exact conservation" : fieldInvariant.issues.join("; ")}</dd></div></dl></article>${transportDebugPanel()}</section>` : ""}
     <footer><span>World seed <code>${world.seed}</code> · hash <code data-testid="world-hash">${world.worldHash}</code> · vectors <code data-testid="deterministic-vector-hash">${deterministicVectorHash()}</code></span><span>Run <code>pnpm check</code> from the repository root if a diagnostic fails.</span></footer>
@@ -356,6 +467,13 @@ function render(root: HTMLElement): void {
     debugVisible = !debugVisible;
     render(root);
   });
+  root
+    .querySelector('[data-action="render-loss"]')
+    ?.addEventListener("click", () => {
+      const status = journeyRenderer?.simulateContextLoss();
+      if (status !== null && status !== undefined)
+        updateRenderDiagnostics(root, status);
+    });
   root
     .querySelector('[data-action="field-step"]')
     ?.addEventListener("click", () => {
@@ -436,10 +554,45 @@ function render(root: HTMLElement): void {
       render(root);
     });
   }
+  void mountJourneyRenderer(root, renderScene);
 }
 
 const root = document.querySelector<HTMLElement>("#app");
 if (root === null) throw new Error("Missing #app mount point");
+(
+  window as Window & { __tenBillionRenderBenchmark?: LocalRenderBenchmark }
+).__tenBillionRenderBenchmark = (width, height, frames) => {
+  if (
+    !Number.isSafeInteger(width) ||
+    !Number.isSafeInteger(height) ||
+    !Number.isSafeInteger(frames) ||
+    width <= 0 ||
+    height <= 0 ||
+    frames <= 0 ||
+    frames > 120
+  )
+    throw new RangeError("invalid local render benchmark workload");
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const scene = createRenderScene({
+    worldSeed: world.seed,
+    stateHash: snapshotA.stateHash,
+    selectionId: manifestationPersonId,
+    stage: "street",
+    quality: "baseline",
+    viewport: { width, height },
+    reducedMotion: true,
+  });
+  const frameTimesMs = Array.from({ length: frames }, () =>
+    drawCanvasScene(canvas, scene),
+  );
+  return Object.freeze({
+    frameTimesMs: Object.freeze(frameTimesMs),
+    visibleCount: scene.draw.visibleCount,
+    bufferBytes: scene.buffer.byteLength,
+  });
+};
 try {
   render(root);
 } catch (error: unknown) {

@@ -22,6 +22,7 @@
     "benchmark:transport": "pnpm --filter @ten-billion-lives/sim build && node --expose-gc scripts/benchmark-transport.mjs && prettier --write benchmarks/results/planetary-day.json",
     "benchmark:kernel": "pnpm --filter @ten-billion-lives/sim build && node --expose-gc scripts/benchmark-kernel.mjs && prettier --write benchmarks/results/world-kernel.json",
     "benchmark:manifest": "node --expose-gc scripts/benchmark-manifest.mjs && prettier --write benchmarks/results/manifestation.json",
+    "benchmark:renderer": "node scripts/benchmark-renderer.mjs && prettier --write benchmarks/results/multi-lod-renderer.json",
     "benchmark:world": "pnpm --filter @ten-billion-lives/sim build && node --expose-gc scripts/benchmark-world.mjs && prettier --write benchmarks/results/world-generation.json",
     "preview": "pnpm --filter @ten-billion-lives/web preview",
     "person:vector": "node scripts/person-vector.mjs",

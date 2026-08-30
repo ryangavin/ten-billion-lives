@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "multi-lod-renderer-v1",
+  "commit": "3000af5f7459712a3a1f8a253b85b441c7b66f87",
+  "browser": {
+    "version": "151.0.7922.34"
+  },
+  "workload": {
+    "stage": "street",
+    "backend": "canvas2d",
+    "detectedBackend": "canvas2d",
+    "webgpuNavigatorPresent": true,
+    "canvasWidth": 1280,
+    "canvasHeight": 720,
+    "visibleManifestations": 250000,
+    "bufferBytes": 1250000,
+    "frameSamples": 11,
+    "drawStrategy": "typed-pixel-buffer",
+    "screenshot": "docs/evidence/issue-13/street-baseline-canvas.png"
+  },
+  "metrics": {
+    "fallbackFrameTimeP50Ms": 2.314999997615814,
+    "fallbackFrameTimeP95Ms": 4.784999966621399,
+    "browserMemoryMiB": 73.05145263671875
+  },
+  "budgets": {
+    "visibleManifestationsMin": 250000,
+    "fallbackFrameTimeP95MsMax": 16.67,
+    "browserMemoryMiBMax": 256,
+    "passed": true
+  }
+}
