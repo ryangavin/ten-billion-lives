@@ -19,3 +19,7 @@ The project does **not** claim to simulate ten billion independent minds. Its su
 
 Planning. The complete executable work plan is tracked in GitHub milestones and issues.
 
+- [Milestones](https://github.com/ryangavin/ten-billion-lives/milestones)
+- [Final release gate and master checklist](https://github.com/ryangavin/ten-billion-lives/issues/27)
+- [Autonomous Codex goal prompt](GOAL.md)
+
