@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "profile": "apple-m1-max-32gb-chromium-151-canvas2d-1280x720",
+  "before": {
+    "commit": "76cc74911c4cf1216062b3b216a29a15fa2ff169",
+    "visibleManifestations": 250000,
+    "frameTimeP50Ms": 2.009999990463257,
+    "frameTimeP95Ms": 5.105000019073486,
+    "browserMemoryMiB": 77.62908935546875
+  },
+  "allocationFailureThatTriggeredOptimization": {
+    "commit": "07d945dcd9871e488e12f683965bada491f155f9",
+    "workload": "30-minute-equivalent accelerated production Canvas soak before buffer reuse and bounded caches",
+    "totalFrames": 1800,
+    "frameTimeP95Ms": 2.350000023841858,
+    "maximumHeapMiB": 422.0670175552368,
+    "finalHeapMiB": 231.5328245162964,
+    "uncollectedEndpointGrowthMiB": 181.53578186035156,
+    "failedBudgets": ["browserHeapMiB", "browserHeapGrowthMiB"]
+  },
+  "after": {
+    "commit": "6dfab119a84a22d58da2d43d793ac85ee4e9bb6f",
+    "visibleManifestations": 250000,
+    "frameTimeP50Ms": 1.8100000023841858,
+    "frameTimeP95Ms": 3.824999988079071,
+    "browserMemoryMiB": 42.629241943359375,
+    "wallClockSoak": {
+      "durationMs": 1800068.880209,
+      "totalFrames": 1800,
+      "frameTimeP95Ms": 1.8700000047683716,
+      "maximumHeapMiB": 105.3497428894043,
+      "retainedHeapGrowthMiB": 49.354201316833496,
+      "lastToFirstFrameP95Ratio": 0.9840848957339264
+    }
+  },
+  "changes": [
+    "Reuse one ImageData pixel buffer per Canvas and dimensions.",
+    "Reuse bounded local benchmark canvases and scenes.",
+    "Bound derived render scenes to 8 and observer projections to 32 entries."
+  ],
+  "correctness": {
+    "rootTests": "15 files / 76 tests passed",
+    "productionBrowsers": "16/16 passed (8 Chromium, 8 WebKit)",
+    "semanticQualityComparison": "person, state, manifestation, event, and itinerary values matched"
+  }
+}

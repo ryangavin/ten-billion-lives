@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "multi-lod-renderer-v1",
-  "commit": "9fdf06b1d0994bb35bd75be7c9a9dcb044008a90",
+  "commit": "e5d291976b8eb5b926e07ba1bc26e0d3a425aa6b",
   "browser": {
     "version": "151.0.7922.34"
   },
@@ -20,11 +20,11 @@
     "screenshot": "docs/evidence/issue-13/street-baseline-canvas.png"
   },
   "metrics": {
-    "fallbackFrameTimeP50Ms": 1.9950000047683716,
-    "fallbackFrameTimeP95Ms": 5.110000014305115,
-    "browserMemoryMiB": 61.03515625,
-    "detectedBackendFrameTimeP50Ms": 1.42,
-    "detectedBackendFrameTimeP95Ms": 2.97
+    "fallbackFrameTimeP50Ms": 1.8100000023841858,
+    "fallbackFrameTimeP95Ms": 3.824999988079071,
+    "browserMemoryMiB": 42.629241943359375,
+    "detectedBackendFrameTimeP50Ms": 1.68,
+    "detectedBackendFrameTimeP95Ms": 3.01
   },
   "budgets": {
     "visibleManifestationsMin": 250000,

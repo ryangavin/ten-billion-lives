@@ -1,0 +1,212 @@
+[
+  {
+    "minute": 1,
+    "frameP50Ms": 1.7649999856948853,
+    "frameP95Ms": 1.8849999904632568,
+    "heapMiB": 45.622798919677734,
+    "stateHash": "6557c769cf3f6f8f"
+  },
+  {
+    "minute": 2,
+    "frameP50Ms": 1.774999976158142,
+    "frameP95Ms": 1.8850000500679016,
+    "heapMiB": 35.960509300231934,
+    "stateHash": "c4a6811806caa9d4"
+  },
+  {
+    "minute": 3,
+    "frameP50Ms": 1.7549999952316284,
+    "frameP95Ms": 1.8600000143051147,
+    "heapMiB": 38.590396881103516,
+    "stateHash": "be7c2321aa470749"
+  },
+  {
+    "minute": 4,
+    "frameP50Ms": 1.7599999904632568,
+    "frameP95Ms": 1.9300000071525574,
+    "heapMiB": 41.10234451293945,
+    "stateHash": "c18065f9a63c7209"
+  },
+  {
+    "minute": 5,
+    "frameP50Ms": 1.7649999856948853,
+    "frameP95Ms": 1.8499999642372131,
+    "heapMiB": 44.29680252075195,
+    "stateHash": "2d309cc88628725b"
+  },
+  {
+    "minute": 6,
+    "frameP50Ms": 1.7700000405311584,
+    "frameP95Ms": 1.875,
+    "heapMiB": 45.185763359069824,
+    "stateHash": "638dd6a02cb002c0"
+  },
+  {
+    "minute": 7,
+    "frameP50Ms": 1.7850000262260437,
+    "frameP95Ms": 1.89000004529953,
+    "heapMiB": 64.50639724731445,
+    "stateHash": "4a8da3fe8ba19283"
+  },
+  {
+    "minute": 8,
+    "frameP50Ms": 1.8100000023841858,
+    "frameP95Ms": 1.9000000357627869,
+    "heapMiB": 75.06157398223877,
+    "stateHash": "c0c247643e1b5869"
+  },
+  {
+    "minute": 9,
+    "frameP50Ms": 1.7950000166893005,
+    "frameP95Ms": 1.8949999809265137,
+    "heapMiB": 67.89841270446777,
+    "stateHash": "1c05183487e6256f"
+  },
+  {
+    "minute": 10,
+    "frameP50Ms": 1.6850000023841858,
+    "frameP95Ms": 1.76500004529953,
+    "heapMiB": 51.134286880493164,
+    "stateHash": "59723304f28fe459"
+  },
+  {
+    "minute": 11,
+    "frameP50Ms": 1.6899999976158142,
+    "frameP95Ms": 1.800000011920929,
+    "heapMiB": 85.86305332183838,
+    "stateHash": "04f7ca7cf8f2da07"
+  },
+  {
+    "minute": 12,
+    "frameP50Ms": 1.75,
+    "frameP95Ms": 1.8450000286102295,
+    "heapMiB": 81.44327354431152,
+    "stateHash": "083972cd808b7009"
+  },
+  {
+    "minute": 13,
+    "frameP50Ms": 1.6949999928474426,
+    "frameP95Ms": 1.8199999928474426,
+    "heapMiB": 74.75534343719482,
+    "stateHash": "6e30300e54a65a2e"
+  },
+  {
+    "minute": 14,
+    "frameP50Ms": 1.6899999976158142,
+    "frameP95Ms": 1.8550000190734863,
+    "heapMiB": 56.48378944396973,
+    "stateHash": "e8654a7840049a65"
+  },
+  {
+    "minute": 15,
+    "frameP50Ms": 1.7199999690055847,
+    "frameP95Ms": 1.8550000190734863,
+    "heapMiB": 58.02200794219971,
+    "stateHash": "82c40b40f0847f77"
+  },
+  {
+    "minute": 16,
+    "frameP50Ms": 1.7199999690055847,
+    "frameP95Ms": 1.8200000524520874,
+    "heapMiB": 102.10566997528076,
+    "stateHash": "d412e962987ca5a4"
+  },
+  {
+    "minute": 17,
+    "frameP50Ms": 1.725000023841858,
+    "frameP95Ms": 1.9800000190734863,
+    "heapMiB": 95.48768329620361,
+    "stateHash": "794205ce6968b921"
+  },
+  {
+    "minute": 18,
+    "frameP50Ms": 1.725000023841858,
+    "frameP95Ms": 1.8499999642372131,
+    "heapMiB": 105.3497428894043,
+    "stateHash": "5816c6dff0975c87"
+  },
+  {
+    "minute": 19,
+    "frameP50Ms": 1.7299999594688416,
+    "frameP95Ms": 1.8799999952316284,
+    "heapMiB": 63.50580310821533,
+    "stateHash": "743874c7eb751676"
+  },
+  {
+    "minute": 20,
+    "frameP50Ms": 1.7300000190734863,
+    "frameP95Ms": 1.8100000023841858,
+    "heapMiB": 64.99503517150879,
+    "stateHash": "0f65d7bccef8bd26"
+  },
+  {
+    "minute": 21,
+    "frameP50Ms": 1.7350000143051147,
+    "frameP95Ms": 1.8799999952316284,
+    "heapMiB": 66.38458442687988,
+    "stateHash": "93d56a603d3650e3"
+  },
+  {
+    "minute": 22,
+    "frameP50Ms": 1.7299999594688416,
+    "frameP95Ms": 1.8149999976158142,
+    "heapMiB": 68.85187911987305,
+    "stateHash": "5a6a3ac290259651"
+  },
+  {
+    "minute": 23,
+    "frameP50Ms": 1.7099999785423279,
+    "frameP95Ms": 1.8149999976158142,
+    "heapMiB": 69.51169300079346,
+    "stateHash": "ac3fd185f2db2079"
+  },
+  {
+    "minute": 24,
+    "frameP50Ms": 1.725000023841858,
+    "frameP95Ms": 1.840000033378601,
+    "heapMiB": 70.92245483398438,
+    "stateHash": "5dac9dbf10a70ae1"
+  },
+  {
+    "minute": 25,
+    "frameP50Ms": 1.7099999785423279,
+    "frameP95Ms": 1.8349999785423279,
+    "heapMiB": 73.54940128326416,
+    "stateHash": "3c4102fe4feff58d"
+  },
+  {
+    "minute": 26,
+    "frameP50Ms": 1.6600000262260437,
+    "frameP95Ms": 1.7700000405311584,
+    "heapMiB": 71.5922441482544,
+    "stateHash": "d95bfe762bfc32b7"
+  },
+  {
+    "minute": 27,
+    "frameP50Ms": 1.7649999856948853,
+    "frameP95Ms": 1.909999966621399,
+    "heapMiB": 75.1916561126709,
+    "stateHash": "880c55b5476460d6"
+  },
+  {
+    "minute": 28,
+    "frameP50Ms": 1.6549999713897705,
+    "frameP95Ms": 1.7199999690055847,
+    "heapMiB": 74.59436988830566,
+    "stateHash": "4c7c60a33689dbe0"
+  },
+  {
+    "minute": 29,
+    "frameP50Ms": 1.7449999451637268,
+    "frameP95Ms": 1.8600000143051147,
+    "heapMiB": 81.34127902984619,
+    "stateHash": "bafcd10d424c5164"
+  },
+  {
+    "minute": 30,
+    "frameP50Ms": 1.625,
+    "frameP95Ms": 1.7400000095367432,
+    "heapMiB": 94.56836318969727,
+    "stateHash": "0b31bb53917d7cd0"
+  }
+]

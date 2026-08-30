@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "adaptive-quality-local-v1",
+  "commit": "6dfab119a84a22d58da2d43d793ac85ee4e9bb6f",
+  "browser": {
+    "name": "chromium",
+    "version": "151.0.7922.34"
+  },
+  "capability": {
+    "logicalCores": 10,
+    "deviceMemoryGiB": 32,
+    "webgpuNavigatorPresent": true
+  },
+  "workload": {
+    "productionBuild": true,
+    "backend": "canvas2d",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "logicalMinutes": 30,
+    "framesPerMinute": 60,
+    "totalFrames": 1800,
+    "actualSoakDurationMs": 1800068.880209,
+    "mode": "wall-clock",
+    "note": "Thirty wall-clock minutes; each minute performs one semantic interaction and 60 production Canvas frames."
+  },
+  "qualityComparison": {
+    "fallbackVisibleManifestations": 25000,
+    "baselineVisibleManifestations": 250000,
+    "fallbackFrameMs": {
+      "minimum": 0.4950000047683716,
+      "p50": 0.5349999666213989,
+      "p95": 0.6800000071525574,
+      "maximum": 1.8450000286102295
+    },
+    "baselineFrameMs": {
+      "minimum": 1.5450000166893005,
+      "p50": 1.725000023841858,
+      "p95": 1.8700000047683716,
+      "maximum": 4.430000007152557
+    },
+    "showcaseVisibleManifestations": 1000000,
+    "showcaseFrameMs": {
+      "minimum": 5.14000004529953,
+      "p50": 5.340000033378601,
+      "p95": 5.589999973773956,
+      "maximum": 5.605000019073486
+    },
+    "showcasePassed": true,
+    "largestStableTestedManifestations": 1000000
+  },
+  "semanticEvidence": {
+    "matchedAcrossQualityTiers": true,
+    "selectedIdentityPreserved": true,
+    "cameraAndQualityExcludedFromHashes": true,
+    "fallback": {
+      "personA": "person_27yi09s_1obkbba",
+      "personB": "person_27yi09s_1obkbba",
+      "stateHash": "b2007dbd631d0474",
+      "manifestationA": "0b21e681edada68a",
+      "manifestationB": "0b21e681edada68a",
+      "eventA": "b0bd84480511f52f",
+      "eventB": "b0bd84480511f52f",
+      "itineraryA": "Tick 10 · work at North Works",
+      "itineraryB": "Tick 10 · work at North Works"
+    },
+    "baseline": {
+      "personA": "person_27yi09s_1obkbba",
+      "personB": "person_27yi09s_1obkbba",
+      "stateHash": "b2007dbd631d0474",
+      "manifestationA": "0b21e681edada68a",
+      "manifestationB": "0b21e681edada68a",
+      "eventA": "b0bd84480511f52f",
+      "eventB": "b0bd84480511f52f",
+      "itineraryA": "Tick 10 · work at North Works",
+      "itineraryB": "Tick 10 · work at North Works"
+    }
+  },
+  "metrics": {
+    "startupMs": {
+      "fallback": 1057.9582499999997,
+      "baseline": 1046.7835000000005
+    },
+    "initialHeapMiB": 24.169718742370605,
+    "maximumHeapMiB": 105.3497428894043,
+    "finalHeapMiB": 73.5239200592041,
+    "retainedHeapGrowthMiB": 49.354201316833496,
+    "firstWindowP95Ms": 1.8849999904632568,
+    "lastWindowP95Ms": 1.8550000190734863,
+    "lastToFirstFrameP95Ratio": 0.9840848957339264
+  },
+  "evidence": {
+    "trace": "docs/evidence/issue-22/soak-trace.json",
+    "graph": "docs/evidence/issue-22/soak-graph.svg",
+    "fallbackScreenshot": "docs/evidence/issue-22/quality-fallback.png",
+    "baselineScreenshot": "docs/evidence/issue-22/quality-baseline.png",
+    "finalScreenshot": "docs/evidence/issue-22/soak-final.png"
+  },
+  "budgets": {
+    "startupMsMax": 5000,
+    "fallbackFrameP95MsMax": 33.333333333333336,
+    "baselineFrameP95MsMax": 16.666666666666668,
+    "showcaseFrameP95MsMax": 33.333333333333336,
+    "browserHeapMiBMax": 256,
+    "retainedHeapGrowthMiBMax": 64,
+    "lastToFirstFrameP95RatioMax": 1.5,
+    "passed": true
+  },
+  "failures": []
+}
