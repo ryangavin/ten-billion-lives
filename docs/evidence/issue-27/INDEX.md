@@ -1,6 +1,6 @@
 # Issue #27 — final local MVP gate
 
-The final gate passed from a fresh clone of `origin/main` at `ba703e4e91f2acf4aac931d431d2eb43b6ba8de8` on the committed Apple M1 Max profile. The source checkout was clean after frozen install and the root check. Benchmark outputs were generated only in that temporary checkout; their summaries and the independently inspected browser artifacts are retained here.
+The final gate passed from a fresh clone of `origin/main` at `ba703e4e91f2acf4aac931d431d2eb43b6ba8de8` on the committed Apple M1 Max profile. The source checkout was clean after frozen install and the root check. Benchmark outputs were generated only in that temporary checkout; their summaries and the independently inspected browser artifacts are retained here. Issue #27 closed at `2026-08-30T23:16:57Z`; the immediate post-close query returned zero open P0 issues.
 
 ## Reproduce
 

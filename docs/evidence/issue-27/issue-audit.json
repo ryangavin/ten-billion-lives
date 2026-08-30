@@ -10,5 +10,12 @@
   "openDeferred": [28],
   "excludedRetiredDeferred": [17, 18, 19, 20, 24],
   "onlyGateRemains": true,
+  "postClosure": {
+    "queriedAt": "2026-08-30T23:16:57Z",
+    "issue27State": "CLOSED",
+    "issue27ClosedAt": "2026-08-30T23:16:57Z",
+    "openP0": [],
+    "passed": true
+  },
   "passed": true
 }
