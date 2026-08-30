@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "inspectedAt": "2026-08-30T23:12:32Z",
+  "artifacts": [
+    {
+      "path": "signature-start.png",
+      "dimensions": "1440x1000",
+      "sha256": "28ef96b96abb58fd8cb9dd532cc0ca26a6e1a4744e227726ebfe3db4e0177687",
+      "inspection": "Production header, exact population claim, local controls, and person stage are legible; Canvas fallback is disclosed."
+    },
+    {
+      "path": "signature-festival.png",
+      "dimensions": "1440x1000",
+      "sha256": "eb8d7fdc72b11ec3552ac785499fc4dfd563efbcffa5a5cd862c180910b98b5e",
+      "inspection": "Eli Vale is visibly reconstructed at tick 19 in the Lantern Tide festival."
+    },
+    {
+      "path": "signature-observers.png",
+      "dimensions": "1120x1124",
+      "sha256": "4c0efc51597f1f6a88bc1ad72d1ff78eaf1485ef28c33a70fe0da868f29246e8",
+      "inspection": "Observer A and independently initialized observer B visibly agree on person, itinerary, relationships, encounters, semantic events, and hashes."
+    },
+    {
+      "path": "signature-final.png",
+      "dimensions": "1440x3629",
+      "sha256": "c2b27fec59cef2c98db634ff256b628f69530ddb5c4f3aa5dbd777342481dd8e",
+      "inspection": "Full final state visibly includes both observers, replay verification, exactly ten billion represented lives, integer fields, and zero retained person rows."
+    },
+    {
+      "path": "signature-journey.webm",
+      "durationSeconds": 8.04,
+      "bytes": 1000752,
+      "sha256": "d4396a4e372ba3da38a693edf0ca38c2002d60819665b080393b1f2f39a04321",
+      "inspection": "Frames at 2, 5, and 8 seconds show the person/festival state, matching observer panes, and final field reveal without a blocking visual defect."
+    }
+  ],
+  "blockingDefects": [],
+  "passed": true
+}

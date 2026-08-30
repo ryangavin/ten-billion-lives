@@ -1,0 +1,229 @@
+{
+  "schemaVersion": 1,
+  "source": "https://github.com/ryangavin/ten-billion-lives.git",
+  "commit": "ba703e4e91f2acf4aac931d431d2eb43b6ba8de8",
+  "temporaryCheckoutRetainedAt": "/var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-final-6sg48L/repo",
+  "environment": {
+    "node": "v24.18.0",
+    "pnpm": "11.24.0",
+    "browser": "/Users/ryan/Library/Caches/ms-playwright/chromium-1234/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+  },
+  "commands": [
+    {
+      "command": "git clone --quiet --branch main --single-branch https://github.com/ryangavin/ten-billion-lives.git /var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-final-6sg48L/repo",
+      "durationMs": 2783.0445,
+      "exitCode": 0,
+      "outputTail": "",
+      "passed": true
+    },
+    {
+      "command": "pnpm install --frozen-lockfile",
+      "durationMs": 1032.90425,
+      "exitCode": 0,
+      "outputTail": "Scope: all 6 workspace projects\n✓ Lockfile passes supply-chain policies (verified 21m ago)\nLockfile is up to date, resolution step is skipped\nProgress: resolved 1, reused 0, downloaded 0, added 0\nPackages: +242\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nPackages are cloned from the content-addressable store to the virtual store.\n  Content-addressable store is at: /Users/ryan/Library/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nProgress: resolved 242, reused 242, downloaded 0, added 242, done\n\ndevDependencies:\n+ @axe-core/playwright 4.13.0\n+ @eslint/js 10.0.1\n+ @playwright/test 1.62.1\n+ @types/node 24.13.3\n+ cspell 10.1.1\n+ eslint 10.9.1\n+ globals 17.11.0\n+ prettier 3.9.6\n+ typescript 6.0.3\n+ typescript-eslint 8.68.0\n+ vite 8.2.2\n+ vitest 4.1.11\n\nDone in 972ms using pnpm v11.24.0",
+      "passed": true
+    },
+    {
+      "command": "pnpm check",
+      "durationMs": 22074.429541,
+      "exitCode": 0,
+      "outputTail": "Checking formatting...\nAll matched files use Prettier code style!\nDocumentation check passed: 13 files, local links, shell snippets, diagram alternatives, claims, and dependency inventory.\nScope: 5 of 6 workspace projects\npackages/render typecheck$ tsc --noEmit -p tsconfig.json\npackages/testkit typecheck$ tsc --noEmit -p tsconfig.json\npackages/sim typecheck$ tsc --noEmit -p tsconfig.json\npackages/render typecheck: Done\npackages/testkit typecheck: Done\npackages/sim typecheck: Done\npackages/manifest typecheck$ tsc --noEmit -p tsconfig.json\npackages/manifest typecheck: Done\napps/web typecheck$ tsc --noEmit -p tsconfig.json\napps/web typecheck: Done\nProduct contract check passed.\nArchitecture contract check passed.\n\n RUN  v4.1.11 /private/var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-final-6sg48L/repo\n\n\n Test Files  15 passed (15)\n      Tests  76 passed (76)\n   Start at  19:07:35\n   Duration  4.42s (transform 772ms, setup 0ms, import 2.65s, tests 14.95s, environment 1ms)\n\nScope: 5 of 6 workspace projects\npackages/render build$ tsc -p tsconfig.json\npackages/sim build$ tsc -p tsconfig.json\npackages/testkit build$ tsc -p tsconfig.json\npackages/sim build: Done\npackages/testkit build: Done\npackages/render build: Done\npackages/manifest build$ tsc -p tsconfig.json\npackages/manifest build: Done\napps/web build$ tsc --noEmit -p tsconfig.json && vite build\napps/web build: vite v8.2.2 building client environment for production...\napps/web build: transforming...\napps/web build: ✓ 23 modules transformed.\napps/web build: rendering chunks...\napps/web build: computing gzip size...\napps/web build: dist/index.html                  1.27 kB │ gzip:  0.63 kB\napps/web build: dist/assets/index-CmeXLcDR.css  15.23 kB │ gzip:  4.27 kB\napps/web build: dist/assets/index-CPOO8sXF.js   98.58 kB │ gzip: 31.48 kB\napps/web build: ✓ built in 318ms\napps/web build: Done\n$ pnpm format:check && pnpm docs:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build\n$ prettier --check .\n$ cspell --no-progress --show-suggestions README.md CONTRIBUTING.md docs/*.md && node scripts/check-docs.mjs\nCSpell: Files checked: 13, Issues found: 0 in 0 files.\n$ eslint .\n$ pnpm -r --if-present typecheck\n$ pnpm test:contracts && vitest run\n$ node scripts/check-product-contract.mjs && node scripts/check-architecture-contract.mjs\n$ pnpm -r --if-present build",
+      "passed": true
+    },
+    {
+      "command": "node scripts/capture-m2-replay.mjs /var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-final-6sg48L/evidence",
+      "durationMs": 9415.818542,
+      "exitCode": 0,
+      "outputTail": "{\n  \"schemaVersion\": 1,\n  \"command\": \"pnpm gate:m2:replay\",\n  \"method\": \"Each canonical JSON vector was generated twice in independent processes and compared byte-for-byte.\",\n  \"results\": {\n    \"world\": {\n      \"command\": \"node scripts/replay-world.mjs\",\n      \"runs\": 2,\n      \"byteLength\": 1536,\n      \"sha256\": \"6255989f9c23bc2ff0c5b9c30617f1b7fa396000cc142c679b908d5946a85b05\",\n      \"identical\": true,\n      \"semanticHashes\": {\n        \"worldHash\": \"ed66e344fcd7e737\",\n        \"eventHash\": \"ec998bbac0999abc\",\n        \"initialFieldHash\": \"4e04868f72dfe574\",\n        \"initialKernelHash\": \"f999e3b156e1c63b\",\n        \"finalKernelHash\": \"6e190d289164581d\",\n        \"population\": \"10000000000\"\n      }\n    },\n    \"projection\": {\n      \"command\": \"node scripts/projection-vector.mjs\",\n      \"runs\": 2,\n      \"byteLength\": 3556,\n      \"sha256\": \"85e3565a45b0672e39dd778f68d4155418d5c022e87de44ee65d5ba48132122b\",\n      \"identical\": true,\n      \"semanticHashes\": {\n        \"worldHash\": \"ed66e344fcd7e737\"\n      }\n    },\n    \"person\": {\n      \"command\": \"node scripts/person-vector.mjs\",\n      \"runs\": 2,\n      \"byteLength\": 900,\n      \"sha256\": \"56622fb390119eadff050711929e057f9574577a8ae0878705b97462c49aabc3\",\n      \"identical\": true,\n      \"semanticHashes\": {\n        \"worldHash\": \"ed66e344fcd7e737\",\n        \"semanticHash\": \"036aeda537b40d7e\"\n      }\n    },\n    \"itinerary\": {\n      \"command\": \"node scripts/itinerary-vector.mjs\",\n      \"runs\": 2,\n      \"byteLength\": 40442,\n      \"sha256\": \"a10d12c3c6ef6ae9961f2a04d41f63ee80a9f9cdd6d2216f1448a8adf492fc92\",\n      \"identical\": true,\n      \"semanticHashes\": {\n        \"worldHash\": \"ed66e344fcd7e737\",\n        \"eventHash\": \"ec998bbac0999abc\"\n      }\n    }\n  },\n  \"passed\": true\n}",
+      "passed": true
+    },
+    {
+      "command": "node scripts/capture-playwright-summary.mjs /var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-final-6sg48L/evidence",
+      "durationMs": 45692.423749999994,
+      "exitCode": 0,
+      "outputTail": "{\n  \"passed\": true,\n  \"cases\": 34,\n  \"projects\": {\n    \"chromium\": {\n      \"passed\": 13,\n      \"skipped\": 1,\n      \"total\": 14,\n      \"durationMs\": 36554\n    },\n    \"mobile-chromium\": {\n      \"passed\": 1,\n      \"skipped\": 5,\n      \"total\": 6,\n      \"durationMs\": 4729\n    },\n    \"webkit\": {\n      \"passed\": 10,\n      \"skipped\": 4,\n      \"total\": 14,\n      \"durationMs\": 48911\n    }\n  },\n  \"output\": \"/var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-final-6sg48L/evidence/playwright-summary.json\"\n}",
+      "passed": true
+    },
+    {
+      "command": "pnpm qa:benchmarks",
+      "durationMs": 68158.27562500001,
+      "exitCode": 0,
+      "outputTail": "{\n  \"passed\": true,\n  \"commands\": [\n    {\n      \"command\": \"pnpm run benchmark:primitives\",\n      \"durationMs\": 1640.751334,\n      \"passed\": true\n    },\n    {\n      \"command\": \"pnpm run benchmark:world\",\n      \"durationMs\": 1886.8079999999998,\n      \"passed\": true\n    },\n    {\n      \"command\": \"pnpm run benchmark:fields\",\n      \"durationMs\": 4976.748708,\n      \"passed\": true\n    },\n    {\n      \"command\": \"pnpm run benchmark:transport\",\n      \"durationMs\": 2753.647332999999,\n      \"passed\": true\n    },\n    {\n      \"command\": \"pnpm run benchmark:kernel\",\n      \"durationMs\": 5202.787041999998,\n      \"passed\": true\n    },\n    {\n      \"command\": \"pnpm run benchmark:manifest\",\n      \"durationMs\": 9563.503125,\n      \"passed\": true\n    },\n    {\n      \"command\": \"pnpm run benchmark:itinerary\",\n      \"durationMs\": 12965.956417000001,\n      \"passed\": true\n    },\n    {\n      \"command\": \"pnpm run benchmark:projection\",\n      \"durationMs\": 4204.551790999998,\n      \"passed\": true\n    },\n    {\n      \"command\": \"pnpm run benchmark:renderer\",\n      \"durationMs\": 4618.7616659999985,\n      \"passed\": true\n    },\n    {\n      \"command\": \"pnpm run benchmark:experience\",\n      \"durationMs\": 9232.347249999999,\n      \"passed\": true\n    },\n    {\n      \"command\": \"pnpm run benchmark\",\n      \"durationMs\": 10516.216458000003,\n      \"passed\": true\n    },\n    {\n      \"command\": \"node scripts/summarize-m2-benchmarks.mjs benchmarks/results docs/evidence/issue-25/benchmark-summary.json\",\n      \"durationMs\": 44.47437500000524,\n      \"passed\": true\n    }\n  ],\n  \"longSession\": {\n    \"source\": \"benchmarks/results/adaptive-quality.json\",\n    \"commit\": \"6dfab119a84a22d58da2d43d793ac85ee4e9bb6f\",\n    \"mode\": \"wall-clock\",\n    \"durationMs\": 1800068.880209,\n    \"totalFrames\": 1800,\n    \"baselineFrameP95Ms\": 1.8700000047683716,\n    \"maximumHeapMiB\": 105.3497428894043,\n    \"retainedHeapGrowthMiB\": 49.354201316833496,\n    \"passed\": true\n  },\n  \"output\": \"docs/evidence/issue-25/benchmark-commands.json\"\n}\ndocs/evidence/issue-25/benchmark-commands.json 18ms (unchanged)\ndocs/evidence/issue-25/benchmark-summary.json 3ms (unchanged)\ndocs/evidence/issue-25/clean-checkout.json 3ms (unchanged)\ndocs/evidence/issue-25/comprehension-checklist.json 1ms (unchanged)\ndocs/evidence/issue-25/defect-disposition.json 1ms (unchanged)\ndocs/evidence/issue-25/deterministic-replay.json 1ms (unchanged)\ndocs/evidence/issue-25/exploratory-audit.json 1ms (unchanged)\ndocs/evidence/issue-25/playwright-summary.json 5ms (unchanged)\ndocs/evidence/issue-25/reproduction.json 1ms (unchanged)\ndocs/evidence/issue-25/test-disposition.json 1ms (unchanged)\ndocs/evidence/issue-25/visual-manifest.json 1ms (unchanged)\nbenchmarks/results/adaptive-quality.json 2ms (unchanged)\nbenchmarks/results/analytical-itinerary.json 1ms (unchanged)\nbenchmarks/results/deterministic-primitives.json 1ms (unchanged)\nbenchmarks/results/field-simulation.json 1ms (unchanged)\nbenchmarks/results/illusion-projection.json 1ms (unchanged)\nbenchmarks/results/local-baseline.json 1ms (unchanged)\nbenchmarks/results/local-baseline.md 21ms (unchanged)\nbenchmarks/results/manifestation.json 3ms (unchanged)\nbenchmarks/results/multi-lod-renderer.json 1ms (unchanged)\nbenchmarks/results/person-experience.json 1ms (unchanged)\nbenchmarks/results/planetary-day.json 1ms (unchanged)\nbenchmarks/results/world-generation.json 1ms (unchanged)\nbenchmarks/results/world-kernel.json 1ms (unchanged)\n$ node scripts/run-qa-benchmarks.mjs && prettier --write docs/evidence/issue-25/*.json benchmarks/results",
+      "passed": true
+    },
+    {
+      "command": "pnpm start + Chromium signature journey",
+      "durationMs": 12709.290540999995,
+      "exitCode": null,
+      "outputTail": "$ pnpm build && pnpm preview --host 127.0.0.1\n$ pnpm -r --if-present build\nScope: 5 of 6 workspace projects\npackages/render build$ tsc -p tsconfig.json\npackages/sim build$ tsc -p tsconfig.json\npackages/testkit build$ tsc -p tsconfig.json\npackages/testkit build: Done\npackages/sim build: Done\npackages/render build: Done\npackages/manifest build$ tsc -p tsconfig.json\npackages/manifest build: Done\napps/web build$ tsc --noEmit -p tsconfig.json && vite build\napps/web build: vite v8.2.2 building client environment for production...\napps/web build: transforming...\napps/web build: ✓ 23 modules transformed.\napps/web build: rendering chunks...\napps/web build: computing gzip size...\napps/web build: dist/index.html                  1.27 kB │ gzip:  0.63 kB\napps/web build: dist/assets/index-CmeXLcDR.css  15.23 kB │ gzip:  4.27 kB\napps/web build: dist/assets/index-CPOO8sXF.js   98.58 kB │ gzip: 31.48 kB\napps/web build: ✓ built in 39ms\napps/web build: Done\n$ pnpm --filter @ten-billion-lives/web preview --host 127.0.0.1\n$ vite preview --host 127.0.0.1\n  ➜  Local:   http://127.0.0.1:4173/",
+      "passed": true
+    }
+  ],
+  "cleanAfterInstallAndRootCheck": true,
+  "generatedBenchmarkChanges": [
+    "M benchmarks/results/analytical-itinerary.json",
+    " M benchmarks/results/deterministic-primitives.json",
+    " M benchmarks/results/field-simulation.json",
+    " M benchmarks/results/illusion-projection.json",
+    " M benchmarks/results/local-baseline.json",
+    " M benchmarks/results/local-baseline.md",
+    " M benchmarks/results/manifestation.json",
+    " M benchmarks/results/multi-lod-renderer.json",
+    " M benchmarks/results/person-experience.json",
+    " M benchmarks/results/planetary-day.json",
+    " M benchmarks/results/world-generation.json",
+    " M benchmarks/results/world-kernel.json",
+    " M docs/evidence/issue-13/street-baseline-canvas.png",
+    " M docs/evidence/issue-25/benchmark-commands.json",
+    " M docs/evidence/issue-25/benchmark-summary.json"
+  ],
+  "replay": {
+    "vectors": ["world", "projection", "person", "itinerary"],
+    "twiceAndByteIdentical": true,
+    "passed": true
+  },
+  "browsers": {
+    "applicablePassed": 24,
+    "unexpected": 0,
+    "flaky": 0,
+    "skipped": 10,
+    "projects": {
+      "chromium": {
+        "passed": 13,
+        "skipped": 1,
+        "total": 14,
+        "durationMs": 36554
+      },
+      "mobile-chromium": {
+        "passed": 1,
+        "skipped": 5,
+        "total": 6,
+        "durationMs": 4729
+      },
+      "webkit": {
+        "passed": 10,
+        "skipped": 4,
+        "total": 14,
+        "durationMs": 48911
+      }
+    },
+    "passed": true
+  },
+  "benchmarks": {
+    "profile": "apple-m1-max-32gb-chromium",
+    "conservation": {
+      "representedPopulation": "10000000000",
+      "residentPopulation": "10000000000",
+      "presentPopulation": "10000000000",
+      "valid": true,
+      "retainedPersonRows": 0
+    },
+    "measurements": {
+      "deterministicOperationsPerSecondP50": 616309.23473628,
+      "worldGenerationP95Ms": 42.265333,
+      "worldRetainedHeapMiB": 0.684539794921875,
+      "fieldCellTicksPerSecondP50": 414785.73303942283,
+      "fieldRetainedHeapMiB": 0.8052597045898438,
+      "planetaryDayP95Ms": 106.61625000000001,
+      "planetaryDayP95MsMax": 500,
+      "kernelReplayTicksPerSecondP50": 59.347278893756226,
+      "kernelRetainedHeapMiB": 1.8807220458984375,
+      "manifestationPersonQueriesPerSecondP50": 32145.85650051726,
+      "millionIdentityGenerationMs": 3083.7249169999996,
+      "itineraryQueriesPerSecondP50": 2923.8965293297315,
+      "streetProjectionP95Ms": 193.582042,
+      "streetProjectionP95MsMax": 500,
+      "observerPairMs": 403.3929589999998,
+      "observerPairMsMax": 1000,
+      "identityRetentionRatio": 0.875,
+      "fallbackFrameTimeP95Ms": 3.7350000143051147,
+      "fallbackFrameTimeP95MsMax": 16.67,
+      "rendererBrowserMemoryMiB": 42.629241943359375,
+      "rendererBrowserMemoryMiBMax": 256,
+      "planetToPersonMs": 1645.5467089999997,
+      "planetToPersonMsMax": 5000,
+      "followTickP95Ms": 235.50941699999976,
+      "followTickP95MsMax": 1500,
+      "secondObserverMs": 92.76204199999984,
+      "deepLinkLoadMs": 917.2272079999998,
+      "experienceBrowserHeapMiB": 82.3974609375,
+      "experienceBrowserHeapMiBMax": 128
+    },
+    "budgets": {
+      "baselineProfile": "passed by benchmark:check",
+      "transport": true,
+      "kernel": true,
+      "manifestation": true,
+      "itinerary": true,
+      "projection": true,
+      "renderer": true,
+      "experience": true
+    },
+    "longSession": {
+      "source": "benchmarks/results/adaptive-quality.json",
+      "commit": "6dfab119a84a22d58da2d43d793ac85ee4e9bb6f",
+      "mode": "wall-clock",
+      "durationMs": 1800068.880209,
+      "totalFrames": 1800,
+      "baselineFrameP95Ms": 1.8700000047683716,
+      "maximumHeapMiB": 105.3497428894043,
+      "retainedHeapGrowthMiB": 49.354201316833496,
+      "passed": true
+    },
+    "passed": true
+  },
+  "signature": {
+    "seed": "ten-billion-lives/baseline/v1",
+    "url": "http://127.0.0.1:4173/",
+    "stages": [
+      "Planet",
+      "Settlement",
+      "Festival",
+      "Street",
+      "Person",
+      "Second observer",
+      "Rewind and replay",
+      "Field reveal"
+    ],
+    "population": "10000000000",
+    "cameraInvariant": {
+      "stateHash": "b2007dbd631d0474",
+      "manifestationHash": "dac9fd526f82c8f0",
+      "eventHash": "b0bd84480511f52f"
+    },
+    "observerA": {
+      "personId": "person_0000a4q_0yrj2dd",
+      "itinerary": "Tick 19 · festival",
+      "relationships": "2 coworker · 3 household · 1 recurring-contact",
+      "encounters": "0 known · encounter_621581a359c38589",
+      "events": "festival · festival/lantern-confluence · arrival · festival/lantern-confluence",
+      "manifestationHash": "02ed3e6940e29cbf",
+      "eventHash": "5413d6b8a43f1b94"
+    },
+    "observerB": {
+      "personId": "person_0000a4q_0yrj2dd",
+      "itinerary": "Tick 19 · festival",
+      "relationships": "2 coworker · 3 household · 1 recurring-contact",
+      "encounters": "0 known · encounter_621581a359c38589",
+      "events": "festival · festival/lantern-confluence · arrival · festival/lantern-confluence",
+      "manifestationHash": "02ed3e6940e29cbf",
+      "eventHash": "5413d6b8a43f1b94"
+    },
+    "independentObserver": {
+      "personId": "person_0000a4q_0yrj2dd",
+      "itinerary": "Tick 19 · festival",
+      "relationships": "2 coworker · 3 household · 1 recurring-contact",
+      "encounters": "0 known · encounter_621581a359c38589",
+      "events": "festival · festival/lantern-confluence · arrival · festival/lantern-confluence",
+      "manifestationHash": "02ed3e6940e29cbf",
+      "eventHash": "5413d6b8a43f1b94"
+    },
+    "independentContexts": 2,
+    "requests": 3,
+    "externalRequests": [],
+    "consoleErrors": [],
+    "backend": "canvas2d",
+    "passed": true
+  },
+  "passed": true
+}

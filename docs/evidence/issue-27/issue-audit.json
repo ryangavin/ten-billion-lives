@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-08-30T23:12:32Z",
+  "repository": "ryangavin/ten-billion-lives",
+  "query": "gh issue list --state all --limit 100 --json number,title,state,labels,milestone,url",
+  "closedNonDeferredLocalP0": [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21, 22, 23, 25, 26
+  ],
+  "openNonDeferredLocalP0": [27],
+  "openDeferred": [28],
+  "excludedRetiredDeferred": [17, 18, 19, 20, 24],
+  "onlyGateRemains": true,
+  "passed": true
+}

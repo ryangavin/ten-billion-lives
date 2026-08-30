@@ -2,7 +2,7 @@
 
 One compact planetary field. Exactly ten billion represented lives. Zoom from a fictional planet to Brindle Bay, Harbor Street, and one reproducible person; then initialize a second local observer and see the same identity, itinerary, relationships, and events without a ten-billion-row table.
 
-Ten Billion Lives is a working local-first browser MVP candidate, pending the final #27 handoff gate. Its authoritative simulation uses conserved integer population, activity, place, and mobility fields. Pure seeded queries reconstruct stable local people from that shared state, while WebGPU or Canvas draws a disposable view. Everything runs on one machine with no runtime API, account, server protocol, or remote data source.
+Ten Billion Lives is a validated local-first browser MVP. Its authoritative simulation uses conserved integer population, activity, place, and mobility fields. Pure seeded queries reconstruct stable local people from that shared state, while WebGPU or Canvas draws a disposable view. Everything runs on one machine with no runtime API, account, server protocol, or remote data source. The final clean-checkout audit is retained in [the issue #27 evidence index](docs/evidence/issue-27/INDEX.md).
 
 ![The local observatory at planet scale](docs/evidence/issue-25/landing-desktop.png)
 

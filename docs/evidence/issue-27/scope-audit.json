@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-08-30T23:12:32Z",
+  "commit": "ba703e4e91f2acf4aac931d431d2eb43b6ba8de8",
+  "checks": {
+    "trackedCiOrPagesConfiguration": [],
+    "trackedContainerConfiguration": [],
+    "trackedDeploymentConfiguration": [],
+    "trackedServerImplementation": [],
+    "runtimeExternalDependencies": [],
+    "runtimeLlmOrPaidApiDependencies": [],
+    "signatureJourneyExternalRequests": [],
+    "productionOrigin": "http://127.0.0.1:4173/",
+    "workspaceRuntimeDependencies": [
+      "@ten-billion-lives/manifest",
+      "@ten-billion-lives/render",
+      "@ten-billion-lives/sim"
+    ]
+  },
+  "notes": [
+    "Text matches for prohibited scope are confined to explicit exclusions in repository contracts and documentation.",
+    "The lockfile's cspell dictionaries are development-only transitive spelling assets, not runtime services.",
+    "The production journey made three loopback asset requests and zero external requests."
+  ],
+  "passed": true
+}

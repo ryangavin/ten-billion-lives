@@ -1,0 +1,53 @@
+{
+  "seed": "ten-billion-lives/baseline/v1",
+  "url": "http://127.0.0.1:4173/",
+  "stages": [
+    "Planet",
+    "Settlement",
+    "Festival",
+    "Street",
+    "Person",
+    "Second observer",
+    "Rewind and replay",
+    "Field reveal"
+  ],
+  "population": "10000000000",
+  "cameraInvariant": {
+    "stateHash": "b2007dbd631d0474",
+    "manifestationHash": "dac9fd526f82c8f0",
+    "eventHash": "b0bd84480511f52f"
+  },
+  "observerA": {
+    "personId": "person_0000a4q_0yrj2dd",
+    "itinerary": "Tick 19 · festival",
+    "relationships": "2 coworker · 3 household · 1 recurring-contact",
+    "encounters": "0 known · encounter_621581a359c38589",
+    "events": "festival · festival/lantern-confluence · arrival · festival/lantern-confluence",
+    "manifestationHash": "02ed3e6940e29cbf",
+    "eventHash": "5413d6b8a43f1b94"
+  },
+  "observerB": {
+    "personId": "person_0000a4q_0yrj2dd",
+    "itinerary": "Tick 19 · festival",
+    "relationships": "2 coworker · 3 household · 1 recurring-contact",
+    "encounters": "0 known · encounter_621581a359c38589",
+    "events": "festival · festival/lantern-confluence · arrival · festival/lantern-confluence",
+    "manifestationHash": "02ed3e6940e29cbf",
+    "eventHash": "5413d6b8a43f1b94"
+  },
+  "independentObserver": {
+    "personId": "person_0000a4q_0yrj2dd",
+    "itinerary": "Tick 19 · festival",
+    "relationships": "2 coworker · 3 household · 1 recurring-contact",
+    "encounters": "0 known · encounter_621581a359c38589",
+    "events": "festival · festival/lantern-confluence · arrival · festival/lantern-confluence",
+    "manifestationHash": "02ed3e6940e29cbf",
+    "eventHash": "5413d6b8a43f1b94"
+  },
+  "independentContexts": 2,
+  "requests": 3,
+  "externalRequests": [],
+  "consoleErrors": [],
+  "backend": "canvas2d",
+  "passed": true
+}
