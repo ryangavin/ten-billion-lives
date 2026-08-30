@@ -1,0 +1,23 @@
+{
+  "name": "@ten-billion-lives/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@ten-billion-lives/manifest": "workspace:*",
+    "@ten-billion-lives/render": "workspace:*",
+    "@ten-billion-lives/sim": "workspace:*"
+  },
+  "devDependencies": {
+    "@ten-billion-lives/testkit": "workspace:*",
+    "@types/node": "24.13.3",
+    "typescript": "6.0.3",
+    "vite": "8.2.2"
+  }
+}

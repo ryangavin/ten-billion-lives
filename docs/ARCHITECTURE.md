@@ -15,14 +15,14 @@ The local world has one authoritative state. Its non-negotiable invariants are:
 
 Authority is intentionally narrow:
 
-| Data | Owner | Authoritative? |
-| --- | --- | --- |
-| Seed, schema/kernel versions, branch, tick, population/activity/place/mobility fields | world kernel | yes |
-| Ordered scenario commands and sparse event definitions | scenario log | yes |
-| Snapshot and command/event hashes | replay layer over canonical state | yes |
-| Person, household, itinerary, relationship, encounter, and local event projections | pure manifestation queries | derived but semantically reproducible |
-| Camera, selection, pane layout, quality tier, animation interpolation | local observer UI | no |
-| Meshes, buffers, particles, colors, pixels, frame timing | renderer | no |
+| Data                                                                                  | Owner                             | Authoritative?                        |
+| ------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------- |
+| Seed, schema/kernel versions, branch, tick, population/activity/place/mobility fields | world kernel                      | yes                                   |
+| Ordered scenario commands and sparse event definitions                                | scenario log                      | yes                                   |
+| Snapshot and command/event hashes                                                     | replay layer over canonical state | yes                                   |
+| Person, household, itinerary, relationship, encounter, and local event projections    | pure manifestation queries        | derived but semantically reproducible |
+| Camera, selection, pane layout, quality tier, animation interpolation                 | local observer UI                 | no                                    |
+| Meshes, buffers, particles, colors, pixels, frame timing                              | renderer                          | no                                    |
 
 ## Deterministic world evolution
 
@@ -62,13 +62,13 @@ Daily itineraries are analytical piecewise segments derived from identity, place
 
 Two independently initialized local observers given the same identity epoch, compatible snapshot, branch, tick, region, and LOD profile must agree exactly on:
 
-| Domain | Fields that must match |
-| --- | --- |
-| World context | schema/kernel/identity versions, seed, branch, tick, `stateHash`, `eventHash` |
-| Person | `personId`, population address, represented weight, home, household, role, and work/school/leisure anchors |
-| Relationships | relationship kind, endpoint IDs, symmetry, and canonical order |
-| Itinerary | segment IDs, start/end ticks, origin/destination, route, activity, and integer progress inputs |
-| Moment | canonical location/place, activity, qualifying encounter IDs, event IDs, and membership |
+| Domain        | Fields that must match                                                                                                                      |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| World context | schema/kernel/identity versions, seed, branch, tick, `stateHash`, `eventHash`                                                               |
+| Person        | `personId`, population address, represented weight, home, household, role, and work/school/leisure anchors                                  |
+| Relationships | relationship kind, endpoint IDs, symmetry, and canonical order                                                                              |
+| Itinerary     | segment IDs, start/end ticks, origin/destination, route, activity, and integer progress inputs                                              |
+| Moment        | canonical location/place, activity, qualifying encounter IDs, event IDs, and membership                                                     |
 | Sparse events | event ID/type, branch, start/end tick, place, capacity/demand fields, participants selected by semantic query, and ordered semantic payload |
 
 `stateHash` covers canonical authoritative state. `eventHash` covers the ordered scenario/event prefix through the tick. Derived query results also expose a `manifestHash` so tests can compare the full semantic projection.
@@ -91,42 +91,33 @@ Reload recovery uses the same path: parse, validate schema, validate integer ran
 
 ## Package boundaries
 
-The repository uses a small TypeScript workspace with one-way dependencies. Names describe public responsibilities rather than permission to create extra services.
+The repository uses a small TypeScript workspace with one-way dependencies. The `sim` package keeps the tightly coupled deterministic kernel modules together until measurements justify another boundary; directories inside it preserve the authority rules below.
 
 ```mermaid
 flowchart LR
-  Math[packages/core-math\ninteger allocation + hashing]
-  Contracts[packages/contracts\nversioned values + canonical encoding]
-  World[packages/world-kernel\nfields + fixed-tick evolve]
-  Scenario[packages/scenario\ncommands + sparse events]
-  Manifest[packages/manifestation\npure people + spacetime queries]
-  Replay[packages/replay\nsnapshots + logs + hashes]
-  Render[packages/renderer\nWebGPU + local fallback]
-  Web[apps/observatory\nlocal observer UI]
+  Sim[packages/sim\nmath + contracts + world + scenario + replay]
+  Manifest[packages/manifest\npure people + spacetime queries]
+  Render[packages/render\nWebGPU + local fallback]
+  Testkit[packages/testkit\nfixtures + observers + benchmarks]
+  Web[apps/web\nlocal observer UI]
 
-  Math --> World
-  Math --> Manifest
-  Contracts --> World
-  Contracts --> Scenario
-  World --> Scenario
-  World --> Manifest
-  Scenario --> Manifest
-  Contracts --> Replay
-  World --> Replay
-  Scenario --> Replay
-  Contracts --> Render
+  Sim --> Manifest
+  Sim --> Render
   Manifest --> Render
-  Replay --> Web
+  Sim --> Web
   Manifest --> Web
   Render --> Web
+  Sim -. public fixtures .-> Testkit
+  Manifest -. public fixtures .-> Testkit
+  Testkit -. test/dev only .-> Web
 ```
 
-- `core-math`, `contracts`, `world-kernel`, `scenario`, `manifestation`, and `replay` are platform-neutral and cannot import DOM, browser, renderer, or application modules.
-- `world-kernel` cannot import manifestation or renderer code.
-- `manifestation` consumes readonly contracts/checkpoints and returns plain canonical values.
-- `renderer` receives readonly projections and capability/quality settings; it cannot issue world commands.
-- `apps/observatory` owns cameras, controls, local persistence adapters, and composition. Two app instances can be constructed against the same immutable input with separate UI state.
-- Tests may depend on public package APIs and explicit fixture helpers, never renderer pixels for semantic assertions.
+- `packages/sim` is platform-neutral. Its internal `math`, `contracts`, `world`, `scenario`, and `replay` modules cannot import DOM, browser, manifestation, renderer, or application code; the world module cannot import the replay adapter.
+- `packages/manifest` consumes readonly sim contracts/checkpoints and returns plain canonical values. It cannot import renderer or application code.
+- `packages/render` receives readonly aggregate/manifest projections and capability/quality settings; it cannot issue world commands.
+- `packages/testkit` owns explicit fixtures, golden vectors, observer harnesses, and benchmark drivers. Production packages cannot import it.
+- `apps/web` owns cameras, controls, local persistence adapters, and composition. Two app instances can be constructed against the same immutable input with separate UI state.
+- Tests may depend on public package APIs and `testkit`, never renderer pixels for semantic assertions.
 
 ## Data flow
 
@@ -166,22 +157,22 @@ The intervention is a separate branch command applied to a baseline checkpoint. 
 
 Every material assumption has a later falsifier and a simple local fallback.
 
-| Risky assumption | Objective validation owner | Simplest fallback if the budget/claim fails |
-| --- | --- | --- |
-| Browser `bigint` and canonical hashing are fast enough | golden vectors #6; benchmark profile #4 and #22 | keep wide arithmetic at conservation boundaries and cache immutable canonical encodings |
-| Seeded geography can allocate exactly ten billion | allocation/conservation tests #7 | reduce field resolution, never relax the total |
-| Fixed-point field movement remains conservative | property and long-run tests #8 and gate #10 | simpler integer transfer rules with stable remainder allocation |
-| A deterministic day can express settlements and transport | scenario invariants #9 and replay gate #10 | fewer route/activity classes while preserving the journey |
-| Snapshots and logs replay compatibly | checkpoint/direct replay golden tests #10 | support one explicit schema version and reject all others |
-| Stable person/household/relationship projection is collision-free and believable | fixture/property tests #11 | expose structured population addresses and reduce relationship variety |
-| Analytical itineraries produce stable encounters | spacetime intersection tests #12 | reduce to fewer piecewise route segments |
-| WebGPU is available and materially useful | visual/performance tests #13, #22, #23 | use the committed Canvas/DOM local fallback with fewer visual instances |
-| Weighted LOD reconciles fields and stays camera-independent | conservation/nesting/two-query tests #14 | use fewer named profiles and explicit remainder reporting |
-| The complete semantic journey composes | real-browser milestone gate #16 | simplify presentation without removing a contract step |
-| UI exposes time, narrative, and reality budget clearly | browser inspection #21 and QA #25 | retain a compact text-first inspector |
-| Startup, frame, and memory budgets hold | same-profile benchmarks #22 and QA #25 | lower renderer quality/visible sample count, never authoritative fidelity |
-| Keyboard, touch, browsers, and fallback remain usable | accessibility/browser matrix #23 and #25 | text-first controls and fallback renderer |
-| Clean-checkout handoff is reproducible | documentation audit #26 and final gate #27 | reduce commands/dependencies rather than add remote infrastructure |
+| Risky assumption                                                                 | Objective validation owner                      | Simplest fallback if the budget/claim fails                                             |
+| -------------------------------------------------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Browser `bigint` and canonical hashing are fast enough                           | golden vectors #6; benchmark profile #4 and #22 | keep wide arithmetic at conservation boundaries and cache immutable canonical encodings |
+| Seeded geography can allocate exactly ten billion                                | allocation/conservation tests #7                | reduce field resolution, never relax the total                                          |
+| Fixed-point field movement remains conservative                                  | property and long-run tests #8 and gate #10     | simpler integer transfer rules with stable remainder allocation                         |
+| A deterministic day can express settlements and transport                        | scenario invariants #9 and replay gate #10      | fewer route/activity classes while preserving the journey                               |
+| Snapshots and logs replay compatibly                                             | checkpoint/direct replay golden tests #10       | support one explicit schema version and reject all others                               |
+| Stable person/household/relationship projection is collision-free and believable | fixture/property tests #11                      | expose structured population addresses and reduce relationship variety                  |
+| Analytical itineraries produce stable encounters                                 | spacetime intersection tests #12                | reduce to fewer piecewise route segments                                                |
+| WebGPU is available and materially useful                                        | visual/performance tests #13, #22, #23          | use the committed Canvas/DOM local fallback with fewer visual instances                 |
+| Weighted LOD reconciles fields and stays camera-independent                      | conservation/nesting/two-query tests #14        | use fewer named profiles and explicit remainder reporting                               |
+| The complete semantic journey composes                                           | real-browser milestone gate #16                 | simplify presentation without removing a contract step                                  |
+| UI exposes time, narrative, and reality budget clearly                           | browser inspection #21 and QA #25               | retain a compact text-first inspector                                                   |
+| Startup, frame, and memory budgets hold                                          | same-profile benchmarks #22 and QA #25          | lower renderer quality/visible sample count, never authoritative fidelity               |
+| Keyboard, touch, browsers, and fallback remain usable                            | accessibility/browser matrix #23 and #25        | text-first controls and fallback renderer                                               |
+| Clean-checkout handoff is reproducible                                           | documentation audit #26 and final gate #27      | reduce commands/dependencies rather than add remote infrastructure                      |
 
 ## Rejected alternatives
 
@@ -199,13 +190,13 @@ Server processes, WebSocket design, networking, shared remote state, CI, GitHub 
 
 ## Architecture review against the journey
 
-| Journey step | Contract path | Validation gate |
-| --- | --- | --- |
-| Planet and exact total | baseline → integer fields → aggregate projection | #5, #10, #27 |
-| Settlement and festival | world fields + observer-independent sparse scenario | #5, #16, #25 |
-| Street and person | region/LOD query → stable address → person/itinerary projection | #5, #16 |
-| Second observer | duplicate immutable inputs → exact semantic/hash comparison | #16, #25, #27 |
-| Rewind | compatible snapshot + ordered command suffix → verified hashes | #10, #16, #27 |
-| Field reveal | authoritative state + derived projection + renderer counts | #16, #21, #27 |
+| Journey step            | Contract path                                                   | Validation gate |
+| ----------------------- | --------------------------------------------------------------- | --------------- |
+| Planet and exact total  | baseline → integer fields → aggregate projection                | #5, #10, #27    |
+| Settlement and festival | world fields + observer-independent sparse scenario             | #5, #16, #25    |
+| Street and person       | region/LOD query → stable address → person/itinerary projection | #5, #16         |
+| Second observer         | duplicate immutable inputs → exact semantic/hash comparison     | #16, #25, #27   |
+| Rewind                  | compatible snapshot + ordered command suffix → verified hashes  | #10, #16, #27   |
+| Field reveal            | authoritative state + derived projection + renderer counts      | #16, #21, #27   |
 
 This review leaves no product step dependent on camera state, per-person storage, networking, or GPU authority.

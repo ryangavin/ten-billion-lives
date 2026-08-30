@@ -25,7 +25,9 @@ const requiredSections = [
 
 for (const section of requiredSections) {
   if (!architecture.includes(section)) {
-    throw new Error(`docs/ARCHITECTURE.md is missing required section: ${section}`);
+    throw new Error(
+      `docs/ARCHITECTURE.md is missing required section: ${section}`,
+    );
   }
 }
 
@@ -42,7 +44,9 @@ const requiredContracts = [
 
 for (const contract of requiredContracts) {
   if (!architecture.includes(contract)) {
-    throw new Error(`docs/ARCHITECTURE.md is missing required contract: ${contract}`);
+    throw new Error(
+      `docs/ARCHITECTURE.md is missing required contract: ${contract}`,
+    );
   }
 }
 

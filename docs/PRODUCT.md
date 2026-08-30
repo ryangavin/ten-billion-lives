@@ -64,16 +64,16 @@ The explicit intervention opens a temporary **harbor walking-and-transit connect
 
 ## Success metrics
 
-| Product promise | Objective signal | Gate owner |
-| --- | --- | --- |
-| Exact scale | Baseline conserved sum is `10,000,000,000` at initialization and every simulated tick | #7, #8, #10, #27 |
-| Stable individuality | Repeated, camera-independent queries reproduce identity, household, itinerary, relationships, encounters, and events | #11, #12, #14, #16 |
-| Shared observation | Two independent local views agree on semantic identities and event hashes at the same context | #14, #16, #25, #27 |
-| Deterministic time | Two replays and rewind/replay produce matching state and event hashes | #10, #16, #25, #27 |
-| Complete exploration | The planet-to-field-reveal signature journey passes uninterrupted in a real browser | #5, #16, #21, #25, #27 |
-| Honest compactness | Reality-budget UI and retained measurements distinguish authoritative, derived, and GPU-only work | #4, #21, #22, #27 |
-| Usable locally | Committed browser, performance, memory, accessibility, touch, and fallback budgets pass | #22, #23, #25, #27 |
-| Reproducible handoff | Clean-checkout install, checks, production build, and one-command preview follow the documentation | #3, #26, #27 |
+| Product promise      | Objective signal                                                                                                     | Gate owner             |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| Exact scale          | Baseline conserved sum is `10,000,000,000` at initialization and every simulated tick                                | #7, #8, #10, #27       |
+| Stable individuality | Repeated, camera-independent queries reproduce identity, household, itinerary, relationships, encounters, and events | #11, #12, #14, #16     |
+| Shared observation   | Two independent local views agree on semantic identities and event hashes at the same context                        | #14, #16, #25, #27     |
+| Deterministic time   | Two replays and rewind/replay produce matching state and event hashes                                                | #10, #16, #25, #27     |
+| Complete exploration | The planet-to-field-reveal signature journey passes uninterrupted in a real browser                                  | #5, #16, #21, #25, #27 |
+| Honest compactness   | Reality-budget UI and retained measurements distinguish authoritative, derived, and GPU-only work                    | #4, #21, #22, #27      |
+| Usable locally       | Committed browser, performance, memory, accessibility, touch, and fallback budgets pass                              | #22, #23, #25, #27     |
+| Reproducible handoff | Clean-checkout install, checks, production build, and one-command preview follow the documentation                   | #3, #26, #27           |
 
 Exact numeric performance and memory budgets belong to #4 so they are measured and committed against a named hardware/browser profile rather than guessed here.
 
@@ -81,19 +81,19 @@ Exact numeric performance and memory budgets belong to #4 so they are measured a
 
 Each condition is independently falsifiable and owned by later local issues:
 
-| Local acceptance condition | Required evidence | Owning issues |
-| --- | --- | --- |
-| Documented clean checkout installs, checks, builds, and launches a production preview | command transcript from the documented supported toolchain | #3, #26, #27 |
-| Baseline represents exactly 10 billion people without per-person storage | conservation tests, state inspection, and reality-budget counts | #7, #8, #10, #21, #27 |
-| Authoritative fields use integers/fixed point and manifestation is pure and camera-independent | architecture record, unit/property tests, and observer comparison | #2, #6, #11, #14, #16 |
-| Primary journey works without interruption | retained real-browser trace, screenshots, and signature recording | #5, #16, #21, #25, #27 |
-| Independent observers share semantic identity and events | automated two-instance assertion plus browser evidence | #14, #16, #25, #27 |
-| Replay is deterministic | two replay runs with identical state/event hashes and rewind proof | #10, #16, #25, #27 |
-| Visual hierarchy and fallback remain usable | retained reference screenshots and fallback journey | #13, #16, #23, #25 |
-| Performance and memory stay within committed budgets | same-profile before/after or gate measurements | #4, #16, #22, #25, #27 |
-| Accessibility, keyboard, touch, and supported local browsers pass | automated audit plus recorded browser matrix | #23, #25, #27 |
-| Documentation states the architecture, limits, and exact local commands | link and clean-checkout audit | #26, #27 |
-| No local release-blocking defect remains | GitHub query for zero open `priority:p0` + `phase:local` issues except the active gate | #5, #10, #16, #27 |
+| Local acceptance condition                                                                     | Required evidence                                                                      | Owning issues          |
+| ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------- |
+| Documented clean checkout installs, checks, builds, and launches a production preview          | command transcript from the documented supported toolchain                             | #3, #26, #27           |
+| Baseline represents exactly 10 billion people without per-person storage                       | conservation tests, state inspection, and reality-budget counts                        | #7, #8, #10, #21, #27  |
+| Authoritative fields use integers/fixed point and manifestation is pure and camera-independent | architecture record, unit/property tests, and observer comparison                      | #2, #6, #11, #14, #16  |
+| Primary journey works without interruption                                                     | retained real-browser trace, screenshots, and signature recording                      | #5, #16, #21, #25, #27 |
+| Independent observers share semantic identity and events                                       | automated two-instance assertion plus browser evidence                                 | #14, #16, #25, #27     |
+| Replay is deterministic                                                                        | two replay runs with identical state/event hashes and rewind proof                     | #10, #16, #25, #27     |
+| Visual hierarchy and fallback remain usable                                                    | retained reference screenshots and fallback journey                                    | #13, #16, #23, #25     |
+| Performance and memory stay within committed budgets                                           | same-profile before/after or gate measurements                                         | #4, #16, #22, #25, #27 |
+| Accessibility, keyboard, touch, and supported local browsers pass                              | automated audit plus recorded browser matrix                                           | #23, #25, #27          |
+| Documentation states the architecture, limits, and exact local commands                        | link and clean-checkout audit                                                          | #26, #27               |
+| No local release-blocking defect remains                                                       | GitHub query for zero open `priority:p0` + `phase:local` issues except the active gate | #5, #10, #16, #27      |
 
 Gate issues #5, #10, #16, and #27 run the outer validation appropriate to the implemented milestone. Issue #27 owns the final independent audit and is the only authority for declaring the local MVP complete.
 

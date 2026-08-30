@@ -29,11 +29,33 @@ Local-first MVP planning complete. The executable work plan is tracked in GitHub
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). The project is available under the [MIT License](LICENSE).
 
-## Current local check
+## Local development
 
-Until issue #3 establishes the complete application workflow, validate the product-contract foundation from the repository root with:
+The supported toolchain is Node.js 24.18.0 LTS and pnpm 11.24.0, pinned in `.node-version`, `.nvmrc`, `package.json`, and the lockfile. From a clean checkout:
 
 ```sh
-node scripts/check-product-contract.mjs
-node scripts/check-architecture-contract.mjs
+nvm install
+corepack enable
+corepack install --global pnpm@11.24.0
+pnpm install --frozen-lockfile
+pnpm exec playwright install chromium
+pnpm check
+pnpm test:e2e
 ```
+
+The root commands are:
+
+| Command          | Purpose                                                                |
+| ---------------- | ---------------------------------------------------------------------- |
+| `pnpm dev`       | Launch the local Vite development app at the printed loopback URL      |
+| `pnpm build`     | Type-check packages and create the production browser build            |
+| `pnpm preview`   | Serve the production build locally at `http://localhost:4173`          |
+| `pnpm test`      | Run deterministic unit and contract tests once                         |
+| `pnpm test:e2e`  | Build, preview, and run the Chromium browser smoke journey             |
+| `pnpm lint`      | Run ESLint across the workspace                                        |
+| `pnpm typecheck` | Run strict TypeScript checks in every package                          |
+| `pnpm check`     | Run formatting, lint, type, unit/contract, and production build checks |
+
+`pnpm format` updates supported text files. The smoke fixture is seed- and tick-driven and does not consult ambient time. If the browser surface fails to render, its fallback message points back to `pnpm check`; terminal failures retain the failing command and package.
+
+The workspace contains the local Vite app in `apps/web` and deterministic seams in `packages/sim`, `packages/manifest`, `packages/render`, and `packages/testkit`. There is no server package or remote runtime dependency.

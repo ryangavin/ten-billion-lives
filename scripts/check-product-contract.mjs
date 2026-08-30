@@ -43,7 +43,9 @@ const requiredStatements = [
 
 for (const statement of requiredStatements) {
   if (!product.includes(statement)) {
-    throw new Error(`docs/PRODUCT.md is missing required statement: ${statement}`);
+    throw new Error(
+      `docs/PRODUCT.md is missing required statement: ${statement}`,
+    );
   }
 }
 
@@ -51,7 +53,7 @@ if (!readme.includes("docs/PRODUCT.md")) {
   throw new Error("README.md does not link to docs/PRODUCT.md");
 }
 
-if (!readme.includes("node scripts/check-product-contract.mjs")) {
+if (!readme.includes("pnpm check")) {
   throw new Error("README.md does not document the current root local check");
 }
 
