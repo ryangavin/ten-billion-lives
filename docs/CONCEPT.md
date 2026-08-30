@@ -1,0 +1,13 @@
+# Field-first emergence: a conceptual note
+
+Ten Billion Lives starts with a constraint rather than a cast of characters: a fictional planet contains exactly ten billion represented lives, yet a local computer cannot and should not keep ten billion richly simulated agents. The design therefore asks a narrower question. How much shared structure is needed for a close view to feel coherent, and for two observers to recover the same answer?
+
+The authoritative layer is a field. Integer population is distributed across geography, cohorts, activities, places, and mobility channels. Sparse events alter named capacities or routes. The state says how many represented lives occupy each channel and how flows balance; conservation makes the total auditable. It contains no camera and no visual detail.
+
+A person appears when an observer asks a semantic question of that field. A versioned seed, cell address, ordinal, branch, and tick select an identity reproducibly. The same address determines a household and recurring places; analytical schedules and routes determine a moment; spacetime intersections determine encounters. The query is not a birth event and does not awaken a process. It is closer to evaluating a function: the result was implicit in the shared inputs and can be reconstructed after eviction.
+
+This creates a useful kind of emergence inside the demonstration. A compact global description supports local facts that are not stored as a table, while consistency rules make those facts survive another view, another quality tier, or a replay. The visible individuality is richer than any single field count, but it remains accountable to that count. The reality-budget panel is part of the idea: it shows the difference between authoritative cells, derived semantic projections, and temporary rendering work.
+
+The second observer is the strongest conceptual test. If identity depended on camera order, frame timing, or a mutable random stream, the observers could disagree. Instead they begin from the same versioned semantic inputs and reproduce the same person and event hashes without communicating. Agreement comes from a shared deterministic contract, not from synchronization after the fact.
+
+This is a software demonstration, not physical evidence. It does not show that real consciousness, societies, or universes emerge this way; it does not model ten billion minds; and it cannot validate claims about physics, biology, sociology, or metaphysics. It offers a concrete interface for thinking about representation, reconstruction, observer-independent semantics, and the honest limits of procedural worlds.

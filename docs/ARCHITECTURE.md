@@ -36,7 +36,37 @@ S[t+1] = evolve(S[t], commands[t])
 
 All division uses a named integer rule (floor unless the domain contract says otherwise). Conservation allocations use largest remainder with stable identifier tie-breaking. Fixed-point scales live beside their field definitions; implicit floating-point conversions are forbidden in the kernel. Development assertions check safe ranges and the population invariant at every transition. Canonical hashing uses explicitly ordered fields and encoded integer values, never default object serialization.
 
-The baseline is a deterministic 1,440-tick day. Direct seeking loads a compatible checkpoint and evolves canonical commands to the target tick. Playback rate changes how quickly ticks are requested, not the result of a tick.
+The baseline is a deterministic 24-tick day, with one analytical activity tick displayed as one local hour. Direct seeking loads a compatible checkpoint and evolves canonical commands to the target tick. Playback rate changes how quickly ticks are requested, not the result of a tick.
+
+## Simulation equations
+
+The implementation uses 24 analytical activity ticks per repeating day. For cell `i`, its present population is partitioned into activity channels with largest-remainder allocation:
+
+```text
+A[i,c,t] = largestRemainder(Present[i,t], W[c,t] + Influence[i,c,t])
+```
+
+`c` is sleep, home, work, transit, or community. Weights are integer schedules; only the community channel receives the bounded event influence. Largest-remainder allocation and stable index tie-breaking guarantee:
+
+```text
+sum(c, A[i,c,t]) = Present[i,t]
+```
+
+Transit demand is an integer floor calculation:
+
+```text
+D[i,t] = floor(A[i,transit,t] * CapacityPermille[i] / 4000)
+```
+
+A domain-separated counter selects one canonical neighbor. Each flux subtracts `D[i,t]` from the source transit channel and adds it to the destination transit channel. Because the same integer appears once with each sign:
+
+```text
+sum(i, Present[i,t+1]) = sum(i, Present[i,t]) = 10,000,000,000
+```
+
+Resident/cohort fields are separately conserved. The planetary-day transport layer uses the same largest-remainder rule to divide cohorts among home, work, school, service, leisure, and sleep; edge demand is capped by integer capacity, ordered by stable edge ID, and altered only by the versioned route-open/route-close command log. The full state is hashed after every transition, so a conservation, order, or rounding change is a semantic version decision.
+
+Manifestation does not integrate another dynamic system. A versioned affine permutation maps `(seed, homeCellId, localOrdinal)` bijectively into a global population address and opaque `personId`. Household/place slots, names, appearance, relationships, schedules, routes, and encounters use separately domain-separated hashes of that address. Named LOD profiles select nested stable priorities and attach integer represented weights; changing the sample count changes cost, never the underlying address or semantic result.
 
 ## Pure manifestation and identity
 
@@ -102,15 +132,13 @@ flowchart LR
   Web[apps/web\nlocal observer UI]
 
   Sim --> Manifest
-  Sim --> Render
-  Manifest --> Render
   Sim --> Web
   Manifest --> Web
   Render --> Web
-  Sim -. public fixtures .-> Testkit
-  Manifest -. public fixtures .-> Testkit
   Testkit -. test/dev only .-> Web
 ```
+
+**Text alternative:** Production dependency flow runs from `packages/sim` into `packages/manifest` and the web app, and from `packages/manifest` and `packages/render` into the web app. `packages/testkit` reaches only the web app as a development dependency. No production package depends on the app or testkit.
 
 - `packages/sim` is platform-neutral. Its internal `math`, `contracts`, `world`, `scenario`, and `replay` modules cannot import DOM, browser, manifestation, renderer, or application code; the world module cannot import the replay adapter.
 - `packages/manifest` consumes readonly sim contracts/checkpoints and returns plain canonical values. It cannot import renderer or application code.
@@ -138,6 +166,8 @@ flowchart TD
   ViewA -. never feeds authority .-> Renderer
   ViewB -. never feeds authority .-> Renderer
 ```
+
+**Text alternative:** A seed initializes deterministic fields and an ordered local command log advances them. Authoritative state produces hashes/snapshots and feeds pure semantic queries. Semantic projections flow one way into WebGPU or Canvas and then two separate observer views. Neither observer can feed camera or UI state back into authority.
 
 For the product journey, planet and settlement views read aggregate world fields; street/person/festival views request manifestations; the second observer repeats those queries independently; rewind uses snapshot plus replay; field reveal shows the authoritative and derived values already present at these boundaries.
 

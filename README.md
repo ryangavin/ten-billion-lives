@@ -1,67 +1,96 @@
 # Ten Billion Lives
 
-One compact planetary field. Ten billion represented lives. Any observer can zoom from the whole planet to a street, select a person, and witness the same deterministic identity, itinerary, relationships, and events as every other observer—without storing ten billion agent records.
+One compact planetary field. Exactly ten billion represented lives. Zoom from a fictional planet to Brindle Bay, Harbor Street, and one reproducible person; then initialize a second local observer and see the same identity, itinerary, relationships, and events without a ten-billion-row table.
 
-This repository will first deliver a local browser-based interactive observatory for a fictional Earth-like planet. The authoritative simulation operates on conserved population, place, and mobility fields. The browser procedurally manifests stable local people from that shared state. Networked sharing and deployment are explicitly deferred until the local concept is compelling and validated.
+Ten Billion Lives is a working local-first browser MVP candidate, pending the final #27 handoff gate. Its authoritative simulation uses conserved integer population, activity, place, and mobility fields. Pure seeded queries reconstruct stable local people from that shared state, while WebGPU or Canvas draws a disposable view. Everything runs on one machine with no runtime API, account, server protocol, or remote data source.
 
-## Product promise
+![The local observatory at planet scale](docs/evidence/issue-25/landing-desktop.png)
 
-- Exactly 10,000,000,000 represented people in the baseline world.
-- Continuous planet-to-person exploration.
-- Stable, camera-independent manifested identities.
-- Shared semantic events across two independent local observers.
-- Peaceful daily-life systems: homes, work, school, transit, leisure, and festivals.
-- Deterministic replay and a visible “reality budget” explaining how little state is required.
+## What it demonstrates
 
-The project does **not** claim to simulate ten billion independent minds. Its subject is the emergence of consistent apparent individuality from a compact shared field.
+- The baseline represents exactly **10,000,000,000** fictional people at initialization and after every tick.
+- Camera-independent queries recover the same person, household, itinerary, relationships, encounters, and event membership for the same semantic inputs.
+- Two independently initialized local views reproduce the same semantic identity and event hashes.
+- Snapshot restore and replay converge on committed hashes.
+- A complete Planet → Settlement → Street → Person → Festival → Replay → Field reveal journey works in Chromium, WebKit, mobile emulation, and the Canvas fallback.
 
-The frozen [local MVP product contract](docs/PRODUCT.md) defines the honest claim and non-claim, five-minute journey, continuity rules, success metrics, evidence owners, and explicit non-goals. The [local architecture contract](docs/ARCHITECTURE.md) records authoritative state, deterministic manifestation/replay, package boundaries, and the exact two-observer semantic guarantee.
+The project does **not** run ten billion independent minds or agent loops. It demonstrates coherent apparent individuality reconstructed from compact fields. It is a software and product experiment, not evidence for a physical or social theory.
 
-## Status
+## Quickstart
 
-Local-first MVP planning complete. The executable work plan is tracked in GitHub milestones and issues; server deployment is a separate future phase.
-
-- [Milestones](https://github.com/ryangavin/ten-billion-lives/milestones)
-- [Final local-MVP gate and master checklist](https://github.com/ryangavin/ten-billion-lives/issues/27)
-- [Autonomous Codex goal prompt](GOAL.md)
-
-## Contributing and license
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). The project is available under the [MIT License](LICENSE).
-
-## Local development
-
-The supported toolchain is Node.js 24.18.0 LTS and pnpm 11.24.0, pinned in `.node-version`, `.nvmrc`, `package.json`, and the lockfile. From a clean checkout:
+Prerequisites are Node.js 24.18.0 and pnpm 11.24.0. From a clean checkout:
 
 ```sh
 nvm install
 corepack enable
 corepack install --global pnpm@11.24.0
 pnpm install --frozen-lockfile
+pnpm start
+```
+
+`pnpm start` builds every package and launches the production browser app on the printed loopback URL, normally `http://127.0.0.1:4173`. Stop it with Ctrl-C. The detailed [quickstart and troubleshooting guide](docs/QUICKSTART.md) covers browser installation, fallback behavior, snapshots, ports, and build failures.
+
+## Guided journey
+
+1. Confirm the header says `10,000,000,000 represented lives` and the world time is paused.
+2. Enter **Brindle Bay**, then **Harbor Street**, and select the highlighted resident.
+3. Inspect the stable person ID, household, role, itinerary, relationships, encounters, and local semantic events.
+4. Initialize observer B and confirm **Semantic match**.
+5. Visit **Lantern Tide**, follow a departure, and compare the reversible closure branch.
+6. Rewind and replay, then reveal the field/reality budget: 2,048 authoritative integer cells, zero stored person rows, weighted visible projections, and state/event hashes.
+
+The [product contract](docs/PRODUCT.md) explains the complete five-minute story and the exact success criteria.
+
+## Local validation
+
+```sh
 pnpm exec playwright install chromium webkit
 pnpm check
 pnpm test:e2e
+pnpm qa:replay
+pnpm qa:benchmarks
 ```
 
-The root commands are:
+`pnpm check` includes formatting, spelling, local documentation links/snippets, lint, strict types, 76 deterministic unit/contract tests, and the production build. The independent #25 gate passed 24 applicable browser cases with zero unexpected or flaky outcomes. All current performance budgets passed; the retained 30-minute soak stayed within its frame and memory budgets. See [testing and evidence](docs/TESTING.md) and [benchmark methodology](docs/BENCHMARKS.md).
 
-| Command                 | Purpose                                                                                 |
-| ----------------------- | --------------------------------------------------------------------------------------- |
-| `pnpm dev`              | Launch the local Vite development app at the printed loopback URL                       |
-| `pnpm build`            | Type-check packages and create the production browser build                             |
-| `pnpm benchmark`        | Build, measure local CPU/browser workloads, write JSON/report, and check coarse budgets |
-| `pnpm benchmark:kernel` | Measure checkpoint size/save/load/replay/memory and enforce M1 kernel budgets           |
-| `pnpm benchmark:check`  | Check the committed baseline against catastrophic regression limits                     |
-| `pnpm preview`          | Serve the production build locally at `http://localhost:4173`                           |
-| `pnpm replay:world`     | Print deterministic full-day and three-checkpoint replay hashes                         |
-| `pnpm test`             | Run deterministic unit and contract tests once                                          |
-| `pnpm test:e2e`         | Build, preview, and run the Chromium browser smoke journey                              |
-| `pnpm lint`             | Run ESLint across the workspace                                                         |
-| `pnpm typecheck`        | Run strict TypeScript checks in every package                                           |
-| `pnpm check`            | Run formatting, lint, type, unit/contract, and production build checks                  |
+## Architecture at a glance
 
-`pnpm format` updates supported text files. The smoke fixture is seed- and tick-driven and does not consult ambient time. If the browser surface fails to render, its fallback message points back to `pnpm check`; terminal failures retain the failing command and package.
+```text
+seed + commands → integer world fields → snapshot/state/event hashes
+                                      ↘ pure manifestation queries
+                                        → semantic people/events
+                                          → WebGPU or Canvas projection
+```
 
-The workspace contains the local Vite app in `apps/web` and deterministic seams in `packages/sim`, `packages/manifest`, `packages/render`, and `packages/testkit`. There is no server package or remote runtime dependency.
+`packages/sim` owns authority and replay; `packages/manifest` derives people and itineraries; `packages/render` projects immutable scenes; `packages/testkit` owns fixtures and regression helpers; `apps/web` composes the local observer. Camera and renderer state never flow back into authority. The full [architecture contract](docs/ARCHITECTURE.md) includes equations, package boundaries, data flow, identity construction, determinism, formats, and LOD semantics.
 
-The [deterministic primitive contract](docs/DETERMINISM.md) documents authoritative arithmetic, encoding, hashing, domain separation, allocation, permutation, tick, failure, and cross-runtime golden guarantees. The [local format contract](docs/FORMATS.md) freezes world, event, and checkpoint version 1 plus its fail-closed migration policy.
+## Known limitations
+
+- This is a fictional, one-day analytical demonstration, not a demographic model, historical simulation, consciousness model, or scientific validation of emergence.
+- Visible figures are weighted deterministic manifestations; visual density changes with local capability while semantics do not.
+- Chromium 151 and WebKit 26.5 are validated locally. Firefox was unavailable on the validation machine and is not claimed as tested.
+- WebGPU is optional. Canvas preserves the complete journey with fewer visible tokens.
+- Person links are local reconstruction references, not remote shared sessions.
+
+The complete [claims, non-claims, and limitations](docs/LIMITATIONS.md) are part of the product contract, not fine print.
+
+## Documentation
+
+- [Quickstart and troubleshooting](docs/QUICKSTART.md)
+- [Product story and guided journey](docs/PRODUCT.md)
+- [Architecture, equations, packages, data flow, identity, and LOD](docs/ARCHITECTURE.md)
+- [Determinism](docs/DETERMINISM.md) and [snapshot/event formats](docs/FORMATS.md)
+- [Browser and accessibility support](docs/COMPATIBILITY.md)
+- [Benchmark methodology and baseline](docs/BENCHMARKS.md)
+- [Testing and evidence](docs/TESTING.md)
+- [Dependencies and licenses](docs/DEPENDENCIES.md)
+- [Field-first emergence: conceptual note](docs/CONCEPT.md)
+- [Contributing](CONTRIBUTING.md)
+
+## Deferred networking and deployment
+
+Networking, shared remote observation, deployment, cloud services, CI, Pages, containers, and production operations are deliberately absent. They will be planned only after the local MVP is validated, under separate deferred issues. This repository contains no deployment or server runbook.
+
+## Contributing and license
+
+GitHub issues and milestones define scope and dependency order. Read [CONTRIBUTING.md](CONTRIBUTING.md) and the current issue before changing code. The project is available under the [MIT License](LICENSE), and its runtime/development dependency licenses are documented in [docs/DEPENDENCIES.md](docs/DEPENDENCIES.md).

@@ -18,10 +18,10 @@ The uninterrupted signature journey is:
 
 1. **Planet:** launch the baseline world and see the exact represented population, current tick, seed, and compact reality budget.
 2. **Settlement:** select a visible population concentration and descend into the fictional settlement of Brindle Bay.
-3. **Festival:** advance to the Lantern Tide gathering and see peaceful attendance and transit activity emerge from the fields.
-4. **Street:** continue without a loading discontinuity to a street-scale view with homes, destinations, routes, and manifested people.
-5. **Person:** select and follow one person; inspect their stable identifier, household, home, role, itinerary, relationships, current activity, encounters, and event participation.
-6. **Second local observer:** open an independently initialized second pane or tab with the same seed, snapshot, and tick. Navigate independently to the shared person and verify the same semantic identity, itinerary, encounters, and event hashes.
+3. **Street:** continue without a loading discontinuity to a street-scale view with homes, destinations, routes, and manifested people.
+4. **Person:** select and follow one person; inspect their stable identifier, household, home, role, itinerary, relationships, current activity, encounters, and event participation.
+5. **Second local observer:** initialize a second local pane from the same seed, snapshot, and tick. Verify the same semantic identity, itinerary, encounters, and event hashes.
+6. **Festival and intervention:** visit the Lantern Tide gathering, follow peaceful attendance and transit activity, then compare one reversible route-closure branch with the immutable baseline.
 7. **Rewind:** move backward, then replay to the comparison tick and recover the same state and event hashes.
 8. **Field reveal:** expose the population/activity cells, manifestation weights, authoritative-versus-derived boundary, and storage counts behind the visible scene.
 
@@ -29,9 +29,9 @@ Success means the journey remains legible and continuous on the reference local 
 
 ## Secondary journeys
 
-- Pause, scrub, and change time rate while following a person, then return to the same tick without changing their semantic state.
+- Pause, step, change time rate, and choose named itinerary ticks while following a person, then return to the same tick without changing their semantic state.
 - Copy a compact local observation reference and resolve it in another independently initialized local view.
-- Toggle the planned transit intervention, compare the baseline and intervention branches, and return to the untouched baseline.
+- Toggle the local route-closure intervention, compare the baseline and closure branches, and return to the untouched baseline.
 - Inspect an accessibility-first textual summary when reduced motion, keyboard navigation, touch input, or the rendering fallback is active.
 - Run the documented local checks and deterministic replay from a clean checkout without external services.
 
@@ -39,12 +39,12 @@ Success means the journey remains legible and continuous on the reference local 
 
 **Lantern Tide** is a fictional, culturally neutral, daytime waterfront festival in Brindle Bay. Residents visit shared art, food, music, and garden spaces. Its attendance is an aggregate demand field; locally visible participants and encounters are deterministic manifestations of that field.
 
-The explicit intervention opens a temporary **harbor walking-and-transit connector** during the festival. It changes route capacity and travel time on a named local branch; it does not create or remove people. The baseline remains immutable, both branches conserve population, and the UI labels all intervention results as a comparison rather than history.
+The explicit intervention temporarily closes one canonical intercity edge at tick 7 and reopens it at tick 9. It changes aggregate edge flow and gives the selected traveler a deterministic detour; it does not create or remove people. The baseline remains immutable, both branches conserve population, and the UI labels all intervention results as a comparison rather than history.
 
 ## Baseline world and continuity
 
-- The baseline scenario covers one repeating fictional 24-hour day at one-minute authoritative ticks.
-- Controls provide pause, play, step, rewind/scrub, and clearly labeled time rates. Reaching a tick directly or by replay must produce the same semantics.
+- The baseline scenario covers one repeating fictional 24-hour day at 24 analytical hourly ticks.
+- Controls provide pause, play, one-tick step, named time rates, direct itinerary ticks, and rewind/replay. Reaching a tick directly or by replay must produce the same semantics.
 - An observer may orbit and zoom, choose a settlement or event, inspect/follow a person, reveal fields, compare the intervention, and open an independent observer view.
 - Camera position, frame timing, render quality, pane layout, and inspection history cannot affect authoritative or manifested semantic state.
 - A manifested person must retain the same stable identifier, household, home, work/school/leisure role, symmetric relationships, analytical itinerary, location/activity at a tick, qualifying encounters, and event membership for the same seed, snapshot, branch, and tick.
@@ -60,7 +60,7 @@ The explicit intervention opens a temporary **harbor walking-and-transit connect
 - **Event:** a deterministic peaceful shared occurrence with stable membership and hashable semantics.
 - **Reality budget:** visible counts and sizes for authoritative cells, derived manifestations, retained snapshots/events, and rendering work.
 - **Baseline:** the immutable canonical seed, geography, population allocation, and 24-hour scenario.
-- **Intervention branch:** an explicit local what-if derived from the baseline without mutating it.
+- **Intervention branch:** an explicit local route-closure what-if derived from the baseline without mutating it.
 
 ## Success metrics
 
@@ -105,4 +105,4 @@ Anything labeled `phase:deferred` is a separate future phase and cannot become a
 
 ## Decision status
 
-The claim, journey, event, intervention, duration, controls, observer model, continuity rules, evidence owners, and non-goals above are frozen for the local MVP. Later issues may choose the smallest implementation that satisfies this contract, but changing a product-level choice requires explicit issue evidence and an update here.
+The claim, journey, event, implemented intervention, 24-tick duration, controls, observer model, continuity rules, evidence owners, and non-goals above are frozen for the local MVP. Issue #26 reconciled the early one-minute/connector sketches with the validated 24-tick route-closure implementation; any later product-level change requires explicit issue evidence and an update here.
