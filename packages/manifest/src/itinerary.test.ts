@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 
 import {
   BASELINE_WORLD_SEED,
@@ -22,7 +23,82 @@ describe("analytical person itineraries", () => {
     "adult",
     42n,
   );
-  const stateAt = (tick: number) => advanceWorldKernel(kernel, tick);
+  const states = [kernel];
+  for (let tick = 1; tick <= 24; tick += 1)
+    states.push(advanceWorldKernel(states[tick - 1] ?? kernel, 1));
+  const stateAt = (tick: number) =>
+    states[tick] ?? advanceWorldKernel(kernel, tick);
+
+  it("matches committed 24-hour, closure, and festival golden traces", () => {
+    const fixture = JSON.parse(
+      readFileSync(
+        new URL("../fixtures/itinerary-golden-v1.json", import.meta.url),
+        "utf8",
+      ),
+    ) as {
+      worldHash: string;
+      eventHash: string;
+      personId: string;
+      trace: unknown;
+      closure: { personId: string; points: unknown };
+      festival: { personId: string; points: unknown };
+    };
+    const tracePoint = (personId: string, tick: number) => {
+      const point = itinerary.queryPerson(
+        personId,
+        BigInt(tick),
+        stateAt(tick),
+      );
+      return [
+        point.tick.toString(),
+        point.activity,
+        point.location.semanticId,
+        point.route?.edgeIds.length ?? 0,
+        point.route?.replannedAtTick?.toString() ?? null,
+        point.encounterGroupId,
+        point.semanticHash,
+      ];
+    };
+    expect(world.worldHash).toBe(fixture.worldHash);
+    expect(kernel.eventHash).toBe(fixture.eventHash);
+    expect(
+      Array.from({ length: 25 }, (_value, tick) =>
+        tracePoint(fixture.personId, tick),
+      ),
+    ).toEqual(fixture.trace);
+    expect(
+      [7, 8, 9].map((tick) => {
+        const point = itinerary.queryPerson(
+          fixture.closure.personId,
+          BigInt(tick),
+          stateAt(tick),
+        );
+        return [
+          point.tick.toString(),
+          point.route?.edgeIds.length,
+          point.route?.edgeIds[0],
+          point.route?.edgeIds.at(-1),
+          point.route?.replannedAtTick?.toString(),
+          point.semanticHash,
+        ];
+      }),
+    ).toEqual(fixture.closure.points);
+    expect(
+      [17, 18, 19, 20, 21, 22].map((tick) => {
+        const point = itinerary.queryPerson(
+          fixture.festival.personId,
+          BigInt(tick),
+          stateAt(tick),
+        );
+        return [
+          point.tick.toString(),
+          point.activity,
+          point.location.semanticId,
+          point.semanticHash,
+        ];
+      }),
+    ).toEqual(fixture.festival.points);
+  });
 
   it("is pure for repeated and out-of-order time/LOD scrubbing", () => {
     const ticks = [19, 0, 10, 7, 24, 8, 16, 6];
