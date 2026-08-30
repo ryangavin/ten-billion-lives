@@ -111,6 +111,9 @@ test("traces planet to person across two independent local observers", async ({
   );
   await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Settlement");
+  await expect(
+    page.getByRole("heading", { name: "Brindle Bay" }),
+  ).toBeVisible();
   await expect(page.getByTestId("render-visible")).toHaveText("125,000");
   await page.getByRole("button", { name: "Enter Harbor Street" }).click();
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Street");
@@ -331,6 +334,13 @@ test("guides a first visit through time, discovery, truthful diagnostics, and lo
   );
   await expect(page).toHaveURL(/stage=settlement/);
   await expect(page).toHaveURL(/location=settlement%2Fsettlement-00/);
+  await page
+    .getByRole("button", { name: "Harbor Street", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Harbor Street" }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/stage=street/);
 
   const stateBeforeEmpty = await page.getByTestId("state-hash").textContent();
   await discovery.fill("Atlantis");

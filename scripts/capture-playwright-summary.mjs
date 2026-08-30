@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 
-const outputDirectory = "docs/evidence/issue-16";
+const outputDirectory = process.argv[2] ?? "docs/evidence/issue-16";
 const result = spawnSync(
   "pnpm",
   ["exec", "playwright", "test", "--reporter=json"],

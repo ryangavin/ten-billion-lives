@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "method": "Production UI assertions plus inspected desktop and narrow recordings; questions are answered by visible copy or state, without external documentation.",
+  "checks": [
+    {
+      "question": "What does ten billion mean?",
+      "evidence": "First-run copy says exactly 10,000,000,000 represented lives, no table of people, reconstructed from compact fields.",
+      "passed": true
+    },
+    {
+      "question": "Where am I in the journey?",
+      "evidence": "The visible Planet/Settlement/Street/Person label includes a numbered step and every navigation updates it.",
+      "passed": true
+    },
+    {
+      "question": "Is local time running and at what rate?",
+      "evidence": "Pause/play, one-tick step, 1×/6×/24× controls, day/hour, and pressed rate are explicit; 24× advanced exactly 24 ticks.",
+      "passed": true
+    },
+    {
+      "question": "How can I find a place or event?",
+      "evidence": "Local search and three named shortcuts open Brindle Bay, Harbor Street, and Lantern Tide; an unknown query changes no semantic state and gives next choices.",
+      "passed": true
+    },
+    {
+      "question": "What is authoritative and what is projected?",
+      "evidence": "Reality budget exposes integer cells/checkpoint bytes, zero stored people, represented scope, weighted visible tokens, tick/state/event hashes, frame time, backend, and sampling contract.",
+      "passed": true
+    },
+    {
+      "question": "Am I viewing baseline, replay, or branch state?",
+      "evidence": "The mode label distinguishes Immutable baseline, replay verified, and Local closure branch; the branch panel shows field equality and route consequences.",
+      "passed": true
+    },
+    {
+      "question": "Does a weaker browser lose the experience?",
+      "evidence": "Forced Canvas reports its fallback explicitly and completed both desktop and 390×844 signature journeys without overflow.",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

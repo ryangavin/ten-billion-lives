@@ -45,7 +45,9 @@
     "experience:copy-check": "node scripts/check-experience-copy.mjs",
     "gate:m2:capture": "pnpm build && node scripts/capture-m2-gate.mjs",
     "gate:m2:playwright": "node scripts/capture-playwright-summary.mjs",
-    "gate:m2:replay": "pnpm build && node scripts/capture-m2-replay.mjs"
+    "gate:m2:replay": "pnpm build && node scripts/capture-m2-replay.mjs",
+    "evidence:observatory": "pnpm build && node scripts/capture-observatory.mjs",
+    "evidence:observatory:playwright": "node scripts/capture-playwright-summary.mjs docs/evidence/issue-21"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "local-person-experience-v1",
-  "commit": "5aa84e1c7a2f1bed6ceb147fdbec576dbe60ac5a",
+  "commit": "49400039987f2a944688d89b05c92f2677b5875b",
   "browser": "151.0.7922.34",
   "seed": "ten-billion-lives/baseline/v1",
   "workload": {
@@ -9,14 +9,14 @@
     "independentlyInitializedObservers": 2,
     "followQueries": 4,
     "retainedPersonRows": 0,
-    "deepLink": "http://127.0.0.1:4174/?schema=1&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=10&person=person_27yi09s_1obkbba&branch=baseline"
+    "deepLink": "http://127.0.0.1:4174/?schema=1&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=10&person=person_27yi09s_1obkbba&branch=baseline&stage=person&location=L5%2F0%2F38"
   },
   "metrics": {
-    "planetToPersonMs": 1876.504459,
-    "followTickP50Ms": 229.8413330000003,
-    "followTickP95Ms": 262.073625,
-    "initializeSecondObserverMs": 129.68587500000012,
-    "freshDeepLinkLoadMs": 1037.2785000000003,
+    "planetToPersonMs": 1731.1884579999999,
+    "followTickP50Ms": 233.0797080000002,
+    "followTickP95Ms": 258.6795000000002,
+    "initializeSecondObserverMs": 93.89174999999977,
+    "freshDeepLinkLoadMs": 960.9867919999997,
     "browserHeapMiB": 82.3974609375
   },
   "semanticEvidence": {

@@ -7,7 +7,7 @@ import { chromium } from "@playwright/test";
 /* global document, HTMLInputElement */
 
 const previewUrl = "http://127.0.0.1:4175";
-const evidenceDirectory = "docs/evidence/issue-16";
+const evidenceDirectory = process.argv[2] ?? "docs/evidence/issue-16";
 const videoDirectory = "/tmp/ten-billion-lives-m2-video";
 
 async function waitForPreview() {
@@ -58,7 +58,10 @@ async function auditAccessibility(page) {
         const labelledBy = element.getAttribute("aria-labelledby")?.trim();
         const text = element.textContent?.trim();
         const value = element instanceof HTMLInputElement ? element.value : "";
-        return !label && !labelledBy && !text && !value;
+        const associatedLabel =
+          element instanceof HTMLInputElement &&
+          (element.labels?.length ?? 0) > 0;
+        return !label && !labelledBy && !associatedLabel && !text && !value;
       })
       .map((element) => element.outerHTML.slice(0, 160));
     const unlabelledInputs = [...document.querySelectorAll("input")]
