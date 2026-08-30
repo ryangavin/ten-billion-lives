@@ -36,3 +36,19 @@ export type {
   PersonRoute,
   PersonSemanticLocation,
 } from "./itinerary";
+export {
+  IllusionEngine,
+  allocateManifestationWeights,
+  createIllusionEngine,
+} from "./projection";
+export type {
+  IllusionProjection,
+  ManifestationToken,
+  ProjectionEvent,
+  ProjectionEventKind,
+  ProjectionLod,
+  ProjectionQuery,
+  ProjectionRealityBudget,
+  ProjectionVisualContext,
+  SemanticTransform,
+} from "./projection";
