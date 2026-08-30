@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 
 import {
   EVENT_FORMAT_VERSION,
@@ -94,5 +95,30 @@ describe("versioned local world checkpoints", () => {
     expect(
       kernel.events.every((event) => event.version === EVENT_FORMAT_VERSION),
     ).toBe(true);
+  });
+
+  it("matches the committed small event and kernel golden fixtures", () => {
+    const eventFixture = JSON.parse(
+      readFileSync(
+        new URL("../fixtures/events-v1.json", import.meta.url),
+        "utf8",
+      ),
+    ) as { eventHash: string; events: unknown };
+    const kernelFixture = JSON.parse(
+      readFileSync(
+        new URL("../fixtures/kernel-golden-v1.json", import.meta.url),
+        "utf8",
+      ),
+    ) as {
+      eventHash: string;
+      initialKernelHash: string;
+      fullDayHashes: string[];
+    };
+    const kernel = createWorldKernel();
+    expect(kernel.events).toEqual(eventFixture.events);
+    expect(kernel.eventHash).toBe(eventFixture.eventHash);
+    expect(kernel.eventHash).toBe(kernelFixture.eventHash);
+    expect(kernel.kernelHash).toBe(kernelFixture.initialKernelHash);
+    expect(replayKernelHashes(kernel, 24)).toEqual(kernelFixture.fullDayHashes);
   });
 });

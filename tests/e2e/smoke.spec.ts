@@ -49,6 +49,14 @@ test("inspects deterministic geography across hierarchy, seam, and pole", async 
     page.getByText(/100,000 attending from 2 surrounding regions/),
   ).toBeVisible();
   await expect(page.getByTestId("flow-explanation")).toContainText("capacity");
+  await expect(page.getByTestId("kernel-hash")).toHaveText("74410bddf69993e9");
+  await expect(page.getByTestId("event-hash")).toHaveText("ec998bbac0999abc");
+  await page
+    .getByRole("button", { name: "Save and restore checkpoint" })
+    .click();
+  await expect(page.getByTestId("checkpoint-result")).toHaveText(
+    "74410bddf69993e9 restored from 189,085 bytes",
+  );
   await page.getByRole("button", { name: "Single-step" }).click();
   await expect(page.getByTestId("field-tick")).toHaveText("1");
   await expect(page.getByText(/transfers; \d+ touch this cell/)).toBeVisible();

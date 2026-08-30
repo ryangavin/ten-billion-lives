@@ -567,6 +567,27 @@ button:disabled {
   background: rgba(3, 17, 13, 0.48);
 }
 
+.checkpoint-debug {
+  display: grid;
+  grid-template-columns: 0.55fr 1.45fr;
+  gap: 18px;
+  align-items: start;
+  margin-top: 12px;
+  padding: 20px;
+  border: 1px solid rgba(199, 226, 213, 0.13);
+  border-radius: 14px;
+  background: rgba(3, 17, 13, 0.48);
+}
+
+.checkpoint-debug h2 {
+  font-size: 1.2rem;
+}
+
+.checkpoint-debug button {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
 .day-chart {
   display: block;
   width: 100%;
@@ -704,6 +725,10 @@ button:disabled {
   }
 
   .field-channels {
+    grid-template-columns: 1fr;
+  }
+
+  .checkpoint-debug {
     grid-template-columns: 1fr;
   }
 

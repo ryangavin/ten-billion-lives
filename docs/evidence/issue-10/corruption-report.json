@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "checkpointVersion": 1,
+  "sourceBytes": 182672,
+  "cases": [
+    {
+      "name": "truncated",
+      "rejected": true,
+      "error": "Invalid checkpoint JSON: Unterminated string in JSON at position 182661 (line 1 column 182662)"
+    },
+    {
+      "name": "corrupt-world-hash",
+      "rejected": true,
+      "error": "Checkpoint world hash mismatch: expected ed66e344fcd7e737, received 0000000000000000"
+    },
+    {
+      "name": "incompatible-version",
+      "rejected": true,
+      "error": "Unsupported checkpoint version 999"
+    },
+    {
+      "name": "out-of-order-events",
+      "rejected": true,
+      "error": "Checkpoint events must be ordered by tick and id"
+    }
+  ]
+}

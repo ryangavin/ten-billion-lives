@@ -19,9 +19,11 @@
     "benchmark:fields": "pnpm --filter @ten-billion-lives/sim build && node --expose-gc scripts/benchmark-fields.mjs && prettier --write benchmarks/results/field-simulation.json",
     "benchmark:primitives": "node scripts/benchmark-primitives.mjs && prettier --write benchmarks/results/deterministic-primitives.json",
     "benchmark:transport": "pnpm --filter @ten-billion-lives/sim build && node --expose-gc scripts/benchmark-transport.mjs && prettier --write benchmarks/results/planetary-day.json",
+    "benchmark:kernel": "pnpm --filter @ten-billion-lives/sim build && node --expose-gc scripts/benchmark-kernel.mjs && prettier --write benchmarks/results/world-kernel.json",
     "benchmark:world": "pnpm --filter @ten-billion-lives/sim build && node --expose-gc scripts/benchmark-world.mjs && prettier --write benchmarks/results/world-generation.json",
     "preview": "pnpm --filter @ten-billion-lives/web preview",
     "replay:tracer": "node scripts/replay-tracer.mjs",
+    "replay:world": "pnpm --silent --filter @ten-billion-lives/sim build && node scripts/replay-world.mjs",
     "test": "pnpm test:contracts && vitest run",
     "test:contracts": "node scripts/check-product-contract.mjs && node scripts/check-architecture-contract.mjs",
     "test:e2e": "playwright test",
@@ -30,7 +32,8 @@
     "format:check": "prettier --check .",
     "typecheck": "pnpm -r --if-present typecheck",
     "vector:hash": "node scripts/deterministic-vectors.mjs",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "checkpoint:corruption": "pnpm --silent --filter @ten-billion-lives/sim build && node scripts/check-checkpoint-corruption.mjs && prettier --write docs/evidence/issue-10/corruption-report.json"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

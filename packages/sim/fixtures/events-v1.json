@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "eventFormatVersion": 1,
+  "eventHash": "ec998bbac0999abc",
+  "events": [
+    {
+      "version": 1,
+      "id": "intervention/close",
+      "tick": 7,
+      "type": "route-close",
+      "targetId": "intercity:region/region-0-0>region/region-0-1"
+    },
+    {
+      "version": 1,
+      "id": "intervention/reopen",
+      "tick": 9,
+      "type": "route-open",
+      "targetId": "intercity:region/region-0-0>region/region-0-1"
+    }
+  ]
+}

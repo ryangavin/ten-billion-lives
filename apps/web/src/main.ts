@@ -6,13 +6,18 @@ import {
 } from "@ten-billion-lives/manifest";
 import {
   BASELINE_WORLD_SEED,
+  EVENT_FORMAT_VERSION,
   FIELD_TICKS_PER_DAY,
   FieldSimulationRunner,
+  LOCAL_CHECKPOINT_VERSION,
   WORLD_LEVEL,
+  WORLD_FORMAT_VERSION,
+  advanceWorldKernel,
   buildTransportGraph,
   createFieldState,
   createPlaceholderSnapshot,
   createSignatureCommandLog,
+  createWorldKernel,
   deterministicVectorHash,
   explainFlow,
   generateWorld,
@@ -20,6 +25,8 @@ import {
   invariantReport,
   populationAt,
   replayPlaceholder,
+  restoreWorldKernel,
+  serializeWorldKernel,
   simulatePlanetaryDay,
   type FictionalWorld,
   type LocalSnapshot,
@@ -42,6 +49,8 @@ const planetaryDay = simulatePlanetaryDay(
   world,
   createSignatureCommandLog(transportGraph),
 );
+const checkpointKernel = advanceWorldKernel(createWorldKernel(), 13);
+const checkpointBytes = serializeWorldKernel(checkpointKernel);
 let stageIndex = 0;
 let cameraDegrees = 0;
 let personA: PlaceholderManifestation | null = null;
@@ -52,6 +61,7 @@ let debugVisible = false;
 let debugLevel: 2 | 3 | 5 = WORLD_LEVEL;
 let selectedCellId = "L5/12/0";
 let selectedDayTick = 7;
+let checkpointResult = "Not restored";
 
 const biomeColors = {
   ocean: "#0d3441",
@@ -194,7 +204,7 @@ function transportDebugPanel(): string {
   return `<article class="transport-debug" aria-labelledby="transport-debug-title"><div class="field-debug-heading"><div><p class="kicker">Representative planetary day</p><h2 id="transport-debug-title">Tick <span data-testid="transport-tick">${tick.tick}</span> · <code data-testid="planetary-day-hash">${planetaryDay.dayHash}</code></h2></div><div class="debug-controls"><button type="button" class="secondary" data-day-tick="7">Tick 7 · closure</button><button type="button" class="secondary" data-day-tick="9">Tick 9 · reopened</button><button type="button" class="secondary" data-day-tick="19">Tick 19 · festival</button></div></div><svg class="day-chart" viewBox="0 0 768 200" role="img" aria-label="Full-day aggregate movement and festival attendance"><line x1="24" y1="170" x2="744" y2="170"></line><line x1="24" y1="105" x2="744" y2="105"></line><line x1="24" y1="40" x2="744" y2="40"></line><polyline class="movement-line" points="${points(flowTotals, maximumFlow)}"></polyline><polyline class="festival-line" points="${points(
     planetaryDay.ticks.map((sample) => sample.festivalAttendance),
     planetaryDay.graph.festival.peakAttendance,
-  )}"></polyline><line class="tick-marker" x1="${markerX}" y1="28" x2="${markerX}" y2="176"></line><text x="24" y="193">00</text><text x="205" y="193">06</text><text x="393" y="193">12</text><text x="581" y="193">18</text><text x="728" y="193">23</text></svg><div class="chart-legend"><span class="movement">aggregate movement</span><span class="festival">festival attendance</span><span>vertical marker: selected tick</span></div><dl class="field-channels"><div><dt>Cohort activity reconciliation</dt><dd>${activities}</dd></div><div><dt>Festival</dt><dd>${planetaryDay.graph.festival.name} · ${tick.festivalAttendance.toLocaleString("en-US")} attending from ${tick.festivalOrigins.length} surrounding regions</dd></div><div><dt>Signature route</dt><dd data-testid="signature-route">${signatureFlow.closed ? "Closed" : "Open"} · ${signatureFlow.count.toLocaleString("en-US")} / ${signatureFlow.capacity.toLocaleString("en-US")}</dd></div><div><dt>Bottlenecks</dt><dd>${bottlenecks.length.toLocaleString("en-US")} capacity-limited edges at regional/globe LOD</dd></div><div class="flow-explanation"><dt>Why this flow?</dt><dd data-testid="flow-explanation">${explainFlow(planetaryDay, selectedDayTick, signatureFlow.edgeId)}</dd></div><div><dt>Invariant failures</dt><dd class="valid">${tick.invariantIssues.length === 0 ? "None — activities and routes valid" : tick.invariantIssues.join("; ")}</dd></div></dl></article>`;
+  )}"></polyline><line class="tick-marker" x1="${markerX}" y1="28" x2="${markerX}" y2="176"></line><text x="24" y="193">00</text><text x="205" y="193">06</text><text x="393" y="193">12</text><text x="581" y="193">18</text><text x="728" y="193">23</text></svg><div class="chart-legend"><span class="movement">aggregate movement</span><span class="festival">festival attendance</span><span>vertical marker: selected tick</span></div><dl class="field-channels"><div><dt>Cohort activity reconciliation</dt><dd>${activities}</dd></div><div><dt>Festival</dt><dd>${planetaryDay.graph.festival.name} · ${tick.festivalAttendance.toLocaleString("en-US")} attending from ${tick.festivalOrigins.length} surrounding regions</dd></div><div><dt>Signature route</dt><dd data-testid="signature-route">${signatureFlow.closed ? "Closed" : "Open"} · ${signatureFlow.count.toLocaleString("en-US")} / ${signatureFlow.capacity.toLocaleString("en-US")}</dd></div><div><dt>Bottlenecks</dt><dd>${bottlenecks.length.toLocaleString("en-US")} capacity-limited edges at regional/globe LOD</dd></div><div class="flow-explanation"><dt>Why this flow?</dt><dd data-testid="flow-explanation">${explainFlow(planetaryDay, selectedDayTick, signatureFlow.edgeId)}</dd></div><div><dt>Invariant failures</dt><dd class="valid">${tick.invariantIssues.length === 0 ? "None — activities and routes valid" : tick.invariantIssues.join("; ")}</dd></div></dl></article><article class="checkpoint-debug" aria-labelledby="checkpoint-debug-title"><div><p class="kicker">Local checkpoint round-trip</p><h2 id="checkpoint-debug-title">Tick 13 · <code data-testid="kernel-hash">${checkpointKernel.kernelHash}</code></h2></div><dl class="field-channels"><div><dt>Frozen formats</dt><dd>world ${WORLD_FORMAT_VERSION} · events ${EVENT_FORMAT_VERSION} · checkpoint ${LOCAL_CHECKPOINT_VERSION}</dd></div><div><dt>Event hash</dt><dd><code data-testid="event-hash">${checkpointKernel.eventHash}</code></dd></div><div><dt>Canonical snapshot</dt><dd>${checkpointBytes.length.toLocaleString("en-US")} bytes · local UTF-8 JSON</dd></div><div><dt>Restore result</dt><dd class="${checkpointResult === "Not restored" ? "" : "valid"}" data-testid="checkpoint-result">${checkpointResult}</dd></div></dl><button type="button" data-action="checkpoint-restore">Save and restore checkpoint</button></article>`;
 }
 
 function render(root: HTMLElement): void {
@@ -294,6 +304,13 @@ function render(root: HTMLElement): void {
       fieldRunner.play();
       fieldRunner.advanceFakeTicks(1);
       fieldRunner.pause();
+      render(root);
+    });
+  root
+    .querySelector('[data-action="checkpoint-restore"]')
+    ?.addEventListener("click", () => {
+      const restored = restoreWorldKernel(checkpointBytes);
+      checkpointResult = `${restored.kernelHash} restored from ${checkpointBytes.length.toLocaleString("en-US")} bytes`;
       render(root);
     });
   for (const control of root.querySelectorAll<HTMLButtonElement>(

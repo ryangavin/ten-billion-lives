@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "command": "node scripts/replay-world.mjs",
+  "processAExit": 0,
+  "processBExit": 0,
+  "byteIdenticalStdout": true,
+  "stdoutBytes": 1536,
+  "worldHash": "ed66e344fcd7e737",
+  "eventHash": "ec998bbac0999abc",
+  "initialKernelHash": "f999e3b156e1c63b",
+  "finalKernelHash": "6e190d289164581d",
+  "checkpoints": [
+    {
+      "tick": 3,
+      "kernelHash": "9be6cf7d4cbf928c",
+      "snapshotBytes": 182563,
+      "restoredKernelHash": "9be6cf7d4cbf928c",
+      "suffixFinalHash": "6e190d289164581d"
+    },
+    {
+      "tick": 9,
+      "kernelHash": "949ccbe69c083b05",
+      "snapshotBytes": 191163,
+      "restoredKernelHash": "949ccbe69c083b05",
+      "suffixFinalHash": "6e190d289164581d"
+    },
+    {
+      "tick": 17,
+      "kernelHash": "9a0e37acf127bc77",
+      "snapshotBytes": 188995,
+      "restoredKernelHash": "9a0e37acf127bc77",
+      "suffixFinalHash": "6e190d289164581d"
+    }
+  ]
+}
