@@ -20,7 +20,7 @@ For every coherent change:
 6. Inspect actual browser output for user-facing changes.
 7. Commit only a green, reviewable increment.
 
-Determinism, conservation, and protocol behavior require tests before optimization. Visual work requires screenshot evidence; performance work requires before/after measurements on the same profile.
+Determinism and conservation behavior require tests before optimization. Visual work requires screenshot evidence; performance work requires before/after measurements on the same profile.
 
 ## Outer validation loop
 
@@ -33,7 +33,7 @@ At each milestone gate:
 5. Review open defects and regressions; do not advance with unresolved P0 defects.
 6. Update the milestone issue evidence and project progress log.
 
-Release requires cross-browser smoke evidence, reconnect/replay validation, an extended server soak, accessibility checks, a security review, and a clean deployment rehearsal.
+The local MVP requires deterministic replay, two independent local observer views, cross-browser smoke evidence, accessibility checks, performance evidence, and the complete product journey from a clean local checkout.
 
 ## Rabbit-hole and usage controls
 
@@ -45,10 +45,10 @@ Release requires cross-browser smoke evidence, reconnect/replay validation, an e
 - Profile before optimizing. Do not pursue performance work without a failing budget or benchmark.
 - Do not use pixel-perfect cross-GPU equality as a goal; shared semantic identities and events must be exact.
 - Do not use an LLM or external paid API in the runtime MVP.
-- Do not deploy to a service that may incur charges without explicit account authorization.
+- Do not add servers, networking, CI, Pages, containers, deployment configuration, or cloud-provider work during the local-MVP goal.
 - Keep progress reports short: current issue, evidence produced, next issue, and blockers.
 - Avoid subagents by default. Use one only for a bounded, independent investigation with a clear deliverable, then validate its output locally.
 
 ## Definition of done
 
-The MVP is done only when all release-blocking issues are closed with evidence, CI is green, the production build runs from the documented container, the public client is reachable, and the release acceptance journey passes. Missing third-party deployment credentials may be documented as an external blocker, but do not substitute an untested deployment design for a verified local container and deployment rehearsal.
+The local MVP is done only when all local release-blocking issues are closed with evidence, a clean checkout passes the documented local checks, the production browser build launches locally with one command, and the complete local acceptance journey passes. Server deployment is not part of this goal.
