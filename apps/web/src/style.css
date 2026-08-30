@@ -551,6 +551,53 @@ button:disabled {
   font-size: 0.78rem;
 }
 
+.field-debug {
+  margin-top: 18px;
+  padding: 20px;
+  border: 1px solid rgba(199, 226, 213, 0.13);
+  border-radius: 14px;
+  background: rgba(3, 17, 13, 0.48);
+}
+
+.field-debug-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.field-debug-heading h2 {
+  font-size: 1.25rem;
+}
+
+.field-channels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.field-channels div {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(22, 51, 42, 0.54);
+}
+
+.field-channels dd {
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.field-channels .valid {
+  color: #8ce3b9;
+}
+
+.field-channels .invalid {
+  color: #ff9c85;
+}
+
 @media (max-width: 760px) {
   .observatory {
     width: min(100% - 24px, 620px);
@@ -572,6 +619,14 @@ button:disabled {
 
   .debug-inspector {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field-debug-heading {
+    flex-direction: column;
+  }
+
+  .field-channels {
+    grid-template-columns: 1fr;
   }
 
   .tracer-header {

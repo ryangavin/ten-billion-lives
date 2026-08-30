@@ -16,6 +16,7 @@
     "benchmark": "pnpm build && node scripts/run-benchmarks.mjs && prettier --write benchmarks/results && pnpm benchmark:check",
     "benchmark:check": "node scripts/check-benchmark.mjs",
     "benchmark:degraded": "node scripts/check-benchmark.mjs benchmarks/fixtures/degraded.json",
+    "benchmark:fields": "pnpm --filter @ten-billion-lives/sim build && node --expose-gc scripts/benchmark-fields.mjs && prettier --write benchmarks/results/field-simulation.json",
     "benchmark:primitives": "node scripts/benchmark-primitives.mjs && prettier --write benchmarks/results/deterministic-primitives.json",
     "benchmark:world": "pnpm --filter @ten-billion-lives/sim build && node --expose-gc scripts/benchmark-world.mjs && prettier --write benchmarks/results/world-generation.json",
     "preview": "pnpm --filter @ten-billion-lives/web preview",

@@ -147,7 +147,10 @@ describe("conservative activity fields", () => {
       hashes.push(first.stateHash);
       expect(second.stateHash).toBe(first.stateHash);
     }
-    expect(hashes).toHaveLength(3);
-    expect(new Set(hashes).size).toBe(3);
+    expect(hashes).toEqual([
+      "8b66001d55773395",
+      "e599987da2aabdca",
+      "9af788b45cf049a6",
+    ]);
   });
 });

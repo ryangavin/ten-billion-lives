@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "field-simulation-v1",
+  "commit": "3fde8d1ff46509d502228f81e6cd97e8b0785853",
+  "seed": "ten-billion-lives/baseline/v1/fields/v1",
+  "initialStateHash": "4e04868f72dfe574",
+  "dailyStateHashes": [
+    "8b66001d55773395",
+    "e599987da2aabdca",
+    "9af788b45cf049a6"
+  ],
+  "finalStateHash": "9af788b45cf049a6",
+  "workload": {
+    "samples": 7,
+    "cells": 2048,
+    "ticks": 72,
+    "days": 3,
+    "ticksPerDay": 24,
+    "representedPopulation": "10000000000"
+  },
+  "metrics": {
+    "cellTicksPerSecondP50": 368741.1346309952,
+    "cellTicksPerSecondP95": 376107.177363841,
+    "retainedHeapMiB": 0.8115921020507812
+  },
+  "invariantReport": {
+    "valid": true,
+    "issues": [],
+    "residentPopulation": "10000000000",
+    "presentPopulation": "10000000000"
+  }
+}

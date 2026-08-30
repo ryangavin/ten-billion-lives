@@ -31,6 +31,18 @@ test("inspects deterministic geography across hierarchy, seam, and pole", async 
   await page.getByRole("button", { name: "Inspect debug world" }).click();
   await expect(page.getByTestId("debug-globe")).toBeVisible();
   await expect(page.getByTestId("debug-cell-id")).toHaveText("L5/12/0");
+  await expect(page.getByTestId("field-hash")).toHaveText("4e04868f72dfe574");
+  await expect(page.getByTestId("field-invariants")).toHaveText(
+    "None — exact conservation",
+  );
+  await page.getByRole("button", { name: "Single-step" }).click();
+  await expect(page.getByTestId("field-tick")).toHaveText("1");
+  await expect(page.getByText(/transfers; \d+ touch this cell/)).toBeVisible();
+  await page.getByRole("button", { name: "Advance one day" }).click();
+  await expect(page.getByTestId("field-tick")).toHaveText("25");
+  await expect(page.getByTestId("field-invariants")).toHaveText(
+    "None — exact conservation",
+  );
   await page.getByRole("button", { name: "L2 regions" }).click();
   await expect(
     page.getByRole("heading", { name: "Debug globe · L2" }),
