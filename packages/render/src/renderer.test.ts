@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import {
   RenderLifecycle,
+  adaptRenderQuality,
   createRenderScene,
   sceneBufferHash,
+  selectInitialRenderQuality,
   selectRenderBackend,
 } from "./renderer";
 
@@ -133,5 +135,87 @@ describe("multi-LOD render scene", () => {
     expect(reduced.transition.durationMs).toBe(0);
     expect(reduced.semanticKey).toBe(animated.semanticKey);
     expect(sceneBufferHash(reduced)).toBe(sceneBufferHash(animated));
+  });
+
+  it("selects an initial tier from bounded local CPU and memory capability", () => {
+    expect(
+      selectInitialRenderQuality({ logicalCores: 10, deviceMemoryGiB: 8 }),
+    ).toEqual({
+      quality: "baseline",
+      reason: "local capability supports the 250k baseline",
+    });
+    expect(
+      selectInitialRenderQuality({ logicalCores: 4, deviceMemoryGiB: 4 }),
+    ).toEqual({
+      quality: "fallback",
+      reason: "limited local CPU or memory selects the 25k fallback",
+    });
+    expect(
+      selectInitialRenderQuality({ logicalCores: 2, deviceMemoryGiB: 8 }),
+    ).toEqual({
+      quality: "fallback",
+      reason: "limited local CPU or memory selects the 25k fallback",
+    });
+    expect(
+      selectInitialRenderQuality({ logicalCores: 8, deviceMemoryGiB: 4 }),
+    ).toEqual({
+      quality: "fallback",
+      reason: "limited local CPU or memory selects the 25k fallback",
+    });
+    expect(
+      selectInitialRenderQuality({ logicalCores: 8, deviceMemoryGiB: null }),
+    ).toEqual({
+      quality: "baseline",
+      reason: "local capability supports the 250k baseline",
+    });
+  });
+
+  it("downshifts only after a sustained frame window and never changes semantics", () => {
+    const insufficient = adaptRenderQuality({
+      quality: "baseline",
+      frameTimesMs: [30, 31, 29],
+    });
+    expect(insufficient).toEqual({
+      quality: "baseline",
+      p95FrameMs: 31,
+      reason: "collecting a sustained 8-frame window",
+    });
+    const downshift = adaptRenderQuality({
+      quality: "baseline",
+      frameTimesMs: [18, 19, 20, 21, 22, 23, 24, 25],
+    });
+    expect(downshift).toEqual({
+      quality: "fallback",
+      p95FrameMs: 25,
+      reason: "sustained frame time exceeded the 60 FPS baseline budget",
+    });
+    const steady = adaptRenderQuality({
+      quality: "baseline",
+      frameTimesMs: [3, 3, 4, 4, 5, 5, 6, 6],
+    });
+    expect(steady).toEqual({
+      quality: "baseline",
+      p95FrameMs: 6,
+      reason: "sustained frame time remains inside the tier budget",
+    });
+
+    const fallback = createRenderScene({
+      ...authoritative,
+      stage: "street",
+      quality: "fallback",
+      viewport: { width: 1280, height: 720 },
+      reducedMotion: false,
+    });
+    const baseline = createRenderScene({
+      ...authoritative,
+      stage: "street",
+      quality: "baseline",
+      viewport: { width: 1280, height: 720 },
+      reducedMotion: false,
+    });
+    expect(fallback.semanticKey).toBe(baseline.semanticKey);
+    expect(fallback.selectionId).toBe(baseline.selectionId);
+    expect(fallback.draw.visibleCount).toBe(25_000);
+    expect(baseline.draw.visibleCount).toBe(250_000);
   });
 });

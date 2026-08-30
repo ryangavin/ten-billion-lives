@@ -8,6 +8,20 @@ export interface RenderCapabilityProbe {
   readonly contextAvailable: boolean;
 }
 
+export interface LocalRenderCapability {
+  readonly logicalCores: number;
+  readonly deviceMemoryGiB: number | null;
+}
+
+export interface AdaptiveRenderQualityDecision {
+  readonly quality: RenderQuality;
+  readonly reason: string;
+}
+
+export interface SustainedRenderQualityDecision extends AdaptiveRenderQualityDecision {
+  readonly p95FrameMs: number;
+}
+
 export interface RenderSceneInput {
   readonly worldSeed: string;
   readonly stateHash: string;
@@ -61,6 +75,66 @@ const qualityCounts: Readonly<Record<RenderQuality, number>> = Object.freeze({
   baseline: 250_000,
   showcase: 1_000_000,
 });
+
+const sustainedFrameWindow = 8;
+const frameBudgetsMs: Readonly<Record<RenderQuality, number>> = Object.freeze({
+  fallback: 1000 / 30,
+  baseline: 1000 / 60,
+  showcase: 1000 / 30,
+});
+
+export function selectInitialRenderQuality(
+  capability: LocalRenderCapability,
+): AdaptiveRenderQualityDecision {
+  const limitedCpuOrMemory =
+    capability.logicalCores <= 4 ||
+    (capability.deviceMemoryGiB !== null && capability.deviceMemoryGiB <= 4);
+  return limitedCpuOrMemory
+    ? Object.freeze({
+        quality: "fallback" as const,
+        reason: "limited local CPU or memory selects the 25k fallback",
+      })
+    : Object.freeze({
+        quality: "baseline" as const,
+        reason: "local capability supports the 250k baseline",
+      });
+}
+
+export function adaptRenderQuality(input: {
+  readonly quality: RenderQuality;
+  readonly frameTimesMs: readonly number[];
+}): SustainedRenderQualityDecision {
+  const samples = input.frameTimesMs.filter(
+    (sample) => Number.isFinite(sample) && sample >= 0,
+  );
+  const sorted = [...samples].sort((left, right) => left - right);
+  const p95FrameMs = sorted[Math.ceil(sorted.length * 0.95) - 1] ?? 0;
+  if (samples.length < sustainedFrameWindow)
+    return Object.freeze({
+      quality: input.quality,
+      p95FrameMs,
+      reason: `collecting a sustained ${sustainedFrameWindow}-frame window`,
+    });
+  if (p95FrameMs > frameBudgetsMs[input.quality]) {
+    if (input.quality === "baseline")
+      return Object.freeze({
+        quality: "fallback" as const,
+        p95FrameMs,
+        reason: "sustained frame time exceeded the 60 FPS baseline budget",
+      });
+    if (input.quality === "showcase")
+      return Object.freeze({
+        quality: "baseline" as const,
+        p95FrameMs,
+        reason: "sustained frame time exceeded the 30 FPS showcase budget",
+      });
+  }
+  return Object.freeze({
+    quality: input.quality,
+    p95FrameMs,
+    reason: "sustained frame time remains inside the tier budget",
+  });
+}
 
 function assertDimension(value: number, name: string): void {
   if (!Number.isSafeInteger(value) || value <= 0 || value > 16_384)

@@ -403,3 +403,47 @@ test("keeps the forced Canvas fallback navigable through loss, resize, and reduc
   await expect(page.getByTestId("render-visible")).toHaveText("250,000");
   await expect(page.getByTestId("render-backend")).toHaveText("canvas2d");
 });
+
+test("preserves person and event semantics across local visual quality tiers", async ({
+  context,
+}) => {
+  const observations = [];
+  for (const quality of ["fallback", "baseline"] as const) {
+    const page = await context.newPage();
+    await page.goto(`/?renderer=canvas&quality=${quality}`);
+    await expect(page.getByTestId("render-quality")).toHaveText(quality);
+    await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
+    await page.getByRole("button", { name: "Enter Harbor Street" }).click();
+    const streetVisible = await page
+      .getByTestId("render-visible")
+      .textContent();
+    await page.getByRole("button", { name: "Meet a resident" }).click();
+    await page.getByRole("button", { name: "Initialize observer B" }).click();
+    await expect(page.getByTestId("observer-match")).toHaveText(
+      "Semantic match",
+    );
+    observations.push({
+      quality,
+      streetVisible,
+      person: await page.getByTestId("observer-a-person-id").textContent(),
+      state: await page.getByTestId("state-hash").textContent(),
+      manifestation: await page
+        .getByTestId("manifestation-hash-a")
+        .textContent(),
+      event: await page.getByTestId("projection-event-hash-a").textContent(),
+      itinerary: await page.getByTestId("observer-a-itinerary").textContent(),
+    });
+    await page.close();
+  }
+  expect(observations[0]?.streetVisible).toBe("25,000");
+  expect(observations[1]?.streetVisible).toBe("250,000");
+  expect({
+    ...observations[0],
+    quality: undefined,
+    streetVisible: undefined,
+  }).toEqual({
+    ...observations[1],
+    quality: undefined,
+    streetVisible: undefined,
+  });
+});

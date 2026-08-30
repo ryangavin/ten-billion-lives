@@ -1,8 +1,8 @@
 # Progress
 
-- Current issue: #21 — local observatory, time controls, narrative, and reality-budget polish.
-- Last green commit: `4940003` (#21 first-run narrative, local time/discovery, complete reality budget, and location-aware links; evidence increment pending).
-- Evidence produced: root check passed 15 files/74 tests; 14/14 Chromium/WebKit production journeys passed; 24× clock advanced exactly 24 analytical ticks; backward-compatible location links passed unit and fresh-page checks; experience benchmark passed at 1.73 s planet-to-person, 259 ms follow p95, 82.40 MiB heap, and zero person rows. Desktop/narrow recordings and 12 state screenshots were inspected after fixing the Brindle Bay/Harbor Street label contradiction.
-- Next action: run the copy audit and final root check, commit/push the #21 evidence increment, validate the final commit, then close #21 with recordings, screenshots, Playwright report, comprehension checklist, and benchmark evidence.
-- Decisions: schema-1 links gain optional stage/location context while legacy person links derive safe defaults. Canonical narrative names remain separate from stable internal location IDs. Local clock rates select analytical ticks once per real second; they do not create resident stepping or another authoritative state.
+- Current issue: #22 — local browser performance, startup, memory, and adaptive quality.
+- Last green commit: `76cc749` (#21 closed with 14/14 browsers, two inspected recordings, 12-state gallery, 7/7 comprehension checklist, and passing interaction/memory budgets).
+- Evidence produced: #21 production journey remains under existing budgets: 1.73 s planet-to-person, 259 ms follow p95, 961 ms fresh link, 82.40 MiB heap, zero person rows; Canvas fallback and narrow layout pass. M2 renderer evidence measured 250,000 manifestations at 4.43 ms frame p95 and 77.63 MiB browser memory.
+- Next action: profile the canonical production journey before changing code; falsify adaptive-tier selection, semantic preservation, and a bounded 30-minute accelerated soak, then implement only measured missing behavior and retain comparable JSON/traces.
+- Decisions: do not pursue a showcase count without evidence. Quality may reduce visual count/effects/resolution only; selected identity, state, manifestation, and event hashes remain authoritative and identical across local observers.
 - Blockers: none. Server deployment is outside the local-MVP goal.
