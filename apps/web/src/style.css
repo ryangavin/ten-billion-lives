@@ -491,6 +491,115 @@ button.secondary {
   background: transparent;
   border-color: rgba(177, 224, 202, 0.28);
 }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+.journey-renderer[role="button"]:focus-visible {
+  outline: 3px solid #fff0a8;
+  outline-offset: 3px;
+}
+
+.journey-renderer[role="button"] {
+  cursor: pointer;
+}
+
+.branch-label {
+  color: #9fc1b2;
+}
+
+.person-tools,
+.branch-comparison {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.75fr) minmax(320px, 1.25fr);
+  gap: 24px;
+  margin-top: 16px;
+  padding: 24px;
+  border: 1px solid rgba(199, 226, 213, 0.13);
+  border-radius: 18px;
+  background: rgba(15, 32, 27, 0.72);
+}
+
+.person-tools h2,
+.branch-comparison h2 {
+  font-size: 1.5rem;
+}
+
+.person-tools p:not(.kicker),
+.branch-comparison p:not(.kicker) {
+  color: #9fc1b2;
+}
+
+.person-tools form {
+  align-self: center;
+}
+
+.person-tools label {
+  display: block;
+  margin-bottom: 8px;
+  color: #a8c7b9;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.search-row,
+.share-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.search-row input {
+  min-width: min(100%, 280px);
+  flex: 1;
+  padding: 11px 14px;
+  border: 1px solid rgba(177, 224, 202, 0.35);
+  border-radius: 999px;
+  color: #e7f7ef;
+  background: rgba(3, 17, 13, 0.7);
+  font: inherit;
+  font-family: "SFMono-Regular", Consolas, monospace;
+}
+
+.form-error {
+  min-height: 1.4em;
+  margin: 8px 0 0;
+  color: #ffb29f !important;
+}
+
+.share-row {
+  grid-column: 1 / -1;
+  padding-top: 16px;
+  border-top: 1px solid rgba(199, 226, 213, 0.1);
+}
+
+.share-row a,
+.button-link {
+  color: #8ce3b9;
+  font-weight: 700;
+}
+
+.branch-comparison dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.branch-comparison dl div {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(3, 17, 13, 0.42);
+}
+
+.branch-comparison .tracer-actions {
+  grid-column: 1 / -1;
+  margin: 0;
+}
 button:disabled {
   cursor: not-allowed;
   opacity: 0.42;
@@ -789,6 +898,8 @@ button:disabled {
   .diagnostics,
   .tracer-world,
   .observer-grid,
+  .person-tools,
+  .branch-comparison,
   .reality-budget {
     grid-template-columns: 1fr;
   }
@@ -807,6 +918,10 @@ button:disabled {
   }
 
   .field-channels {
+    grid-template-columns: 1fr;
+  }
+
+  .branch-comparison dl {
     grid-template-columns: 1fr;
   }
 

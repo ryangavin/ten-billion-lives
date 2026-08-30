@@ -22,7 +22,6 @@ import {
   createFieldState,
   createPlaceholderSnapshot,
   createSignatureCommandLog,
-  createWorldKernel,
   deterministicVectorHash,
   explainFlow,
   generateWorld,
@@ -46,6 +45,15 @@ import {
 } from "@ten-billion-lives/render";
 
 import { createSmokeModel } from "./smoke";
+import {
+  CLOSURE_PERSON_ID,
+  EXPERIENCE_LINK_SCHEMA,
+  FESTIVAL_PERSON_ID,
+  buildExperienceLink,
+  createExperienceKernel,
+  parseExperienceLink,
+  type ExperienceBranch,
+} from "./experience";
 
 const stages = ["Planet", "Settlement", "Street", "Person"] as const;
 const nextLabels = [
@@ -58,24 +66,29 @@ const world = generateWorld(BASELINE_WORLD_SEED);
 const illusionEngine = createIllusionEngine(world);
 const itineraryIndex = illusionEngine.itinerary;
 const manifestationIndex = itineraryIndex.manifestation;
-const manifestationCellId =
+const defaultManifestationCellId =
   world.settlements[0]?.cellId ??
   (() => {
     throw new Error("Baseline world requires a manifestation settlement");
   })();
-const manifestationPersonId = manifestationIndex.personIdAt(
-  manifestationCellId,
+const defaultPersonId = manifestationIndex.personIdAt(
+  defaultManifestationCellId,
   42n,
 );
 const fieldRunner = new FieldSimulationRunner(createFieldState(world));
 const transportGraph = buildTransportGraph(world);
+const baselinePlanetaryDay = simulatePlanetaryDay(world, []);
 const planetaryDay = simulatePlanetaryDay(
   world,
   createSignatureCommandLog(transportGraph),
 );
-const genesisKernel = createWorldKernel();
-const kernelStates = new Map([[0, genesisKernel]]);
-const checkpointKernel = advanceWorldKernel(genesisKernel, 13);
+const baselineGenesisKernel = createExperienceKernel("baseline");
+const closureGenesisKernel = createExperienceKernel("closure");
+const kernelStates = {
+  baseline: new Map([[0, baselineGenesisKernel]]),
+  closure: new Map([[0, closureGenesisKernel]]),
+};
+const checkpointKernel = advanceWorldKernel(closureGenesisKernel, 13);
 const checkpointBytes = serializeWorldKernel(checkpointKernel);
 let stageIndex = 0;
 let cameraDegrees = 0;
@@ -89,6 +102,10 @@ type ManifestedPerson = PersonCard &
 let personA: ManifestedPerson | null = null;
 let personB: ManifestedPerson | null = null;
 let observerBEngine: IllusionEngine | null = null;
+let selectedPersonId = defaultPersonId;
+let activeBranch: ExperienceBranch = "baseline";
+let personSearchError = "";
+let shareStatus = "";
 let replayResult = "Not run";
 let fieldsRevealed = false;
 let debugVisible = false;
@@ -101,12 +118,20 @@ let journeyRenderer: BrowserJourneyRenderer | null = null;
 let journeyResizeObserver: ResizeObserver | null = null;
 let journeyRenderGeneration = 0;
 const renderSceneCache = new Map<string, RenderScene>();
+const projectionCache = new WeakMap<
+  IllusionEngine,
+  Map<string, IllusionProjection>
+>();
 
-function kernelStateAt(tick: number) {
-  const cached = kernelStates.get(tick);
+function kernelStateAt(tick: number, branch = activeBranch) {
+  const states = kernelStates[branch];
+  const cached = states.get(tick);
   if (cached !== undefined) return cached;
-  const state = advanceWorldKernel(genesisKernel, tick);
-  kernelStates.set(tick, state);
+  const state = advanceWorldKernel(
+    branch === "baseline" ? baselineGenesisKernel : closureGenesisKernel,
+    tick,
+  );
+  states.set(tick, state);
   return state;
 }
 
@@ -114,11 +139,19 @@ function projectionFor(
   engine: IllusionEngine,
   stage: (typeof stages)[number],
 ): IllusionProjection {
+  const manifestationCellId =
+    engine.manifestation.person(selectedPersonId).cellId;
   const regionId = world.cells.find(
     (cell) => cell.id === manifestationCellId,
   )?.regionId;
   if (regionId === undefined)
     throw new Error("Baseline manifestation region is unavailable");
+  const state = kernelStateAt(selectedPersonTick);
+  const cache = projectionCache.get(engine) ?? new Map();
+  projectionCache.set(engine, cache);
+  const key = `${stage}/${state.kernelHash}/${selectedPersonId}`;
+  const cached = cache.get(key);
+  if (cached !== undefined) return cached;
   const scopeCellIds =
     stage === "Planet"
       ? world.cells.map((cell) => cell.id)
@@ -127,9 +160,9 @@ function projectionFor(
             .filter((cell) => cell.regionId === regionId)
             .map((cell) => cell.id)
         : [manifestationCellId];
-  return engine.project(
+  const projection = engine.project(
     {
-      state: kernelStateAt(selectedPersonTick),
+      state,
       tick: BigInt(selectedPersonTick),
       scopeCellIds,
       lod:
@@ -140,7 +173,7 @@ function projectionFor(
             : stage === "Street"
               ? "street"
               : "person",
-      selectedPersonIds: [manifestationPersonId],
+      selectedPersonIds: [selectedPersonId],
     },
     {
       observerId: engine === illusionEngine ? "observer-a" : "observer-b",
@@ -148,6 +181,8 @@ function projectionFor(
       quality: "browser-detected",
     },
   );
+  cache.set(key, projection);
+  return projection;
 }
 
 type LocalRenderBenchmark = (
@@ -173,6 +208,7 @@ const biomeColors = {
 function renderSceneFor(
   stage: (typeof stages)[number],
   stateHash: string,
+  selectionId: string,
 ): RenderScene {
   const renderStage: RenderScene["stage"] =
     stage === "Planet"
@@ -182,13 +218,13 @@ function renderSceneFor(
         : stage === "Street"
           ? "street"
           : "person";
-  const key = `${renderStage}/${stateHash}/${manifestationPersonId}`;
+  const key = `${renderStage}/${stateHash}/${selectionId}`;
   const cached = renderSceneCache.get(key);
   if (cached !== undefined) return cached;
   const scene = createRenderScene({
     worldSeed: world.seed,
     stateHash,
-    selectionId: manifestationPersonId,
+    selectionId,
     stage: renderStage,
     quality: "baseline",
     viewport: { width: 768, height: 480 },
@@ -336,6 +372,7 @@ function drawDebugWorld(
 function queryPerson(
   snapshot: LocalSnapshot,
   source: AnalyticalItineraryIndex = itineraryIndex,
+  personId = selectedPersonId,
 ): ManifestedPerson {
   manifestPlaceholder({
     seed: snapshot.seed,
@@ -344,7 +381,7 @@ function queryPerson(
     tick: snapshot.tick,
     lod: "person",
   });
-  const card = source.manifestation.person(manifestationPersonId);
+  const card = source.manifestation.person(personId);
   const itinerary = source.queryPerson(
     card.personId,
     BigInt(selectedPersonTick),
@@ -367,23 +404,101 @@ function queryPerson(
 function personCard(
   person: ManifestedPerson | null,
   observer: "a" | "b",
+  projection: IllusionProjection | null,
 ): string {
   if (person === null)
     return `<p class="observer-empty">Independent local view not yet at person LOD.</p>`;
   return `<dl class="person-facts">
     <div><dt>Person ID</dt><dd data-testid="observer-${observer}-person-id">${person.personId}</dd></div>
-    <div><dt>Identity</dt><dd>${person.name} · age ${person.ageYears} · ${person.cohort}</dd></div>
+    <div><dt>Identity</dt><dd>${person.name} · age ${person.ageYears} · ${person.cohort} age band</dd></div>
     <div><dt>Now</dt><dd data-testid="observer-${observer}-itinerary">Tick ${person.itinerary.tick} · ${person.itinerary.activity}${person.itinerary.activity === "work" || person.itinerary.activity === "school" || person.itinerary.activity === "service" ? ` at ${person.primaryPlace.name}` : ""}</dd></div>
     <div><dt>Semantic location</dt><dd><code>${person.itinerary.location.semanticId}</code> · ${person.itinerary.location.positionPermille}‰</dd></div>
-    <div><dt>Household</dt><dd data-testid="observer-${observer}-household-id"><code>${person.household.id}</code> · ${person.household.role} · ${person.household.memberCount} members</dd></div>
+    <div><dt>Home / role</dt><dd data-testid="observer-${observer}-household-id">${person.home} · ${person.household.role} · <code>${person.household.id}</code> · ${person.household.memberCount} members</dd></div>
     <div><dt>Recurring place</dt><dd>${person.primaryPlace.name} · ${person.primaryPlace.memberCount}/${person.primaryPlace.capacity}</dd></div>
     <div><dt>Relationships</dt><dd>${person.relationshipSummary}</dd></div>
     <div><dt>Co-located encounters</dt><dd>${person.itinerary.encounters.length} known · <code>${person.itinerary.encounterGroupId}</code></dd></div>
     <div><dt>Field reconciliation</dt><dd>${person.itinerary.fieldMembership.channel} · ${person.itinerary.fieldMembership.channelPopulation.toLocaleString("en-US")} in home-cell channel</dd></div>
-    <div><dt>Route</dt><dd>${person.itinerary.route ? `${person.itinerary.route.mode} · ${person.itinerary.route.edgeIds.length} graph edges · ${person.itinerary.route.reason}` : "stationary analytical segment"}</dd></div>
+    <div><dt>Route / destination</dt><dd data-testid="observer-${observer}-route">${person.itinerary.route ? `${person.itinerary.route.mode} · ${person.itinerary.route.edgeIds.length} graph ${person.itinerary.route.edgeIds.length === 1 ? "edge" : "edges"} · ${person.itinerary.route.reason} → ${person.itinerary.route.destinationId}` : `stationary at ${person.itinerary.location.semanticId}`}</dd></div>
+    <div><dt>Local semantic events</dt><dd data-testid="semantic-events-${observer}">${projection === null || projection.events.length === 0 ? "No selected local events" : projection.events.map((event) => `${event.kind} · ${event.locationId}`).join(" · ")}</dd></div>
     <div><dt>Appearance</dt><dd>${person.appearance.stature} · ${person.appearance.hair} hair · ${person.appearance.wardrobe} layers</dd></div>
     <div><dt>Semantic trace</dt><dd><code>${person.traceHash}</code></dd></div>
   </dl>`;
+}
+
+function synchronizePersonUrl(): void {
+  if (stageIndex !== stages.length - 1 || personA === null) return;
+  const href = buildExperienceLink(location.href, {
+    schema: EXPERIENCE_LINK_SCHEMA,
+    seed: BASELINE_WORLD_SEED,
+    tick: selectedPersonTick,
+    personId: selectedPersonId,
+    branch: activeBranch,
+  });
+  history.replaceState(null, "", href);
+}
+
+function selectExperience(
+  personId: string,
+  tick: number,
+  branch: ExperienceBranch,
+): void {
+  manifestationIndex.person(personId);
+  selectedPersonId = personId;
+  selectedPersonTick = tick;
+  activeBranch = branch;
+  stageIndex = stages.length - 1;
+  personA = queryPerson(snapshotA);
+  if (observerBEngine !== null)
+    personB = queryPerson(
+      createPlaceholderSnapshot(),
+      observerBEngine.itinerary,
+    );
+  personSearchError = "";
+  replayResult = "Not run";
+}
+
+function personTimeControls(): readonly (readonly [number, string])[] {
+  if (selectedPersonId === FESTIVAL_PERSON_ID)
+    return Object.freeze([
+      [10, "recurring meeting"],
+      [17, "festival arrival"],
+      [19, "festival peak"],
+      [21, "festival departure"],
+      [22, "home"],
+    ] as const);
+  return Object.freeze([
+    [0, "midnight"],
+    [7, "commute"],
+    [10, "primary activity"],
+    [19, "festival hour"],
+    [23, "sleep"],
+    [24, "identity epoch"],
+  ] as const);
+}
+
+function branchComparisonPanel(): string {
+  const baselineState = kernelStateAt(7, "baseline");
+  const closureState = kernelStateAt(7, "closure");
+  const baselinePoint = itineraryIndex.queryPerson(
+    CLOSURE_PERSON_ID,
+    7n,
+    baselineState,
+  );
+  const closurePoint = itineraryIndex.queryPerson(
+    CLOSURE_PERSON_ID,
+    7n,
+    closureState,
+  );
+  const edgeId = planetaryDay.commands[0]?.edgeId;
+  const baselineFlow = baselinePlanetaryDay.ticks[7]?.edgeFlows.find(
+    (flow) => flow.edgeId === edgeId,
+  );
+  const closureFlow = planetaryDay.ticks[7]?.edgeFlows.find(
+    (flow) => flow.edgeId === edgeId,
+  );
+  if (baselineFlow === undefined || closureFlow === undefined)
+    throw new Error("Missing local intervention comparison");
+  return `<section class="branch-comparison" aria-labelledby="branch-title"><div><p class="kicker">Reversible local scenario</p><h2 id="branch-title" data-testid="active-branch">${activeBranch === "baseline" ? "Immutable baseline" : "Closure branch"}</h2><p>The branch changes one scheduled route at tick 7. It never mutates the baseline checkpoint.</p></div><dl><div><dt>Baseline macro flow</dt><dd>${baselineFlow.count.toLocaleString("en-US")} on signature edge</dd></div><div><dt>Closure macro flow</dt><dd>${closureFlow.count.toLocaleString("en-US")} on closed edge</dd></div><div><dt>Baseline traveler route</dt><dd data-testid="baseline-route">${baselinePoint.route?.edgeIds.length ?? 0} edge</dd></div><div><dt>Closure traveler route</dt><dd data-testid="closure-route">${closurePoint.route?.edgeIds.length ?? 0} edges</dd></div><div><dt>Population fields</dt><dd class="valid" data-testid="branch-field-match">${baselineState.field.stateHash === closureState.field.stateHash ? "Identical field state" : "Unexpected field divergence"}</dd></div><div><dt>Branch event hash</dt><dd><code>${activeBranch === "baseline" ? baselineState.eventHash : closureState.eventHash}</code></dd></div></dl><div class="tracer-actions"><button type="button" data-action="closure-branch">Explore closure branch</button><button type="button" class="secondary" data-action="baseline-branch">View immutable baseline</button></div></section>`;
 }
 
 function transportDebugPanel(): string {
@@ -425,6 +540,7 @@ function transportDebugPanel(): string {
 function render(root: HTMLElement): void {
   const smoke = createSmokeModel();
   const stage = stages[stageIndex] ?? "Planet";
+  synchronizePersonUrl();
   const nextLabel = nextLabels[stageIndex];
   const semanticProjectionA = projectionFor(illusionEngine, stage);
   const semanticProjectionB =
@@ -446,7 +562,15 @@ function render(root: HTMLElement): void {
   const renderScene = renderSceneFor(
     stage,
     semanticProjectionA.manifestationHash,
+    selectedPersonId,
   );
+  const personLink = buildExperienceLink(location.href, {
+    schema: EXPERIENCE_LINK_SCHEMA,
+    seed: BASELINE_WORLD_SEED,
+    tick: selectedPersonTick,
+    personId: selectedPersonId,
+    branch: activeBranch,
+  }).replaceAll("&", "&amp;");
   const cameraShift = Math.sin((cameraDegrees * Math.PI) / 180) * 8;
   const selectedCell = getCell(world, selectedCellId);
   const fieldState = fieldRunner.state;
@@ -470,24 +594,18 @@ function render(root: HTMLElement): void {
   root.innerHTML = `<main class="observatory" aria-labelledby="app-title">
     <header class="tracer-header"><div><p class="eyebrow"><span aria-hidden="true"></span> Deterministic world / M2</p><h1 id="app-title">Ten Billion Lives</h1></div><div class="status" data-testid="smoke-status"><span aria-hidden="true"></span>${smoke.status}</div></header>
     <section class="tracer-world" aria-labelledby="journey-title">
-      <div class="journey-renderer ${tracerProjection.cssStage}" style="--camera-shift: ${cameraShift.toFixed(2)}px" data-render-stack data-projection-key="${semanticProjectionA.manifestationHash}" data-selection-id="${renderScene.selectionId}" data-camera-degrees="${cameraDegrees}" data-transition-ms="${renderScene.transition.durationMs}" data-testid="journey-renderer"><canvas width="768" height="480" data-render-surface="canvas2d" aria-label="${stage} Canvas fallback visualization"></canvas><canvas width="768" height="480" data-render-surface="webgpu" aria-label="${stage} WebGPU visualization" hidden></canvas><div class="render-hud"><span><b data-testid="render-backend">probing</b> · <b data-testid="render-visible">${renderScene.draw.visibleCount.toLocaleString("en-US")}</b> visible · weights ${renderScene.debug.minimumTokenWeight}–${renderScene.debug.maximumTokenWeight}</span><span><b data-testid="render-frame-time">pending</b> · ${(renderScene.buffer.byteLength / 1_048_576).toFixed(2)} MiB · <code>${renderScene.debug.bufferHash.slice(0, 8)}</code> · losses <b data-testid="render-context-losses">0</b></span></div></div>
+      <div class="journey-renderer ${tracerProjection.cssStage}" style="--camera-shift: ${cameraShift.toFixed(2)}px" data-render-stack data-projection-key="${semanticProjectionA.manifestationHash}" data-selection-id="${renderScene.selectionId}" data-camera-degrees="${cameraDegrees}" data-transition-ms="${renderScene.transition.durationMs}" data-testid="journey-renderer" ${stage === "Street" ? 'role="button" tabindex="0" aria-label="Inspect highlighted resident"' : ""}><canvas width="768" height="480" data-render-surface="canvas2d" aria-label="${stage} Canvas fallback visualization"></canvas><canvas width="768" height="480" data-render-surface="webgpu" aria-label="${stage} WebGPU visualization" hidden></canvas><div class="render-hud"><span><b data-testid="render-backend">probing</b> · <b data-testid="render-visible">${renderScene.draw.visibleCount.toLocaleString("en-US")}</b> visible · weights ${renderScene.debug.minimumTokenWeight}–${renderScene.debug.maximumTokenWeight}</span><span><b data-testid="render-frame-time">pending</b> · ${(renderScene.buffer.byteLength / 1_048_576).toFixed(2)} MiB · <code>${renderScene.debug.bufferHash.slice(0, 8)}</code> · losses <b data-testid="render-context-losses">0</b></span></div></div>
       <div class="journey-copy"><p class="kicker">Observer A · <span data-testid="observer-a-stage">${stage}</span></p><h2 id="journey-title">${stage === "Planet" ? "Seeded fictional planet" : stage === "Settlement" ? (world.settlements[0]?.name ?? "Settlement") : stage === "Street" ? (world.settlements[0]?.neighborhoodIds[0] ?? "Neighborhood") : (personA?.name ?? "Resident")}</h2><p>Camera ${cameraDegrees}° · tick <span data-testid="person-tick">${personA?.itinerary.tick ?? snapshotA.tick}</span> · <code data-testid="state-hash">${snapshotA.stateHash}</code></p>
-      <div class="tracer-actions">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}<button type="button" class="secondary" data-action="camera">Orbit camera</button>${personA ? stages.map((candidate, index) => `<button type="button" class="secondary" data-stage-index="${index}" aria-pressed="${stage === candidate}">View ${candidate.toLowerCase()}</button>`).join("") : ""}</div></div>
+      <p class="branch-label">Viewing <strong>${activeBranch === "baseline" ? "immutable baseline" : "local closure branch"}</strong></p><div class="tracer-actions">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}<button type="button" data-action="festival">Visit Lantern Tide</button><button type="button" class="secondary" data-action="camera">Orbit camera</button>${personA ? stages.map((candidate, index) => `<button type="button" class="secondary" data-stage-index="${index}" aria-pressed="${stage === candidate}">View ${candidate.toLowerCase()}</button>`).join("") : ""}</div></div>
     </section>
     <section class="observer-grid" aria-label="Independent observer comparison">
-      <article><p class="kicker">Observer A</p><h2>${personA?.name ?? "Journey in progress"}</h2><p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-a">${semanticProjectionA.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-a">${semanticProjectionA.eventHash}</code></p>${personCard(personA, "a")}</article>
-      <article><p class="kicker">Observer B · independent instance</p><h2>${personB?.name ?? "Not initialized"}</h2>${semanticProjectionB ? `<p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-b">${semanticProjectionB.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-b">${semanticProjectionB.eventHash}</code></p>` : ""}${personCard(personB, "b")}${personA && !personB ? '<button type="button" data-action="observer-b">Initialize observer B</button>' : ""}${semanticMatch ? '<p class="match" data-testid="observer-match">Semantic match</p>' : ""}</article>
+      <article><p class="kicker">Observer A</p><h2>${personA?.name ?? "Journey in progress"}</h2><p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-a">${semanticProjectionA.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-a">${semanticProjectionA.eventHash}</code></p>${personCard(personA, "a", semanticProjectionA)}</article>
+      <article><p class="kicker">Observer B · independent instance</p><h2>${personB?.name ?? "Not initialized"}</h2>${semanticProjectionB ? `<p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-b">${semanticProjectionB.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-b">${semanticProjectionB.eventHash}</code></p>` : ""}${personCard(personB, "b", semanticProjectionB)}${personA && !personB ? '<button type="button" data-action="observer-b">Initialize observer B</button>' : ""}${semanticMatch ? '<p class="match" data-testid="observer-match">Semantic match</p>' : ""}</article>
     </section>
+    <section class="person-tools" aria-labelledby="person-tools-title"><div><p class="kicker">Find and share a represented life</p><h2 id="person-tools-title">Procedural identity, not a stored agent</h2><p id="experience-claim" data-testid="experience-claim">Each selected life is represented from compact fields—not an independently simulated mind. Facts are reconstructed from the same seed, snapshot, tick, and branch.</p></div><form role="search" data-person-search><label for="person-search">Procedural person ID</label><div class="search-row"><input id="person-search" name="person" type="search" value="${selectedPersonId}" aria-describedby="person-search-error"><button type="submit">Inspect person</button></div><p id="person-search-error" class="form-error" role="alert">${personSearchError}</p></form>${personA ? `<div class="share-row"><a data-testid="person-deep-link" href="${personLink}">Open this person at tick ${selectedPersonTick}</a><button type="button" class="secondary" data-action="copy-link">Copy local link</button><span role="status">${shareStatus}</span></div>` : ""}</section>
     ${
       personA
-        ? `<section class="trace-controls" aria-label="Analytical person time"><p><strong>Analytical time</strong> · direct random access, no resident stepping</p>${[
-            [0, "midnight"],
-            [7, "commute"],
-            [10, "primary activity"],
-            [19, "festival hour"],
-            [23, "sleep"],
-            [24, "identity epoch"],
-          ]
+        ? `<section class="trace-controls" aria-label="Analytical person time"><p><strong>Follow through the day</strong> · direct random access, no resident stepping or promoted agent</p>${personTimeControls()
             .map(
               ([tick, label]) =>
                 `<button type="button" class="secondary" data-person-tick="${tick}" aria-pressed="${selectedPersonTick === tick}">Tick ${tick} · ${label}</button>`,
@@ -495,6 +613,7 @@ function render(root: HTMLElement): void {
             .join("")}</section>`
         : ""
     }
+    ${branchComparisonPanel()}
     <section class="trace-controls" aria-label="Replay and field controls"><button type="button" data-action="replay" ${personA ? "" : "disabled"}>Rewind and replay</button><p data-testid="replay-result">${replayResult}</p><button type="button" class="secondary" data-action="fields">Reveal fields</button><button type="button" class="secondary" data-action="render-loss">Simulate renderer loss</button><button type="button" class="secondary" data-action="debug" aria-expanded="${debugVisible}">${debugVisible ? "Hide debug world" : "Inspect debug world"}</button></section>
     <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Authoritative world budget</p><h2><span data-testid="represented-population">${world.totalPopulation.toLocaleString("en-US")}</span> represented lives</h2></div><dl><div><dt>Authority</dt><dd>${world.cells.length.toLocaleString("en-US")} integer cells</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Projected scope</dt><dd><span data-testid="projection-represented">${semanticProjectionA.realityBudget.representedPeople.toLocaleString("en-US")}</span> people → <span data-testid="projection-tokens">${semanticProjectionA.realityBudget.materializedTokens.toLocaleString("en-US")}</span> weighted tokens</dd></div><div><dt>Derived bytes</dt><dd>${semanticProjectionA.realityBudget.estimatedBytes.toLocaleString("en-US")} · epoch ${semanticProjectionA.identityEpoch} / ${semanticProjectionA.realityBudget.continuityHorizonTicks} ticks</dd></div><div><dt>Manifestation hash</dt><dd><code>${semanticProjectionA.manifestationHash}</code></dd></div><div><dt>Event hash</dt><dd><code>${semanticProjectionA.eventHash}</code> · ${semanticProjectionA.events.length} local events</dd></div><div><dt>Sampling contract</dt><dd>${semanticProjectionA.realityBudget.samplingContract}</dd></div><div><dt>Observer state</dt><dd>Camera and GPU quality excluded from hashes</dd></div></dl></section>
     ${debugVisible ? `<section class="debug-world" aria-labelledby="debug-title"><div class="debug-heading"><div><p class="kicker">Seeded semantic atlas</p><h2 id="debug-title">Debug globe · L${debugLevel}</h2><p>Fictional geography; orange edges are the wrapped seam. Cell population brightens land.</p></div><div class="debug-controls" aria-label="Debug world level"><button type="button" class="secondary" data-debug-level="2" aria-pressed="${debugLevel === 2}">L2 regions</button><button type="button" class="secondary" data-debug-level="3" aria-pressed="${debugLevel === 3}">L3</button><button type="button" class="secondary" data-debug-level="5" aria-pressed="${debugLevel === 5}">L5 cells</button></div></div><canvas width="768" height="384" data-testid="debug-globe" aria-label="Fictional world cell map" aria-describedby="debug-cell-details">A deterministic map of fictional geography and population.</canvas><div class="debug-inspector" id="debug-cell-details"><div><dt>Selected cell</dt><dd data-testid="debug-cell-id">${selectedCell.id}</dd></div><div><dt>Hierarchy</dt><dd>${selectedParent} → ${selectedCell.id}</dd></div><div><dt>Geography</dt><dd>${selectedCell.biome} · ${selectedCell.elevationMeters.toLocaleString("en-US")} m</dd></div><div><dt>Population</dt><dd>${selectedCell.population.toLocaleString("en-US")}</dd></div><div><dt>Region</dt><dd>${selectedCell.regionId}</dd></div></div><div class="debug-probes"><button type="button" data-debug-cell="L5/12/0">Inspect seam</button><button type="button" data-debug-cell="L5/0/3">Inspect north pole</button></div><article class="field-debug" aria-labelledby="field-debug-title"><div class="field-debug-heading"><div><p class="kicker">Conservative field simulation</p><h2 id="field-debug-title">Tick <span data-testid="field-tick">${fieldState.tick}</span> · <code data-testid="field-hash">${fieldState.stateHash}</code></h2></div><div class="debug-controls"><button type="button" data-action="field-step">Single-step</button><button type="button" class="secondary" data-action="field-day">Advance one day</button></div></div><dl class="field-channels"><div><dt>Resident cohorts</dt><dd>${selectedFieldCell.cohorts.young.toLocaleString("en-US")} young · ${selectedFieldCell.cohorts.adult.toLocaleString("en-US")} adult · ${selectedFieldCell.cohorts.older.toLocaleString("en-US")} older</dd></div><div><dt>Activity channels</dt><dd>sleep ${selectedFieldCell.activities.sleep.toLocaleString("en-US")} · home ${selectedFieldCell.activities.home.toLocaleString("en-US")} · work ${selectedFieldCell.activities.work.toLocaleString("en-US")} · transit ${selectedFieldCell.activities.transit.toLocaleString("en-US")} · community ${selectedFieldCell.activities.community.toLocaleString("en-US")}</dd></div><div><dt>Capacity / amenity</dt><dd>${selectedFieldCell.capacityPermille}‰ / ${selectedFieldCell.amenityPermille}‰ · demand ${selectedFieldCell.flowDemand.toLocaleString("en-US")}</dd></div><div><dt>Sparse active regions</dt><dd>${fieldState.activeCellIds.length}</dd></div><div><dt>Flux ledger</dt><dd>${fieldState.lastFluxes.length.toLocaleString("en-US")} transfers; ${selectedFluxes.length} touch this cell${selectedFluxes[0] ? ` · #${selectedFluxes[0].processingOrder} ${selectedFluxes[0].sourceCellId} → ${selectedFluxes[0].destinationCellId} (${selectedFluxes[0].count.toLocaleString("en-US")})` : ""}</dd></div><div><dt>Invariant failures</dt><dd class="${fieldInvariant.valid ? "valid" : "invalid"}" data-testid="field-invariants">${fieldInvariant.valid ? "None — exact conservation" : fieldInvariant.issues.join("; ")}</dd></div></dl></article>${transportDebugPanel()}</section>` : ""}
@@ -506,6 +625,26 @@ function render(root: HTMLElement): void {
     if (stages[stageIndex] === "Person") personA = queryPerson(snapshotA);
     render(root);
   });
+  const journeySurface = root.querySelector<HTMLElement>(
+    "[data-testid=journey-renderer][role=button]",
+  );
+  const inspectHighlighted = (): void => {
+    selectExperience(selectedPersonId, selectedPersonTick, activeBranch);
+    render(root);
+  };
+  journeySurface?.addEventListener("click", inspectHighlighted);
+  journeySurface?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      inspectHighlighted();
+    }
+  });
+  root
+    .querySelector('[data-action="festival"]')
+    ?.addEventListener("click", () => {
+      selectExperience(FESTIVAL_PERSON_ID, 19, "baseline");
+      render(root);
+    });
   root
     .querySelector('[data-action="camera"]')
     ?.addEventListener("click", () => {
@@ -520,6 +659,56 @@ function render(root: HTMLElement): void {
         createPlaceholderSnapshot(),
         observerBEngine.itinerary,
       );
+      render(root);
+    });
+  root
+    .querySelector<HTMLFormElement>("[data-person-search]")
+    ?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (!(form instanceof HTMLFormElement)) return;
+      const data = new FormData(form);
+      const requested = String(data.get("person") ?? "").trim();
+      try {
+        manifestationIndex.person(requested);
+        selectExperience(requested, selectedPersonTick, activeBranch);
+      } catch {
+        personSearchError =
+          "That person ID is not valid for this baseline seed. No state changed.";
+      }
+      render(root);
+    });
+  root
+    .querySelector('[data-action="copy-link"]')
+    ?.addEventListener("click", () => {
+      const href = buildExperienceLink(location.href, {
+        schema: EXPERIENCE_LINK_SCHEMA,
+        seed: BASELINE_WORLD_SEED,
+        tick: selectedPersonTick,
+        personId: selectedPersonId,
+        branch: activeBranch,
+      });
+      void navigator.clipboard
+        .writeText(href)
+        .then(() => {
+          shareStatus = "Link copied";
+          render(root);
+        })
+        .catch(() => {
+          shareStatus = "Copy unavailable; open the link directly";
+          render(root);
+        });
+    });
+  root
+    .querySelector('[data-action="closure-branch"]')
+    ?.addEventListener("click", () => {
+      selectExperience(CLOSURE_PERSON_ID, 7, "closure");
+      render(root);
+    });
+  root
+    .querySelector('[data-action="baseline-branch"]')
+    ?.addEventListener("click", () => {
+      selectExperience(CLOSURE_PERSON_ID, 7, "baseline");
       render(root);
     });
   root
@@ -579,6 +768,8 @@ function render(root: HTMLElement): void {
         requested < stages.length
       )
         stageIndex = requested;
+      if (stages[stageIndex] === "Person" && personA === null)
+        personA = queryPerson(snapshotA);
       render(root);
     });
   }
@@ -668,7 +859,7 @@ if (root === null) throw new Error("Missing #app mount point");
   const scene = createRenderScene({
     worldSeed: world.seed,
     stateHash: snapshotA.stateHash,
-    selectionId: manifestationPersonId,
+    selectionId: selectedPersonId,
     stage: "street",
     quality: "baseline",
     viewport: { width, height },
@@ -683,10 +874,21 @@ if (root === null) throw new Error("Missing #app mount point");
     bufferBytes: scene.buffer.byteLength,
   });
 };
-try {
-  render(root);
-} catch (error: unknown) {
-  const reason =
-    error instanceof Error ? error.message : "Unknown startup error";
-  root.innerHTML = `<main class="smoke-error" role="alert"><h1>Local smoke failed</h1><p>${reason}</p><p>Run <code>pnpm check</code> from the repository root, then reload.</p></main>`;
+const deepLink = parseExperienceLink(location.search, manifestationIndex);
+if (!deepLink.ok) {
+  root.innerHTML = `<main class="smoke-error"><p class="kicker">Local link recovery</p><h1>Incompatible local link</h1><p role="alert">${deepLink.message}</p><p><a class="button-link" href="${location.pathname}">Return to baseline</a></p></main>`;
+} else {
+  try {
+    if (deepLink.value !== null)
+      selectExperience(
+        deepLink.value.personId,
+        deepLink.value.tick,
+        deepLink.value.branch,
+      );
+    render(root);
+  } catch (error: unknown) {
+    const reason =
+      error instanceof Error ? error.message : "Unknown startup error";
+    root.innerHTML = `<main class="smoke-error" role="alert"><h1>Local smoke failed</h1><p>${reason}</p><p>Run <code>pnpm check</code> from the repository root, then reload.</p></main>`;
+  }
 }

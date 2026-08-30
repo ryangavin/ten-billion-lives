@@ -184,11 +184,121 @@ test("traces planet to person across two independent local observers", async ({
 
   await page.getByRole("button", { name: "Rewind and replay" }).click();
   await expect(page.getByTestId("replay-result")).toHaveText(
-    "trace-1a66653c restored",
+    "trace-5182c8d2 restored",
   );
   await page.getByRole("button", { name: "Reveal fields" }).click();
   await expect(page.getByTestId("reality-budget")).toContainText(
     "2,048 integer cells",
+  );
+});
+
+test("selects, searches, and opens a validated person link in a fresh session", async ({
+  page,
+  context,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
+  await page.getByRole("button", { name: "Enter Harbor Street" }).click();
+  await page
+    .getByTestId("journey-renderer")
+    .click({ position: { x: 80, y: 80 } });
+  await expect(page.getByTestId("observer-a-stage")).toHaveText("Person");
+  await expect(page.getByTestId("observer-a-person-id")).toHaveText(
+    "person_27yi09s_1obkbba",
+  );
+
+  const search = page.getByRole("searchbox", { name: "Procedural person ID" });
+  await search.fill("person_0000a4q_0yrj2dd");
+  await search.press("Enter");
+  await expect(page.getByTestId("observer-a-person-id")).toHaveText(
+    "person_0000a4q_0yrj2dd",
+  );
+  const firstHash = await page
+    .getByTestId("manifestation-hash-a")
+    .textContent();
+  const href = await page.getByTestId("person-deep-link").getAttribute("href");
+  expect(href).toContain("schema=1");
+  expect(href).toContain("tick=10");
+  expect(href).toContain("branch=baseline");
+
+  const fresh = await context.newPage();
+  await fresh.goto(href ?? "/");
+  await expect(fresh.getByTestId("observer-a-stage")).toHaveText("Person");
+  await expect(fresh.getByTestId("observer-a-person-id")).toHaveText(
+    "person_0000a4q_0yrj2dd",
+  );
+  await expect(fresh.getByTestId("manifestation-hash-a")).toHaveText(
+    firstHash ?? "",
+  );
+
+  const invalid = await context.newPage();
+  await invalid.goto(
+    "/?schema=2&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=10&person=person_0000a4q_0yrj2dd&branch=baseline",
+  );
+  await expect(
+    invalid.getByRole("heading", { name: "Incompatible local link" }),
+  ).toBeVisible();
+  await expect(invalid.getByRole("alert")).toContainText("schema");
+  await invalid.getByRole("link", { name: "Return to baseline" }).click();
+  await expect(
+    invalid.getByRole("heading", { name: "Ten Billion Lives" }),
+  ).toBeVisible();
+});
+
+test("follows festival meetings and departure, then compares the local closure branch", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Visit Lantern Tide" }).click();
+  await expect(page.getByTestId("observer-a-person-id")).toHaveText(
+    "person_0000a4q_0yrj2dd",
+  );
+  await expect(page.getByTestId("observer-a-itinerary")).toContainText(
+    "Tick 19 · festival",
+  );
+  await expect(page.getByTestId("semantic-events-a")).toContainText(
+    "festival/lantern-confluence",
+  );
+  await page
+    .getByRole("button", { name: "Tick 21 · festival departure" })
+    .click();
+  await expect(page.getByTestId("observer-a-itinerary")).toContainText(
+    "Tick 21 · transit",
+  );
+  await expect(page.getByTestId("observer-a-route")).toContainText(
+    "festival return",
+  );
+  await page
+    .getByRole("button", { name: "Tick 10 · recurring meeting" })
+    .click();
+  await expect(page.getByTestId("semantic-events-a")).toContainText("meeting");
+
+  await page.getByRole("button", { name: "Explore closure branch" }).click();
+  await expect(page.getByTestId("active-branch")).toHaveText("Closure branch");
+  await expect(page.getByTestId("observer-a-person-id")).toHaveText(
+    "person_1iy9k0p_1by3xrw",
+  );
+  await expect(page.getByTestId("baseline-route")).toHaveText("1 edge");
+  await expect(page.getByTestId("closure-route")).toHaveText("31 edges");
+  await expect(page.getByTestId("branch-field-match")).toHaveText(
+    "Identical field state",
+  );
+  await expect(page.getByTestId("observer-a-route")).toContainText(
+    "closure detour",
+  );
+  await expect(page.getByTestId("person-deep-link")).toHaveAttribute(
+    "href",
+    /branch=closure/,
+  );
+  await page.getByRole("button", { name: "View immutable baseline" }).click();
+  await expect(page.getByTestId("active-branch")).toHaveText(
+    "Immutable baseline",
+  );
+  await expect(page.getByTestId("observer-a-route")).toContainText(
+    "1 graph edge",
+  );
+  await expect(page.getByTestId("experience-claim")).toContainText(
+    "represented from compact fields—not an independently simulated mind",
   );
 });
 
