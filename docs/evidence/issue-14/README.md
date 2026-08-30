@@ -50,12 +50,12 @@ Apple M1 Max local profile. Values below are the final same-profile run.
 
 | Measurement                        |    Result |      Budget |
 | ---------------------------------- | --------: | ----------: |
-| Street projection p50 (25k tokens) | 223.72 ms |           — |
-| Street projection p95              | 252.22 ms |   <= 500 ms |
-| Planet projection p50 (8,192)      |  80.00 ms |           — |
-| Planet projection p95              |  82.68 ms |   <= 500 ms |
-| Two independently built observers  | 473.82 ms | <= 1,000 ms |
-| Retained projection heap           |  1.31 MiB |   <= 32 MiB |
+| Street projection p50 (25k tokens) | 219.94 ms |           — |
+| Street projection p95              | 282.97 ms |   <= 500 ms |
+| Planet projection p50 (8,192)      |  79.63 ms |           — |
+| Planet projection p95              |  92.29 ms |   <= 500 ms |
+| Two independently built observers  | 472.43 ms | <= 1,000 ms |
+| Retained projection heap           |  1.29 MiB |   <= 32 MiB |
 | Estimated street projection        |  1.72 MiB |    <= 2 MiB |
 | Epoch identity retention           |     87.5% |    >= 87.5% |
 
