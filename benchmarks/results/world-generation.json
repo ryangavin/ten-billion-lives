@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "world-generation-v1",
-  "commit": "1930166845683a0d340afefef9bfdb596bccbbed",
+  "commit": "8145a582c96ffa33d52ba88c16e40b54a3e3edc9",
   "seed": "ten-billion-lives/baseline/v1",
   "worldHash": "ed66e344fcd7e737",
   "totalPopulation": "10000000000",
@@ -12,9 +12,9 @@
     "settlements": 64
   },
   "metrics": {
-    "generationP50Ms": 32.45958400000001,
-    "generationP95Ms": 44.396417,
-    "retainedHeapMiB": 0.6809463500976562,
+    "generationP50Ms": 33.219083,
+    "generationP95Ms": 46.595584,
+    "retainedHeapMiB": 0.684539794921875,
     "semanticPayloadMiB": 0.696772575378418
   }
 }

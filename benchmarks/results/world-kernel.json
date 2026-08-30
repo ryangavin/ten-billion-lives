@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "world-kernel-v1",
-  "commit": "9d7f87c8bc504ee70f39ff7520401b76574cd1e6",
+  "commit": "8145a582c96ffa33d52ba88c16e40b54a3e3edc9",
   "seed": "ten-billion-lives/baseline/v1",
   "worldHash": "ed66e344fcd7e737",
   "eventHash": "ec998bbac0999abc",
@@ -37,13 +37,13 @@
   "finalKernelHash": "6e190d289164581d",
   "metrics": {
     "snapshotBytes": 189085,
-    "saveP50Ms": 1.1086250000000177,
-    "saveP95Ms": 1.3593330000000492,
-    "loadP50Ms": 63.942916999999966,
-    "loadP95Ms": 70.45745799999997,
-    "replayTicksPerSecondP50": 57.003565943572944,
-    "replayTicksPerSecondP95": 57.642851649802175,
-    "retainedHeapMiB": 1.8798980712890625
+    "saveP50Ms": 1.1717499999999745,
+    "saveP95Ms": 1.4175420000000258,
+    "loadP50Ms": 69.219,
+    "loadP95Ms": 78.38237500000002,
+    "replayTicksPerSecondP50": 55.48562594229333,
+    "replayTicksPerSecondP95": 57.18240830860394,
+    "retainedHeapMiB": 2.0070266723632812
   },
   "budgets": {
     "snapshotBytesMax": 1048576,

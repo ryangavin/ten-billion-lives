@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "field-simulation-v1",
-  "commit": "3fde8d1ff46509d502228f81e6cd97e8b0785853",
+  "commit": "8145a582c96ffa33d52ba88c16e40b54a3e3edc9",
   "seed": "ten-billion-lives/baseline/v1/fields/v1",
   "initialStateHash": "4e04868f72dfe574",
   "dailyStateHashes": [
@@ -19,9 +19,9 @@
     "representedPopulation": "10000000000"
   },
   "metrics": {
-    "cellTicksPerSecondP50": 368741.1346309952,
-    "cellTicksPerSecondP95": 376107.177363841,
-    "retainedHeapMiB": 0.8115921020507812
+    "cellTicksPerSecondP50": 383220.7515388377,
+    "cellTicksPerSecondP95": 393974.6196674485,
+    "retainedHeapMiB": 0.8043975830078125
   },
   "invariantReport": {
     "valid": true,

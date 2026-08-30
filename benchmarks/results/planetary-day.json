@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "planetary-day-v1",
-  "commit": "99de7831345621654d9a1842b210a9f4ec36f06e",
+  "commit": "8145a582c96ffa33d52ba88c16e40b54a3e3edc9",
   "seed": "ten-billion-lives/baseline/v1/planetary-day/v1",
   "graphHash": "784fcc1635c75fc3",
   "dayHash": "c09cdd840c68bab2",
@@ -43,10 +43,10 @@
     "passed": true
   },
   "metrics": {
-    "representativeDayP50Ms": 100.84520899999995,
-    "representativeDayP95Ms": 115.275584,
-    "ticksPerSecondP50": 237.98849978088708,
-    "retainedHeapMiB": 1.5028228759765625
+    "representativeDayP50Ms": 95.89029200000004,
+    "representativeDayP95Ms": 115.46054200000002,
+    "ticksPerSecondP50": 250.28602478340548,
+    "retainedHeapMiB": 1.47344970703125
   },
   "festivalAttendance": [
     "0",

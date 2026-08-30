@@ -52,4 +52,4 @@ pnpm test:e2e
 pnpm benchmark
 ```
 
-The clean-checkout outer-loop transcript and final M1 defect audit are appended before the gate closes.
+[`outer-loop.md`](outer-loop.md) records the clean-clone install, full checks, independent replay comparison, Chromium/WebKit journeys, same-profile benchmark matrix, visual review, conservation report, and zero-P0-defect audit at gate revision `8145a58`.
