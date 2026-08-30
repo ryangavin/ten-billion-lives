@@ -21,7 +21,7 @@ The focused suite covers repeat generation, an alternate seed, exact population 
 | Retained heap    | 0.68 MiB |
 | Semantic payload | 0.70 MiB |
 
-These generation costs remain comfortably inside the M0 catastrophic startup (5,000 ms) and browser-memory (256 MiB) limits. The actual production-browser startup and memory profile is refreshed separately by the repository benchmark harness.
+These generation costs remain comfortably inside the M0 catastrophic startup (5,000 ms) and browser-memory (256 MiB) limits. `pnpm benchmark` refreshed the actual production-browser profile at `ab818712a7efabc491acaaf79b387f389e7c93ed`: 137.93 ms startup, 9.54 MiB browser heap, and 86.97 ms p95 for the existing 250k Canvas2D scaffold. The regression gate passes. The pre-existing 60 FPS aspiration remains owned by later rendering work rather than hidden or amended here.
 
 ## Browser and visual checks
 
@@ -37,6 +37,7 @@ Manual inspection confirmed the fictional land/ocean/biome field is visible at b
 ```sh
 pnpm exec vitest run packages/sim/src/world.test.ts
 pnpm benchmark:world
+pnpm benchmark
 pnpm check
 pnpm test:e2e
 ```

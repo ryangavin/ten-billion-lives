@@ -229,7 +229,7 @@ const result = {
   browser: { version: browser.browserVersion, device: profile.device },
 };
 
-const report = `# Local benchmark baseline\n\nRevision: \`${commit}\`  \nSeed: \`${SEED}\`  \nProfile: \`${profile.profileId}\`  \nBrowser: ${browser.browserVersion}\n\n## Capability\n\n- WebGPU navigator: ${browser.webgpu.navigatorPresent}\n- WebGPU adapter: ${browser.webgpu.adapterAvailable}\n- Selected profile: **${browser.webgpu.selectedProfile}**\n- Canvas2D fallback: available\n\n## Metrics\n\n| Metric | Result |\n| --- | ---: |\n${Object.entries(
+const report = `# Local benchmark baseline\n\n- Revision: \`${commit}\`\n- Seed: \`${SEED}\`\n- Profile: \`${profile.profileId}\`\n- Browser: ${browser.browserVersion}\n\n## Capability\n\n- WebGPU navigator: ${browser.webgpu.navigatorPresent}\n- WebGPU adapter: ${browser.webgpu.adapterAvailable}\n- Selected profile: **${browser.webgpu.selectedProfile}**\n- Canvas2D fallback: available\n\n## Metrics\n\n| Metric | Result |\n| --- | ---: |\n${Object.entries(
   result.metrics,
 )
   .map(([name, value]) => `| ${name} | ${value.toFixed(2)} |`)
