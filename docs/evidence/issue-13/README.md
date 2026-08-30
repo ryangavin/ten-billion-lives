@@ -23,14 +23,14 @@
 | Measurement            |    Result |      Budget |
 | ---------------------- | --------: | ----------: |
 | Visible manifestations |   250,000 |  >= 250,000 |
-| Canvas frame p50       |   2.31 ms |           — |
-| Canvas frame p95       |   4.78 ms | <= 16.67 ms |
-| Browser heap           | 73.05 MiB |  <= 256 MiB |
+| Canvas frame p50       |   2.00 ms |           — |
+| Canvas frame p95       |   5.11 ms | <= 16.67 ms |
+| Browser heap           | 61.04 MiB |  <= 256 MiB |
 | Render buffer          |  1.19 MiB |    observed |
 
 The first 1280×720 profile exposed a real miss at 18.37 ms p50 / 19.73 ms p95. Removing a per-instance tuple allocation from the measured hot loop produced the committed result on the same profile. No showcase target was pursued because the 1M count is optional and the baseline criterion is green.
 
-Chromium exposed `navigator.gpu` but returned no usable adapter in this headless profile, so the detected runtime backend was `canvas2d`; the capability test and compiled WebGPU implementation retain the accelerated path for supported local devices.
+Chromium exposed `navigator.gpu` but returned no usable adapter in this headless profile, so the detected runtime backend was `canvas2d` (1.42 ms p50 / 2.97 ms p95 on the in-app street surface). The benchmark automatically exercises that detected path; on a supported local device the same workload reaches the compiled WebGPU storage-buffer/indirect-draw implementation.
 
 ## Visual regression scenes
 

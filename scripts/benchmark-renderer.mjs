@@ -72,9 +72,29 @@ try {
   await detectedPage.goto("http://127.0.0.1:4173/", {
     waitUntil: "networkidle",
   });
+  await detectedPage.getByRole("button", { name: "Enter Brindle Bay" }).click();
+  await detectedPage
+    .getByRole("button", { name: "Enter Harbor Street" })
+    .click();
+  await detectedPage.getByTestId("render-backend").waitFor();
+  const detectedSamples = [];
+  for (let sample = 0; sample < 7; sample += 1) {
+    await detectedPage
+      .getByTestId("journey-renderer")
+      .evaluate((element, index) => {
+        element.style.width = index % 2 === 0 ? "99%" : "100%";
+      }, sample);
+    await detectedPage.waitForTimeout(50);
+    const frame = await detectedPage
+      .getByTestId("render-frame-time")
+      .textContent();
+    detectedSamples.push(Number.parseFloat(frame ?? "NaN"));
+  }
   const detectedBackend =
     (await detectedPage.getByTestId("render-backend").textContent()) ??
     "unknown";
+  if (detectedSamples.some((sample) => !Number.isFinite(sample)))
+    throw new Error("detected renderer produced a non-finite sample");
   const browserVersion = await browser.version();
   await browser.close();
 
@@ -82,6 +102,8 @@ try {
     fallbackFrameTimeP50Ms: percentile(samples, 0.5),
     fallbackFrameTimeP95Ms: percentile(samples, 0.95),
     browserMemoryMiB: browserMetrics.browserMemoryMiB,
+    detectedBackendFrameTimeP50Ms: percentile(detectedSamples, 0.5),
+    detectedBackendFrameTimeP95Ms: percentile(detectedSamples, 0.95),
   };
   const budgets = {
     visibleManifestationsMin: 250_000,
@@ -132,6 +154,7 @@ try {
       visibleManifestations,
       bufferBytes: benchmark.bufferBytes,
       frameSamples: samples.length,
+      detectedBackendFrameSamples: detectedSamples.length,
       drawStrategy: "typed-pixel-buffer",
       screenshot: fallbackScreenshot,
     },

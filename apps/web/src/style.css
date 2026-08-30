@@ -430,6 +430,8 @@ footer code {
   display: block;
   width: 100%;
   height: 100%;
+  transform: translateX(var(--camera-shift, 0));
+  transition: transform 220ms ease;
 }
 
 .journey-renderer canvas[hidden] {

@@ -89,6 +89,10 @@ test("traces planet to person across two independent local observers", async ({
   const stateHash = await page.getByTestId("state-hash").textContent();
   await page.getByRole("button", { name: "Orbit camera" }).click();
   await expect(page.getByTestId("state-hash")).toHaveText(stateHash ?? "");
+  await expect(page.getByTestId("journey-renderer")).toHaveAttribute(
+    "data-camera-degrees",
+    "45",
+  );
   await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Settlement");
   await expect(page.getByTestId("render-visible")).toHaveText("125,000");
