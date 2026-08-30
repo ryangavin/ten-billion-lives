@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "source": "https://github.com/ryangavin/ten-billion-lives.git",
+  "commit": "0ea3f38ac74a1e1ac5a836fdfd85b027aa7fc8de",
+  "temporaryCheckoutRetainedAt": "/var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-docs-zo0b9y/repo",
+  "environment": {
+    "node": "v24.18.0",
+    "pnpm": "11.24.0"
+  },
+  "commands": [
+    {
+      "command": "git clone --quiet --branch main --single-branch https://github.com/ryangavin/ten-billion-lives.git /var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-docs-zo0b9y/repo",
+      "durationMs": 4831.023749999999,
+      "exitCode": 0,
+      "outputTail": "",
+      "passed": true
+    },
+    {
+      "command": "pnpm install --frozen-lockfile",
+      "durationMs": 1052.0363750000006,
+      "exitCode": 0,
+      "outputTail": "Scope: all 6 workspace projects\n✓ Lockfile passes supply-chain policies (verified 13m ago)\nLockfile is up to date, resolution step is skipped\nProgress: resolved 1, reused 0, downloaded 0, added 0\nPackages: +242\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nPackages are cloned from the content-addressable store to the virtual store.\n  Content-addressable store is at: /Users/ryan/Library/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nProgress: resolved 242, reused 242, downloaded 0, added 242, done\n\ndevDependencies:\n+ @axe-core/playwright 4.13.0\n+ @eslint/js 10.0.1\n+ @playwright/test 1.62.1\n+ @types/node 24.13.3\n+ cspell 10.1.1\n+ eslint 10.9.1\n+ globals 17.11.0\n+ prettier 3.9.6\n+ typescript 6.0.3\n+ typescript-eslint 8.68.0\n+ vite 8.2.2\n+ vitest 4.1.11\n\nDone in 988ms using pnpm v11.24.0",
+      "passed": true
+    },
+    {
+      "command": "pnpm docs:check",
+      "durationMs": 1422.7531669999998,
+      "exitCode": 0,
+      "outputTail": "Documentation check passed: 13 files, local links, shell snippets, diagram alternatives, claims, and dependency inventory.\n$ cspell --no-progress --show-suggestions README.md CONTRIBUTING.md docs/*.md && node scripts/check-docs.mjs\nCSpell: Files checked: 13, Issues found: 0 in 0 files.",
+      "passed": true
+    },
+    {
+      "command": "pnpm check",
+      "durationMs": 21543.471042,
+      "exitCode": 0,
+      "outputTail": "Checking formatting...\nAll matched files use Prettier code style!\nDocumentation check passed: 13 files, local links, shell snippets, diagram alternatives, claims, and dependency inventory.\nScope: 5 of 6 workspace projects\npackages/render typecheck$ tsc --noEmit -p tsconfig.json\npackages/sim typecheck$ tsc --noEmit -p tsconfig.json\npackages/testkit typecheck$ tsc --noEmit -p tsconfig.json\npackages/render typecheck: Done\npackages/sim typecheck: Done\npackages/testkit typecheck: Done\npackages/manifest typecheck$ tsc --noEmit -p tsconfig.json\npackages/manifest typecheck: Done\napps/web typecheck$ tsc --noEmit -p tsconfig.json\napps/web typecheck: Done\nProduct contract check passed.\nArchitecture contract check passed.\n\n RUN  v4.1.11 /private/var/folders/0k/8576mxj93vz8bl6s00ytysgr0000gn/T/ten-billion-lives-docs-zo0b9y/repo\n\n\n Test Files  15 passed (15)\n      Tests  76 passed (76)\n   Start at  18:59:13\n   Duration  4.34s (transform 657ms, setup 0ms, import 2.30s, tests 14.75s, environment 1ms)\n\nScope: 5 of 6 workspace projects\npackages/render build$ tsc -p tsconfig.json\npackages/sim build$ tsc -p tsconfig.json\npackages/testkit build$ tsc -p tsconfig.json\npackages/testkit build: Done\npackages/sim build: Done\npackages/render build: Done\npackages/manifest build$ tsc -p tsconfig.json\npackages/manifest build: Done\napps/web build$ tsc --noEmit -p tsconfig.json && vite build\napps/web build: vite v8.2.2 building client environment for production...\napps/web build: transforming...\napps/web build: ✓ 23 modules transformed.\napps/web build: rendering chunks...\napps/web build: computing gzip size...\napps/web build: dist/index.html                  1.27 kB │ gzip:  0.63 kB\napps/web build: dist/assets/index-CmeXLcDR.css  15.23 kB │ gzip:  4.27 kB\napps/web build: dist/assets/index-CPOO8sXF.js   98.58 kB │ gzip: 31.48 kB\napps/web build: ✓ built in 343ms\napps/web build: Done\n$ pnpm format:check && pnpm docs:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build\n$ prettier --check .\n$ cspell --no-progress --show-suggestions README.md CONTRIBUTING.md docs/*.md && node scripts/check-docs.mjs\nCSpell: Files checked: 13, Issues found: 0 in 0 files.\n$ eslint .\n$ pnpm -r --if-present typecheck\n$ pnpm test:contracts && vitest run\n$ node scripts/check-product-contract.mjs && node scripts/check-architecture-contract.mjs\n$ pnpm -r --if-present build",
+      "passed": true
+    },
+    {
+      "command": "pnpm start",
+      "durationMs": 6950.814750000001,
+      "exitCode": null,
+      "outputTail": "$ pnpm build && pnpm preview --host 127.0.0.1\n$ pnpm -r --if-present build\nScope: 5 of 6 workspace projects\npackages/render build$ tsc -p tsconfig.json\npackages/sim build$ tsc -p tsconfig.json\npackages/testkit build$ tsc -p tsconfig.json\npackages/sim build: Done\npackages/testkit build: Done\npackages/render build: Done\npackages/manifest build$ tsc -p tsconfig.json\npackages/manifest build: Done\napps/web build$ tsc --noEmit -p tsconfig.json && vite build\napps/web build: vite v8.2.2 building client environment for production...\napps/web build: transforming...\napps/web build: ✓ 23 modules transformed.\napps/web build: rendering chunks...\napps/web build: computing gzip size...\napps/web build: dist/index.html                  1.27 kB │ gzip:  0.63 kB\napps/web build: dist/assets/index-CmeXLcDR.css  15.23 kB │ gzip:  4.27 kB\napps/web build: dist/assets/index-CPOO8sXF.js   98.58 kB │ gzip: 31.48 kB\napps/web build: ✓ built in 40ms\napps/web build: Done\n$ pnpm --filter @ten-billion-lives/web preview --host 127.0.0.1\n$ vite preview --host 127.0.0.1\n  ➜  Local:   http://127.0.0.1:4173/",
+      "passed": true
+    }
+  ],
+  "documentation": {
+    "maintainedFiles": 13,
+    "spellingIssues": 0,
+    "validated": [
+      "local links and heading fragments",
+      "shell snippets and root scripts",
+      "diagram text alternatives",
+      "claim and non-claim consistency",
+      "zero external runtime packages",
+      "installed direct development versions and licenses"
+    ]
+  },
+  "productionPreview": {
+    "url": "http://127.0.0.1:4173/",
+    "browserEvidence": {
+      "title": "Ten Billion Lives",
+      "population": "10,000,000,000",
+      "firstRunClaim": "One fictional planet, exactly 10,000,000,000 represented lives, and no table of people. Zoom in to reconstruct one coherent life from compact fields.",
+      "backend": "canvas2d"
+    },
+    "passed": true
+  },
+  "cleanWorktreeAfterValidation": true,
+  "passed": true
+}

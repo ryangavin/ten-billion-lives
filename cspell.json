@@ -46,6 +46,7 @@
     "WebKit",
     "WebM",
     "WebGPU",
-    "WebSocket"
+    "WebSocket",
+    "worktree"
   ]
 }

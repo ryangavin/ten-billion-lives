@@ -1,8 +1,8 @@
 # Progress
 
 - Current issue: #26 — publish and verify the complete local quickstart, architecture, limitations, evidence, and contributor documentation.
-- Last green commit: `17a9234` (#25 closed with clean-checkout, deterministic, browser, accessibility, visual, performance, security, and exploratory evidence).
-- Evidence produced: #25 versioned QA index under `docs/evidence/issue-25`; 24/24 applicable browser cases, exact ten-billion conservation, two-observer semantic match, all current budgets, and no unresolved local P0 defect.
-- Next action: audit README and existing docs against #26, add only missing content and a local documentation verifier, then validate commands, links, claims, code snippets, licenses, and the clean-clone walkthrough.
-- Decisions: Documentation must distinguish demonstrated behavior from aspiration and physical theory. Deployment/networking receives only a clearly deferred note, never a runbook.
+- Last green commit: `0ea3f38` (`test: add clean documentation walkthrough`).
+- Evidence produced: README/quickstart, architecture equations/current diagrams, benchmark/testing/dependency/limitations/concept guides, expanded contributor workflow, and `pnpm docs:check`. Fresh remote clone at `0ea3f38` passed frozen install, zero-spelling/link/snippet/claim/license docs checks, root 15 files / 76 tests/build, `pnpm start`, Chromium title/exact-population inspection, and clean worktree. Evidence is under `docs/evidence/issue-26`.
+- Next action: run the final docs/root checks, commit and push #26 evidence, close #26 with the clean-walkthrough transcript, then read and start final gate #27.
+- Decisions: Documentation states the validated 24 analytical hourly ticks and reversible route-closure branch, replacing stale one-minute/new-connector planning copy. Deployment/networking receives only a clearly deferred note, never a runbook. Pnpm aggregate license reporting is recorded as broken; the deterministic direct/runtime inventory is enforced by `pnpm docs:check`.
 - Blockers: none. Server deployment is outside the local-MVP goal.

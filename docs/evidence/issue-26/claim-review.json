@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "command": "rg -n -i 'ten billion.*(minds|agents)|physical evidence|physical or social theory|software demonstration|not claim|does not run|deferred' README.md CONTRIBUTING.md docs/*.md",
+  "automatedCheck": "pnpm docs:check",
+  "requiredHonestStatements": [
+    {
+      "file": "README.md",
+      "statement": "The project does not run ten billion independent minds or agent loops and is not evidence for a physical or social theory.",
+      "present": true
+    },
+    {
+      "file": "docs/PRODUCT.md",
+      "statement": "The local MVP does not run ten billion minds or independent agent loops and stores no row per represented person.",
+      "present": true
+    },
+    {
+      "file": "docs/LIMITATIONS.md",
+      "statement": "Claims and non-claims explicitly separate represented population, deterministic reconstruction, visual sampling, consciousness, demographics, science, and networking.",
+      "present": true
+    },
+    {
+      "file": "docs/CONCEPT.md",
+      "statement": "The conceptual essay calls the work a software demonstration, not physical evidence, and rejects physics/biology/sociology/metaphysics validation.",
+      "present": true
+    }
+  ],
+  "staleOrUnsupportedPatterns": {
+    "futureProductPlanningStatus": 0,
+    "oneMinuteAuthoritativeTicks": 0,
+    "newHarborConnectorIntervention": 0,
+    "affirmativeTenBillionMindOrAgentExecution": 0,
+    "softwareAsPhysicalProof": 0,
+    "implementedRemoteSharingOrDeployment": 0
+  },
+  "implementedClaim": {
+    "population": "exactly 10,000,000,000 represented fictional lives",
+    "storage": "compact fields and zero retained person rows",
+    "personSemantics": "pure deterministic reconstruction",
+    "observers": "independently initialized local views",
+    "rendering": "non-authoritative WebGPU or Canvas projection"
+  },
+  "manualReview": "All search matches are explicit negative, bounded, compatibility, or deferred statements. No maintained document presents a represented life as an independently running mind/agent or presents the software as scientific evidence.",
+  "passed": true
+}
