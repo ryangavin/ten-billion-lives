@@ -7,7 +7,7 @@ import { chromium } from "@playwright/test";
 /* global document */
 
 const previewUrl = "http://127.0.0.1:4176";
-const outputDirectory = "docs/evidence/issue-21";
+const outputDirectory = process.argv[2] ?? "docs/evidence/issue-21";
 const videoDirectory = "/tmp/ten-billion-lives-observatory-video";
 
 async function waitForPreview() {

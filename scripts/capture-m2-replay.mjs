@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 
-const outputDirectory = "docs/evidence/issue-16";
+const outputDirectory = process.argv[2] ?? "docs/evidence/issue-16";
 const vectors = [
   ["world", "scripts/replay-world.mjs"],
   ["projection", "scripts/projection-vector.mjs"],
