@@ -8,6 +8,8 @@ const previewUrl = "http://127.0.0.1:4177";
 const evidenceDirectory = "docs/evidence/issue-22";
 const logicalMinutes = 30;
 const framesPerMinute = 60;
+const wallClockSoak = process.argv.includes("--wall-clock");
+const targetMinuteDurationMs = wallClockSoak ? 60_000 : 0;
 
 function percentile(values, fraction) {
   const sorted = [...values].sort((left, right) => left - right);
@@ -169,6 +171,8 @@ try {
       navigator.deviceMemory === undefined ? null : navigator.deviceMemory,
     webgpuNavigatorPresent: Boolean(navigator.gpu),
   }));
+  const devtools = await context.newCDPSession(baseline.page);
+  await devtools.send("HeapProfiler.collectGarbage");
   const initialHeapMiB = await baseline.page.evaluate(
     () => performance.memory?.usedJSHeapSize / 1_048_576 || 0,
   );
@@ -176,6 +180,7 @@ try {
   const soakSamples = [];
   const allBaselineFrames = [];
   for (let minute = 1; minute <= logicalMinutes; minute += 1) {
+    const minuteStarted = performance.now();
     await baseline.page
       .getByRole("button", { name: "Advance one tick" })
       .click();
@@ -202,12 +207,17 @@ try {
       heapMiB: browserState.heapMiB,
       stateHash: browserState.stateHash,
     });
+    const remainingMinuteMs =
+      targetMinuteDurationMs - (performance.now() - minuteStarted);
+    if (remainingMinuteMs > 0)
+      await new Promise((resolve) => setTimeout(resolve, remainingMinuteMs));
   }
   const actualSoakDurationMs = performance.now() - soakStarted;
   await baseline.page.getByTestId("journey-renderer").screenshot({
     path: `${evidenceDirectory}/soak-final.png`,
   });
 
+  await devtools.send("HeapProfiler.collectGarbage");
   const finalHeapMiB = await baseline.page.evaluate(
     () => performance.memory?.usedJSHeapSize / 1_048_576 || 0,
   );
@@ -233,11 +243,11 @@ try {
     baselineFrameP95MsMax: 1000 / 60,
     showcaseFrameP95MsMax: 1000 / 30,
     browserHeapMiBMax: 256,
-    browserHeapGrowthMiBMax: 64,
+    retainedHeapGrowthMiBMax: 64,
     lastToFirstFrameP95RatioMax: 1.5,
   };
   const maximumHeapMiB = Math.max(initialHeapMiB, finalHeapMiB, ...heapSamples);
-  const heapGrowthMiB = finalHeapMiB - initialHeapMiB;
+  const retainedHeapGrowthMiB = finalHeapMiB - initialHeapMiB;
   const lastToFirstFrameP95Ratio = lastWindowP95Ms / firstWindowP95Ms;
   const baselinePassed =
     baselineFrameSummary.p95 <= budgets.baselineFrameP95MsMax;
@@ -256,8 +266,8 @@ try {
   if (!baselinePassed) failures.push("baselineFrameP95Ms");
   if (maximumHeapMiB > budgets.browserHeapMiBMax)
     failures.push("browserHeapMiB");
-  if (heapGrowthMiB > budgets.browserHeapGrowthMiBMax)
-    failures.push("browserHeapGrowthMiB");
+  if (retainedHeapGrowthMiB > budgets.retainedHeapGrowthMiBMax)
+    failures.push("retainedHeapGrowthMiB");
   if (lastToFirstFrameP95Ratio > budgets.lastToFirstFrameP95RatioMax)
     failures.push("lastToFirstFrameP95Ratio");
 
@@ -284,7 +294,10 @@ try {
       framesPerMinute,
       totalFrames: allBaselineFrames.length,
       actualSoakDurationMs,
-      note: "Accelerated deterministic workload: each logical minute performs one semantic interaction and 60 production Canvas frames; this is not 30 minutes of wall-clock idle time.",
+      mode: wallClockSoak ? "wall-clock" : "accelerated",
+      note: wallClockSoak
+        ? "Thirty wall-clock minutes; each minute performs one semantic interaction and 60 production Canvas frames."
+        : "Accelerated deterministic workload: each logical minute performs one semantic interaction and 60 production Canvas frames; this is not 30 minutes of wall-clock time.",
     },
     qualityComparison: {
       fallbackVisibleManifestations: fallback.streetVisible,
@@ -311,7 +324,7 @@ try {
       initialHeapMiB,
       maximumHeapMiB,
       finalHeapMiB,
-      heapGrowthMiB,
+      retainedHeapGrowthMiB,
       firstWindowP95Ms,
       lastWindowP95Ms,
       lastToFirstFrameP95Ratio,
