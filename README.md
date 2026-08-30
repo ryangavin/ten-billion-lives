@@ -15,6 +15,8 @@ This repository will first deliver a local browser-based interactive observatory
 
 The project does **not** claim to simulate ten billion independent minds. Its subject is the emergence of consistent apparent individuality from a compact shared field.
 
+The frozen [local MVP product contract](docs/PRODUCT.md) defines the honest claim and non-claim, five-minute journey, continuity rules, success metrics, evidence owners, and explicit non-goals.
+
 ## Status
 
 Local-first MVP planning complete. The executable work plan is tracked in GitHub milestones and issues; server deployment is a separate future phase.
@@ -22,3 +24,15 @@ Local-first MVP planning complete. The executable work plan is tracked in GitHub
 - [Milestones](https://github.com/ryangavin/ten-billion-lives/milestones)
 - [Final local-MVP gate and master checklist](https://github.com/ryangavin/ten-billion-lives/issues/27)
 - [Autonomous Codex goal prompt](GOAL.md)
+
+## Contributing and license
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). The project is available under the [MIT License](LICENSE).
+
+## Current local check
+
+Until issue #3 establishes the complete application workflow, validate the product-contract foundation from the repository root with:
+
+```sh
+node scripts/check-product-contract.mjs
+```
