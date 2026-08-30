@@ -1,8 +1,11 @@
 import "./style.css";
 
 import {
-  createAnalyticalItineraryIndex,
+  createIllusionEngine,
   manifestPlaceholder,
+  type AnalyticalItineraryIndex,
+  type IllusionEngine,
+  type IllusionProjection,
   type PersonCard,
   type PersonItineraryPoint,
 } from "@ten-billion-lives/manifest";
@@ -52,11 +55,14 @@ const nextLabels = [
 ];
 const snapshotA = createPlaceholderSnapshot();
 const world = generateWorld(BASELINE_WORLD_SEED);
-const itineraryIndex = createAnalyticalItineraryIndex(world);
+const illusionEngine = createIllusionEngine(world);
+const itineraryIndex = illusionEngine.itinerary;
 const manifestationIndex = itineraryIndex.manifestation;
-const manifestationCellId = world.settlements[0]?.cellId;
-if (manifestationCellId === undefined)
-  throw new Error("Baseline world requires a manifestation settlement");
+const manifestationCellId =
+  world.settlements[0]?.cellId ??
+  (() => {
+    throw new Error("Baseline world requires a manifestation settlement");
+  })();
 const manifestationPersonId = manifestationIndex.personIdAt(
   manifestationCellId,
   42n,
@@ -67,7 +73,9 @@ const planetaryDay = simulatePlanetaryDay(
   world,
   createSignatureCommandLog(transportGraph),
 );
-const checkpointKernel = advanceWorldKernel(createWorldKernel(), 13);
+const genesisKernel = createWorldKernel();
+const kernelStates = new Map([[0, genesisKernel]]);
+const checkpointKernel = advanceWorldKernel(genesisKernel, 13);
 const checkpointBytes = serializeWorldKernel(checkpointKernel);
 let stageIndex = 0;
 let cameraDegrees = 0;
@@ -80,6 +88,7 @@ type ManifestedPerson = PersonCard &
 
 let personA: ManifestedPerson | null = null;
 let personB: ManifestedPerson | null = null;
+let observerBEngine: IllusionEngine | null = null;
 let replayResult = "Not run";
 let fieldsRevealed = false;
 let debugVisible = false;
@@ -92,6 +101,54 @@ let journeyRenderer: BrowserJourneyRenderer | null = null;
 let journeyResizeObserver: ResizeObserver | null = null;
 let journeyRenderGeneration = 0;
 const renderSceneCache = new Map<string, RenderScene>();
+
+function kernelStateAt(tick: number) {
+  const cached = kernelStates.get(tick);
+  if (cached !== undefined) return cached;
+  const state = advanceWorldKernel(genesisKernel, tick);
+  kernelStates.set(tick, state);
+  return state;
+}
+
+function projectionFor(
+  engine: IllusionEngine,
+  stage: (typeof stages)[number],
+): IllusionProjection {
+  const regionId = world.cells.find(
+    (cell) => cell.id === manifestationCellId,
+  )?.regionId;
+  if (regionId === undefined)
+    throw new Error("Baseline manifestation region is unavailable");
+  const scopeCellIds =
+    stage === "Planet"
+      ? world.cells.map((cell) => cell.id)
+      : stage === "Settlement"
+        ? world.cells
+            .filter((cell) => cell.regionId === regionId)
+            .map((cell) => cell.id)
+        : [manifestationCellId];
+  return engine.project(
+    {
+      state: kernelStateAt(selectedPersonTick),
+      tick: BigInt(selectedPersonTick),
+      scopeCellIds,
+      lod:
+        stage === "Planet"
+          ? "planet"
+          : stage === "Settlement"
+            ? "region"
+            : stage === "Street"
+              ? "street"
+              : "person",
+      selectedPersonIds: [manifestationPersonId],
+    },
+    {
+      observerId: engine === illusionEngine ? "observer-a" : "observer-b",
+      cameraPath: `${stage.toLowerCase()}/${cameraDegrees}`,
+      quality: "browser-detected",
+    },
+  );
+}
 
 type LocalRenderBenchmark = (
   width: number,
@@ -276,7 +333,10 @@ function drawDebugWorld(
   context.stroke();
 }
 
-function queryPerson(snapshot: LocalSnapshot): ManifestedPerson {
+function queryPerson(
+  snapshot: LocalSnapshot,
+  source: AnalyticalItineraryIndex = itineraryIndex,
+): ManifestedPerson {
   manifestPlaceholder({
     seed: snapshot.seed,
     checkpoint: snapshot,
@@ -284,17 +344,13 @@ function queryPerson(snapshot: LocalSnapshot): ManifestedPerson {
     tick: snapshot.tick,
     lod: "person",
   });
-  const card = manifestationIndex.person(manifestationPersonId);
-  const itineraryState = advanceWorldKernel(
-    createWorldKernel(),
-    selectedPersonTick,
-  );
-  const itinerary = itineraryIndex.queryPerson(
+  const card = source.manifestation.person(manifestationPersonId);
+  const itinerary = source.queryPerson(
     card.personId,
     BigInt(selectedPersonTick),
-    itineraryState,
+    kernelStateAt(selectedPersonTick),
   );
-  const relationships = manifestationIndex.relationships(card.personId);
+  const relationships = source.manifestation.relationships(card.personId);
   const counts = new Map<string, number>();
   for (const relationship of relationships)
     counts.set(relationship.kind, (counts.get(relationship.kind) ?? 0) + 1);
@@ -370,17 +426,27 @@ function render(root: HTMLElement): void {
   const smoke = createSmokeModel();
   const stage = stages[stageIndex] ?? "Planet";
   const nextLabel = nextLabels[stageIndex];
+  const semanticProjectionA = projectionFor(illusionEngine, stage);
+  const semanticProjectionB =
+    observerBEngine === null ? null : projectionFor(observerBEngine, stage);
   const semanticMatch =
     personA !== null &&
     personB !== null &&
     personA.personId === personB.personId &&
-    personA.traceHash === personB.traceHash;
-  const projection = createTracerProjection({
+    personA.traceHash === personB.traceHash &&
+    semanticProjectionB !== null &&
+    semanticProjectionA.manifestationHash ===
+      semanticProjectionB.manifestationHash &&
+    semanticProjectionA.eventHash === semanticProjectionB.eventHash;
+  const tracerProjection = createTracerProjection({
     stage: stage.toLowerCase() as "planet" | "settlement" | "street" | "person",
     stateHash: snapshotA.stateHash,
     ...(personA ? { traceHash: personA.traceHash } : {}),
   });
-  const renderScene = renderSceneFor(stage, projection.semanticKey);
+  const renderScene = renderSceneFor(
+    stage,
+    semanticProjectionA.manifestationHash,
+  );
   const cameraShift = Math.sin((cameraDegrees * Math.PI) / 180) * 8;
   const selectedCell = getCell(world, selectedCellId);
   const fieldState = fieldRunner.state;
@@ -404,13 +470,13 @@ function render(root: HTMLElement): void {
   root.innerHTML = `<main class="observatory" aria-labelledby="app-title">
     <header class="tracer-header"><div><p class="eyebrow"><span aria-hidden="true"></span> Deterministic world / M2</p><h1 id="app-title">Ten Billion Lives</h1></div><div class="status" data-testid="smoke-status"><span aria-hidden="true"></span>${smoke.status}</div></header>
     <section class="tracer-world" aria-labelledby="journey-title">
-      <div class="journey-renderer ${projection.cssStage}" style="--camera-shift: ${cameraShift.toFixed(2)}px" data-render-stack data-projection-key="${projection.semanticKey}" data-selection-id="${renderScene.selectionId}" data-camera-degrees="${cameraDegrees}" data-transition-ms="${renderScene.transition.durationMs}" data-testid="journey-renderer"><canvas width="768" height="480" data-render-surface="canvas2d" aria-label="${stage} Canvas fallback visualization"></canvas><canvas width="768" height="480" data-render-surface="webgpu" aria-label="${stage} WebGPU visualization" hidden></canvas><div class="render-hud"><span><b data-testid="render-backend">probing</b> · <b data-testid="render-visible">${renderScene.draw.visibleCount.toLocaleString("en-US")}</b> visible · weights ${renderScene.debug.minimumTokenWeight}–${renderScene.debug.maximumTokenWeight}</span><span><b data-testid="render-frame-time">pending</b> · ${(renderScene.buffer.byteLength / 1_048_576).toFixed(2)} MiB · <code>${renderScene.debug.bufferHash.slice(0, 8)}</code> · losses <b data-testid="render-context-losses">0</b></span></div></div>
+      <div class="journey-renderer ${tracerProjection.cssStage}" style="--camera-shift: ${cameraShift.toFixed(2)}px" data-render-stack data-projection-key="${semanticProjectionA.manifestationHash}" data-selection-id="${renderScene.selectionId}" data-camera-degrees="${cameraDegrees}" data-transition-ms="${renderScene.transition.durationMs}" data-testid="journey-renderer"><canvas width="768" height="480" data-render-surface="canvas2d" aria-label="${stage} Canvas fallback visualization"></canvas><canvas width="768" height="480" data-render-surface="webgpu" aria-label="${stage} WebGPU visualization" hidden></canvas><div class="render-hud"><span><b data-testid="render-backend">probing</b> · <b data-testid="render-visible">${renderScene.draw.visibleCount.toLocaleString("en-US")}</b> visible · weights ${renderScene.debug.minimumTokenWeight}–${renderScene.debug.maximumTokenWeight}</span><span><b data-testid="render-frame-time">pending</b> · ${(renderScene.buffer.byteLength / 1_048_576).toFixed(2)} MiB · <code>${renderScene.debug.bufferHash.slice(0, 8)}</code> · losses <b data-testid="render-context-losses">0</b></span></div></div>
       <div class="journey-copy"><p class="kicker">Observer A · <span data-testid="observer-a-stage">${stage}</span></p><h2 id="journey-title">${stage === "Planet" ? "Seeded fictional planet" : stage === "Settlement" ? (world.settlements[0]?.name ?? "Settlement") : stage === "Street" ? (world.settlements[0]?.neighborhoodIds[0] ?? "Neighborhood") : (personA?.name ?? "Resident")}</h2><p>Camera ${cameraDegrees}° · tick <span data-testid="person-tick">${personA?.itinerary.tick ?? snapshotA.tick}</span> · <code data-testid="state-hash">${snapshotA.stateHash}</code></p>
-      <div class="tracer-actions">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}<button type="button" class="secondary" data-action="camera">Orbit camera</button></div></div>
+      <div class="tracer-actions">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}<button type="button" class="secondary" data-action="camera">Orbit camera</button>${personA ? stages.map((candidate, index) => `<button type="button" class="secondary" data-stage-index="${index}" aria-pressed="${stage === candidate}">View ${candidate.toLowerCase()}</button>`).join("") : ""}</div></div>
     </section>
     <section class="observer-grid" aria-label="Independent observer comparison">
-      <article><p class="kicker">Observer A</p><h2>${personA?.name ?? "Journey in progress"}</h2>${personCard(personA, "a")}</article>
-      <article><p class="kicker">Observer B · independent instance</p><h2>${personB?.name ?? "Not initialized"}</h2>${personCard(personB, "b")}${personA && !personB ? '<button type="button" data-action="observer-b">Initialize observer B</button>' : ""}${semanticMatch ? '<p class="match" data-testid="observer-match">Semantic match</p>' : ""}</article>
+      <article><p class="kicker">Observer A</p><h2>${personA?.name ?? "Journey in progress"}</h2><p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-a">${semanticProjectionA.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-a">${semanticProjectionA.eventHash}</code></p>${personCard(personA, "a")}</article>
+      <article><p class="kicker">Observer B · independent instance</p><h2>${personB?.name ?? "Not initialized"}</h2>${semanticProjectionB ? `<p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-b">${semanticProjectionB.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-b">${semanticProjectionB.eventHash}</code></p>` : ""}${personCard(personB, "b")}${personA && !personB ? '<button type="button" data-action="observer-b">Initialize observer B</button>' : ""}${semanticMatch ? '<p class="match" data-testid="observer-match">Semantic match</p>' : ""}</article>
     </section>
     ${
       personA
@@ -429,7 +495,7 @@ function render(root: HTMLElement): void {
         : ""
     }
     <section class="trace-controls" aria-label="Replay and field controls"><button type="button" data-action="replay" ${personA ? "" : "disabled"}>Rewind and replay</button><p data-testid="replay-result">${replayResult}</p><button type="button" class="secondary" data-action="fields">Reveal fields</button><button type="button" class="secondary" data-action="render-loss">Simulate renderer loss</button><button type="button" class="secondary" data-action="debug" aria-expanded="${debugVisible}">${debugVisible ? "Hide debug world" : "Inspect debug world"}</button></section>
-    <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Authoritative world budget</p><h2><span data-testid="represented-population">${world.totalPopulation.toLocaleString("en-US")}</span> represented lives</h2></div><dl><div><dt>Authority</dt><dd>${world.cells.length.toLocaleString("en-US")} integer cells</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Manifested query</dt><dd>${personA ? `${personA.name} · ${personA.semanticHash}` : "none"}</dd></div><div><dt>Observer state</dt><dd>Camera excluded from hash</dd></div></dl></section>
+    <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Authoritative world budget</p><h2><span data-testid="represented-population">${world.totalPopulation.toLocaleString("en-US")}</span> represented lives</h2></div><dl><div><dt>Authority</dt><dd>${world.cells.length.toLocaleString("en-US")} integer cells</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Projected scope</dt><dd><span data-testid="projection-represented">${semanticProjectionA.realityBudget.representedPeople.toLocaleString("en-US")}</span> people → <span data-testid="projection-tokens">${semanticProjectionA.realityBudget.materializedTokens.toLocaleString("en-US")}</span> weighted tokens</dd></div><div><dt>Derived bytes</dt><dd>${semanticProjectionA.realityBudget.estimatedBytes.toLocaleString("en-US")} · epoch ${semanticProjectionA.identityEpoch} / ${semanticProjectionA.realityBudget.continuityHorizonTicks} ticks</dd></div><div><dt>Manifestation hash</dt><dd><code>${semanticProjectionA.manifestationHash}</code></dd></div><div><dt>Event hash</dt><dd><code>${semanticProjectionA.eventHash}</code> · ${semanticProjectionA.events.length} local events</dd></div><div><dt>Sampling contract</dt><dd>${semanticProjectionA.realityBudget.samplingContract}</dd></div><div><dt>Observer state</dt><dd>Camera and GPU quality excluded from hashes</dd></div></dl></section>
     ${debugVisible ? `<section class="debug-world" aria-labelledby="debug-title"><div class="debug-heading"><div><p class="kicker">Seeded semantic atlas</p><h2 id="debug-title">Debug globe · L${debugLevel}</h2><p>Fictional geography; orange edges are the wrapped seam. Cell population brightens land.</p></div><div class="debug-controls" aria-label="Debug world level"><button type="button" class="secondary" data-debug-level="2" aria-pressed="${debugLevel === 2}">L2 regions</button><button type="button" class="secondary" data-debug-level="3" aria-pressed="${debugLevel === 3}">L3</button><button type="button" class="secondary" data-debug-level="5" aria-pressed="${debugLevel === 5}">L5 cells</button></div></div><canvas width="768" height="384" data-testid="debug-globe" aria-label="Fictional world cell map" aria-describedby="debug-cell-details">A deterministic map of fictional geography and population.</canvas><div class="debug-inspector" id="debug-cell-details"><div><dt>Selected cell</dt><dd data-testid="debug-cell-id">${selectedCell.id}</dd></div><div><dt>Hierarchy</dt><dd>${selectedParent} → ${selectedCell.id}</dd></div><div><dt>Geography</dt><dd>${selectedCell.biome} · ${selectedCell.elevationMeters.toLocaleString("en-US")} m</dd></div><div><dt>Population</dt><dd>${selectedCell.population.toLocaleString("en-US")}</dd></div><div><dt>Region</dt><dd>${selectedCell.regionId}</dd></div></div><div class="debug-probes"><button type="button" data-debug-cell="L5/12/0">Inspect seam</button><button type="button" data-debug-cell="L5/0/3">Inspect north pole</button></div><article class="field-debug" aria-labelledby="field-debug-title"><div class="field-debug-heading"><div><p class="kicker">Conservative field simulation</p><h2 id="field-debug-title">Tick <span data-testid="field-tick">${fieldState.tick}</span> · <code data-testid="field-hash">${fieldState.stateHash}</code></h2></div><div class="debug-controls"><button type="button" data-action="field-step">Single-step</button><button type="button" class="secondary" data-action="field-day">Advance one day</button></div></div><dl class="field-channels"><div><dt>Resident cohorts</dt><dd>${selectedFieldCell.cohorts.young.toLocaleString("en-US")} young · ${selectedFieldCell.cohorts.adult.toLocaleString("en-US")} adult · ${selectedFieldCell.cohorts.older.toLocaleString("en-US")} older</dd></div><div><dt>Activity channels</dt><dd>sleep ${selectedFieldCell.activities.sleep.toLocaleString("en-US")} · home ${selectedFieldCell.activities.home.toLocaleString("en-US")} · work ${selectedFieldCell.activities.work.toLocaleString("en-US")} · transit ${selectedFieldCell.activities.transit.toLocaleString("en-US")} · community ${selectedFieldCell.activities.community.toLocaleString("en-US")}</dd></div><div><dt>Capacity / amenity</dt><dd>${selectedFieldCell.capacityPermille}‰ / ${selectedFieldCell.amenityPermille}‰ · demand ${selectedFieldCell.flowDemand.toLocaleString("en-US")}</dd></div><div><dt>Sparse active regions</dt><dd>${fieldState.activeCellIds.length}</dd></div><div><dt>Flux ledger</dt><dd>${fieldState.lastFluxes.length.toLocaleString("en-US")} transfers; ${selectedFluxes.length} touch this cell${selectedFluxes[0] ? ` · #${selectedFluxes[0].processingOrder} ${selectedFluxes[0].sourceCellId} → ${selectedFluxes[0].destinationCellId} (${selectedFluxes[0].count.toLocaleString("en-US")})` : ""}</dd></div><div><dt>Invariant failures</dt><dd class="${fieldInvariant.valid ? "valid" : "invalid"}" data-testid="field-invariants">${fieldInvariant.valid ? "None — exact conservation" : fieldInvariant.issues.join("; ")}</dd></div></dl></article>${transportDebugPanel()}</section>` : ""}
     <footer><span>World seed <code>${world.seed}</code> · hash <code data-testid="world-hash">${world.worldHash}</code> · vectors <code data-testid="deterministic-vector-hash">${deterministicVectorHash()}</code></span><span>Run <code>pnpm check</code> from the repository root if a diagnostic fails.</span></footer>
   </main>`;
@@ -448,7 +514,11 @@ function render(root: HTMLElement): void {
   root
     .querySelector('[data-action="observer-b"]')
     ?.addEventListener("click", () => {
-      personB = queryPerson(createPlaceholderSnapshot());
+      observerBEngine = createIllusionEngine(world);
+      personB = queryPerson(
+        createPlaceholderSnapshot(),
+        observerBEngine.itinerary,
+      );
       render(root);
     });
   root
@@ -498,6 +568,20 @@ function render(root: HTMLElement): void {
       render(root);
     });
   for (const control of root.querySelectorAll<HTMLButtonElement>(
+    "[data-stage-index]",
+  )) {
+    control.addEventListener("click", () => {
+      const requested = Number(control.dataset["stageIndex"]);
+      if (
+        Number.isSafeInteger(requested) &&
+        requested >= 0 &&
+        requested < stages.length
+      )
+        stageIndex = requested;
+      render(root);
+    });
+  }
+  for (const control of root.querySelectorAll<HTMLButtonElement>(
     "[data-debug-level]",
   )) {
     control.addEventListener("click", () => {
@@ -529,7 +613,11 @@ function render(root: HTMLElement): void {
     control.addEventListener("click", () => {
       selectedPersonTick = Number(control.dataset["personTick"]);
       personA = queryPerson(snapshotA);
-      if (personB !== null) personB = queryPerson(createPlaceholderSnapshot());
+      if (observerBEngine !== null)
+        personB = queryPerson(
+          createPlaceholderSnapshot(),
+          observerBEngine.itinerary,
+        );
       replayResult = "Not run";
       render(root);
     });

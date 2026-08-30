@@ -27,6 +27,10 @@ test("production build exposes the deterministic local smoke surface", async ({
     "data-selection-id",
     "person_27yi09s_1obkbba",
   );
+  await expect(page.getByTestId("projection-represented")).toHaveText(
+    "10,000,000,000",
+  );
+  await expect(page.getByTestId("projection-tokens")).toHaveText("8,192");
   await expect(
     page.getByText("Run pnpm check from the repository root"),
   ).toBeVisible();
@@ -87,8 +91,20 @@ test("traces planet to person across two independent local observers", async ({
 }) => {
   await page.goto("/");
   const stateHash = await page.getByTestId("state-hash").textContent();
+  const planetManifestationHash = await page
+    .getByTestId("manifestation-hash-a")
+    .textContent();
+  const planetEventHash = await page
+    .getByTestId("projection-event-hash-a")
+    .textContent();
   await page.getByRole("button", { name: "Orbit camera" }).click();
   await expect(page.getByTestId("state-hash")).toHaveText(stateHash ?? "");
+  await expect(page.getByTestId("manifestation-hash-a")).toHaveText(
+    planetManifestationHash ?? "",
+  );
+  await expect(page.getByTestId("projection-event-hash-a")).toHaveText(
+    planetEventHash ?? "",
+  );
   await expect(page.getByTestId("journey-renderer")).toHaveAttribute(
     "data-camera-degrees",
     "45",
@@ -116,12 +132,31 @@ test("traces planet to person across two independent local observers", async ({
   await expect(page.getByTestId("observer-a-household-id")).toContainText(
     "household_0yojqkh506h6x_0855mue",
   );
+  const personManifestationHash = await page
+    .getByTestId("manifestation-hash-a")
+    .textContent();
 
   await page.getByRole("button", { name: "Initialize observer B" }).click();
   await expect(page.getByTestId("observer-b-person-id")).toHaveText(
     "person_27yi09s_1obkbba",
   );
   await expect(page.getByTestId("observer-match")).toHaveText("Semantic match");
+  await expect(page.getByTestId("manifestation-hash-b")).toHaveText(
+    personManifestationHash ?? "",
+  );
+  await expect(page.getByTestId("projection-event-hash-b")).toHaveText(
+    await page.getByTestId("projection-event-hash-a").textContent(),
+  );
+
+  await page.getByRole("button", { name: "View planet" }).click();
+  await expect(page.getByTestId("observer-a-stage")).toHaveText("Planet");
+  await page.getByRole("button", { name: "View person" }).click();
+  await expect(page.getByTestId("observer-a-person-id")).toHaveText(
+    "person_27yi09s_1obkbba",
+  );
+  await expect(page.getByTestId("manifestation-hash-a")).toHaveText(
+    personManifestationHash ?? "",
+  );
 
   await page.getByRole("button", { name: "Tick 7 · commute" }).click();
   await expect(page.getByTestId("observer-a-itinerary")).toHaveText(
