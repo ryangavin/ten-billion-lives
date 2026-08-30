@@ -45,3 +45,21 @@ export type {
   Settlement,
   WorldCell,
 } from "./world";
+export {
+  FIELD_TICKS_PER_DAY,
+  FieldSimulationRunner,
+  createFieldState,
+  createSmallFieldState,
+  fieldPopulationAt,
+  invariantReport,
+  stepFieldState,
+} from "./fields";
+export type {
+  ActivityField,
+  CohortField,
+  FieldCellState,
+  FieldState,
+  FluxRecord,
+  InvariantReport,
+  SparseInfluence,
+} from "./fields";

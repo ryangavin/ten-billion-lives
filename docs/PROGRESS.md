@@ -1,8 +1,8 @@
 # Progress
 
-- Current issue: #7 — seeded fictional planet, geography, settlements, and exact population.
-- Last green commit: `f8c594e` (#6 complete with process/browser/performance evidence).
-- Evidence produced: #7 world hash `ed66e344fcd7e737`; exact 10,000,000,000 population across 2,048 cells; 32 regions; 64 land-only settlements; generation 32.46 ms p50 / 44.40 ms p95 and 0.68 MiB retained heap; actual browser 137.93 ms startup / 9.54 MiB heap with benchmark regression gate green; 7 files / 22 root tests and 6 Chromium/WebKit journeys green; seam and pole screenshots inspected. Three settlement-ranking runs exposed latitude clustering (6 rows, then 8 with region-first selection); the fallback reserves each inhabited latitude band before global ranking.
-- Next action: commit the refreshed production-browser profile, post #7 closing evidence, close #7, then select the smallest unblocked issue in milestone/dependency order.
-- Decisions: use hierarchical latitude/longitude cells with wrapped seams and reflected pole neighbors; authoritative geographic bounds are integer microdegrees; geography is fictional integer multiscale noise; population uses exact largest-remainder weights and no real demographic input.
+- Current issue: #8 — conservative population and activity-field simulation.
+- Last green commit: `eb437a2` (#7 closed with semantic, browser, visual, and performance evidence).
+- Evidence produced: #8 focused suite has 7 green falsifiers covering exact resident/presence/cohort/activity conservation, stable simultaneous flux records, explicit sparse influence, fake-clock controls, batch/single-step equivalence, 64 randomized small worlds, and repeated three-day replay. Profiling found canonical hashes dominated accelerated runs; hashing only observable batch endpoints preserved hash `9af788b45cf049a6` and improved the measured three-day workload from 65,214 to 323,959 cell-ticks/s.
+- Next action: run the full root check and commit the field kernel, then add a versioned repeated-run benchmark and browser channel/flux/invariant diagnostics.
+- Decisions: keep resident cohorts immutable; model current presence as activity-class integer fields; derive reactions with largest remainder; apply flux simultaneously in stable cell order; sparse event influence is explicit seed/state input and never camera-derived.
 - Blockers: none. Server deployment is outside the local-MVP goal.
