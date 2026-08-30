@@ -85,20 +85,25 @@ test("traces planet to person across two independent local observers", async ({
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Settlement");
   await page.getByRole("button", { name: "Enter Harbor Street" }).click();
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Street");
-  await page.getByRole("button", { name: "Meet Ari Vale" }).click();
+  await page.getByRole("button", { name: "Meet a resident" }).click();
   await expect(page.getByTestId("observer-a-person-id")).toHaveText(
-    "person-5d19f85f",
+    "person_27yi09s_1obkbba",
+  );
+  await expect(page.getByText("Dara Grove · age 28 · adult")).toBeVisible();
+  await expect(page.getByText("North Works · 512/512")).toBeVisible();
+  await expect(page.getByTestId("observer-a-household-id")).toContainText(
+    "household_0yojqkh506h6x_0855mue",
   );
 
   await page.getByRole("button", { name: "Initialize observer B" }).click();
   await expect(page.getByTestId("observer-b-person-id")).toHaveText(
-    "person-5d19f85f",
+    "person_27yi09s_1obkbba",
   );
   await expect(page.getByTestId("observer-match")).toHaveText("Semantic match");
 
   await page.getByRole("button", { name: "Rewind and replay" }).click();
   await expect(page.getByTestId("replay-result")).toHaveText(
-    "trace-b11350f7 restored",
+    "trace-036aeda5 restored",
   );
   await page.getByRole("button", { name: "Reveal fields" }).click();
   await expect(page.getByTestId("reality-budget")).toContainText(

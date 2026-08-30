@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 
 import { BASELINE_WORLD_SEED, generateWorld } from "@ten-billion-lives/sim";
 
@@ -18,6 +19,32 @@ describe("procedural people and reciprocal groups", () => {
     expect(first.personId).toBe(personId);
     expect(first.name).toMatch(/^[A-Z][a-z]+ [A-Z][a-z]+$/);
     expect(first.semanticHash).toMatch(/^[0-9a-f]{16}$/);
+  });
+
+  it("matches the committed golden person, household, and relationship fixture", () => {
+    const fixture = JSON.parse(
+      readFileSync(
+        new URL("../fixtures/person-golden-v1.json", import.meta.url),
+        "utf8",
+      ),
+    ) as {
+      cellId: string;
+      localOrdinal: string;
+      personId: string;
+      card: unknown;
+      householdMembers: string[];
+      relationships: unknown;
+    };
+    const personId = index.personIdAt(
+      fixture.cellId,
+      BigInt(fixture.localOrdinal),
+    );
+    expect(personId).toBe(fixture.personId);
+    expect(index.person(personId)).toEqual(fixture.card);
+    expect(index.householdMembers(index.person(personId).household.id)).toEqual(
+      fixture.householdMembers,
+    );
+    expect(index.relationships(personId)).toEqual(fixture.relationships);
   });
 
   it("assigns every cohort rank and place without exceeding exact quotas", () => {

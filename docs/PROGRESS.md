@@ -1,8 +1,8 @@
 # Progress
 
 - Current issue: #11 — stable procedural people, households, places, and reciprocal relationships.
-- Last green commit: `1ccd60c` (M1 gate #10 closed; clean-checkout outer loop and status posted).
-- Evidence produced: #11 focused suite covers stable opaque reconstruction, exact cohort/place boundary ranks, household/place membership, reciprocal relationship walks, 100,000 collision-free IDs, invalid-ID non-disclosure, query purity, and zero retained person rows. A 50,000-person distribution sample is compared with authoritative quotas.
-- Next action: run the full root check and commit the compact manifestation kernel, then add million-ID/query benchmarks, golden fixtures, and Chromium/WebKit person/household diagnostics.
+- Last green commit: `b48cf81` (#11 compact manifestation kernel; focused tests green).
+- Evidence produced: #11 has a committed golden person/household/relationship vector, byte-identical independent-process reproduction, exact cohort/place boundary tests, reciprocal relationship walks, invalid-ID non-disclosure, zero retained person rows, and deterministic distribution samples. The enforced benchmark generates one million collision-free IDs in 3.41 s, serves 28,487 person queries/s p50, and retains 0.35 MiB. Chromium and WebKit complete the real planet-to-person journey; the retained screenshot shows two independent observers resolving the same identity and semantic trace.
+- Next action: commit and push the green #11 browser/benchmark evidence, then close #11 with the audited acceptance matrix and advance to the smallest unblocked issue.
 - Decisions: use a keyed reversible permutation over the exact ten-billion ordinal domain; retain only compact cell prefix/quota metadata; derive cell-local cohort slots by coprime affine permutation; encode household/place tuples with checksummed opaque tokens; construct relationship adjacency symmetrically without person rows.
 - Blockers: none. Server deployment is outside the local-MVP goal.

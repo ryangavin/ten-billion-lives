@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "manifestation-v1",
+  "commit": "b48cf81f35345480ef81975e0ac208b7ad0bc044",
+  "seed": "ten-billion-lives/baseline/v1",
+  "worldHash": "ed66e344fcd7e737",
+  "workload": {
+    "representedPopulation": "10000000000",
+    "retainedCells": 2048,
+    "retainedPersonRows": 0,
+    "queryCount": 10000,
+    "relationshipCount": 1000,
+    "collisionScale": 1000000,
+    "collisionCount": 0
+  },
+  "metrics": {
+    "indexBuildP50Ms": 9.187417000000039,
+    "indexBuildP95Ms": 13.447499999999991,
+    "personQueriesPerSecondP50": 28486.71453557085,
+    "personQueriesPerSecondP95": 29129.483560589513,
+    "relationshipQueriesPerSecondP50": 15412.159521892569,
+    "millionIdGenerationMs": 3407.925625,
+    "retainedIndexHeapMiB": 0.34876251220703125
+  },
+  "budgets": {
+    "indexBuildP95MsMax": 100,
+    "personQueriesPerSecondMin": 20000,
+    "relationshipQueriesPerSecondMin": 2000,
+    "millionIdGenerationMsMax": 5000,
+    "retainedIndexHeapMiBMax": 8,
+    "passed": true
+  },
+  "distribution": {
+    "cellId": "L5/13/17",
+    "cellPopulation": "89137836",
+    "authoritativeQuotas": {
+      "young": "19610324",
+      "adult": "55265458",
+      "older": "14262054"
+    },
+    "sampleSize": 100000,
+    "sampleCounts": {
+      "young": 22007,
+      "adult": 61996,
+      "older": 15997
+    }
+  },
+  "golden": {
+    "cellId": "L5/0/38",
+    "localOrdinal": "42",
+    "personId": "person_27yi09s_1obkbba",
+    "card": {
+      "personId": "person_27yi09s_1obkbba",
+      "name": "Dara Grove",
+      "ageYears": 28,
+      "cohort": "adult",
+      "cellId": "L5/0/38",
+      "regionId": "region-0-4",
+      "home": "Field 0-12",
+      "household": {
+        "id": "household_0yojqkh506h6x_0855mue",
+        "role": "housemate",
+        "memberCount": 4
+      },
+      "primaryPlace": {
+        "id": "place_wrk_0vq6m09loyq6c_1oxppg2",
+        "kind": "workplace",
+        "name": "North Works",
+        "capacity": 512,
+        "memberCount": 512
+      },
+      "appearance": {
+        "stature": "compact",
+        "hair": "light",
+        "wardrobe": "quiet"
+      },
+      "semanticHash": "036aeda537b40d7e"
+    },
+    "householdMembers": [
+      "person_4d289g2_0tu73g2",
+      "person_0zths61_16e2kcz",
+      "person_27yi09s_1obkbba",
+      "person_3g3i8dj_1fc7inr"
+    ],
+    "relationships": [
+      {
+        "personId": "person_1ne51bs_04skwgb",
+        "kind": "coworker"
+      },
+      {
+        "personId": "person_2awzug9_1iyxe82",
+        "kind": "coworker"
+      },
+      {
+        "personId": "person_0zths61_16e2kcz",
+        "kind": "household"
+      },
+      {
+        "personId": "person_3g3i8dj_1fc7inr",
+        "kind": "household"
+      },
+      {
+        "personId": "person_4d289g2_0tu73g2",
+        "kind": "household"
+      },
+      {
+        "personId": "person_0zths61_16e2kcz",
+        "kind": "recurring-contact"
+      }
+    ]
+  }
+}
