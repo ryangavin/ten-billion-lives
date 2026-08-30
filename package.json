@@ -53,6 +53,7 @@
     "evidence:compatibility": "pnpm build && node scripts/capture-compatibility.mjs && prettier --write docs/evidence/issue-23/*.json docs/evidence/issue-23/*.yml",
     "evidence:compatibility:playwright": "node scripts/capture-playwright-summary.mjs docs/evidence/issue-23",
     "qa:clean": "node scripts/validate-clean-checkout.mjs",
+    "qa:benchmarks": "node scripts/run-qa-benchmarks.mjs && prettier --write docs/evidence/issue-25/*.json benchmarks/results",
     "qa:replay": "pnpm build && node scripts/capture-m2-replay.mjs docs/evidence/issue-25 && prettier --write docs/evidence/issue-25/deterministic-replay.json",
     "qa:visual": "pnpm build && node scripts/capture-observatory.mjs docs/evidence/issue-25 && prettier --write docs/evidence/issue-25/*.json"
   },
