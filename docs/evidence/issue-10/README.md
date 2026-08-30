@@ -34,6 +34,8 @@ The committed 24-hash sequence is in `packages/sim/fixtures/kernel-golden-v1.jso
 
 All kernel budgets pass.
 
+`pnpm benchmark` passed the production-browser regression gate at `e02cd1250bbe0a26f492a975f8ab9df803db3e35`: 493.82 ms startup, 9.54 MiB browser heap, and 89.00 ms p95 for the pre-existing 250k Canvas2D scaffold. Startup and heap remain inside the 5,000 ms / 256 MiB limits without amendment.
+
 ## Browser evidence
 
 Chromium and WebKit both serialize and restore the tick-13 snapshot to kernel hash `74410bddf69993e9` and expose the same event hash. [`checkpoint-restored.png`](checkpoint-restored.png) was manually inspected: all frozen versions, byte size, event hash, and exact restore result are legible.
