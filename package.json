@@ -52,9 +52,10 @@
     "evidence:observatory:playwright": "node scripts/capture-playwright-summary.mjs docs/evidence/issue-21"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "10.0.1",
-    "@types/node": "24.13.3",
     "@playwright/test": "1.62.1",
+    "@types/node": "24.13.3",
     "eslint": "10.9.1",
     "globals": "17.11.0",
     "prettier": "3.9.6",

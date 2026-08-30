@@ -40,6 +40,7 @@ textarea {
 
 code {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  overflow-wrap: anywhere;
 }
 
 .observatory {
@@ -607,6 +608,7 @@ footer code {
 }
 
 button {
+  max-width: 100%;
   padding: 11px 16px;
   border: 1px solid #7ad6aa;
   border-radius: 999px;
@@ -614,6 +616,7 @@ button {
   background: #8ce3b9;
   font-weight: 700;
   cursor: pointer;
+  overflow-wrap: anywhere;
 }
 
 button.secondary {
@@ -625,7 +628,8 @@ button.secondary {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
-.journey-renderer[role="button"]:focus-visible {
+.journey-renderer[role="button"]:focus-visible,
+#journey-title:focus-visible {
   outline: 3px solid #fff0a8;
   outline-offset: 3px;
 }
@@ -1024,6 +1028,36 @@ button:disabled {
     padding-top: 44px;
   }
 
+  .observatory > *,
+  .command-deck > *,
+  .tracer-world > *,
+  .observer-grid > *,
+  .person-tools > *,
+  .branch-comparison > *,
+  .reality-budget > * {
+    min-width: 0;
+  }
+
+  .search-row,
+  .share-row {
+    align-items: stretch;
+  }
+
+  .search-row input,
+  .search-row button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .observer-grid article,
+  .person-tools,
+  .branch-comparison,
+  .reality-budget,
+  dd,
+  a {
+    overflow-wrap: anywhere;
+  }
+
   .world-card,
   .diagnostics,
   .command-deck,
@@ -1096,5 +1130,25 @@ button:disabled {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .journey-renderer,
+  .time-console,
+  .discovery-console,
+  .observer-grid article,
+  .person-tools,
+  .branch-comparison,
+  .trace-controls,
+  .reality-budget {
+    border: 2px solid CanvasText;
+  }
+
+  .render-hud {
+    border: 1px solid CanvasText;
+    color: CanvasText;
+    background: Canvas;
   }
 }

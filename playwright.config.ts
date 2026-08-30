@@ -20,6 +20,11 @@ export default defineConfig({
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
     },
+    {
+      name: "mobile-chromium",
+      testMatch: /compatibility\.spec\.ts/,
+      use: { ...devices["Pixel 7"] },
+    },
   ],
   webServer: {
     command: "pnpm build && pnpm preview --host 127.0.0.1 --port 4173",
