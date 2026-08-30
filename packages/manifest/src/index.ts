@@ -6,3 +6,10 @@ export interface ManifestQueryContext {
   readonly region: string;
   readonly lod: string;
 }
+
+export { manifestPlaceholder } from "./placeholder";
+export type {
+  ManifestPlaceholderQuery,
+  PlaceholderManifestation,
+  TracerLod,
+} from "./placeholder";

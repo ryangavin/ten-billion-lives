@@ -65,6 +65,10 @@ importers:
         version: 8.2.2(@types/node@24.13.3)
 
   packages/manifest:
+    dependencies:
+      '@ten-billion-lives/sim':
+        specifier: workspace:*
+        version: link:../sim
     devDependencies:
       typescript:
         specifier: 6.0.3

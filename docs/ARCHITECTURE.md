@@ -141,6 +141,17 @@ flowchart TD
 
 For the product journey, planet and settlement views read aggregate world fields; street/person/festival views request manifestations; the second observer repeats those queries independently; rewind uses snapshot plus replay; field reveal shows the authoritative and derived values already present at these boundaries.
 
+## M0 tracer interface freeze
+
+Gate #5 validated the first executable versions of the local boundaries. M1 may add fields through explicit version changes, but it must preserve these directions and invariants:
+
+- `LocalSnapshot` is a deeply readonly value with snapshot/kernel versions, seed, branch, integer tick, exact `bigint` represented population, immutable field cells, and `stateHash`. `createPlaceholderSnapshot()` and `replayPlaceholder(snapshot, targetTick)` prove creation and recovery are independent of UI state.
+- `ManifestPlaceholderQuery` contains only seed, checkpoint, canonical region, tick, and named LOD. `manifestPlaceholder(query)` returns an immutable semantic person with stable ID, facts, represented weight, source state hash, and trace hash.
+- `createTracerProjection({ stage, stateHash, traceHash? })` is the renderer boundary. It produces presentation keys only; no camera field is accepted.
+- `apps/web` owns camera degrees, current LOD, selection, second-pane lifecycle, and panel visibility. These values are never written into snapshots or manifestation queries.
+
+Executable discoveries: TypeScript package builds exclude colocated test files while Vitest discovers them from the root; the manifest workspace has an explicit one-way dependency on sim; browser cross-origin isolation is useful but the detailed memory API can still reject in headless Chromium, so benchmark artifacts must record their actual memory method; and headless WebGPU availability cannot stand in for later real-browser capability evidence. The fixed placeholder hashes are M0 tracer goldens only—#6 and #10 own the production canonical hash/replay format.
+
 ## Rendering and LOD
 
 LOD changes cost and density, not world truth. Each named profile defines a deterministic nested sample of population addresses and an integer `representedWeight` for each visible manifestation. One visible manifestation therefore means “this stable sampled identity visually stands for this many represented people in this cell/profile,” never “one stored simulated agent.” Weights plus any explicitly reported unsampled remainder reconcile to the queried field population.

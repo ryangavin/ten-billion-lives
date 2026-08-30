@@ -296,6 +296,196 @@ footer code {
   letter-spacing: -0.03em;
 }
 
+.tracer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+
+.tracer-header h1 {
+  margin-bottom: 0;
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+}
+
+.tracer-world {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(360px, 1.2fr);
+  gap: 54px;
+  align-items: center;
+  min-height: 430px;
+  padding: 44px;
+  border: 1px solid rgba(199, 226, 213, 0.13);
+  border-radius: 24px;
+  background: rgba(15, 32, 27, 0.72);
+}
+
+.mini-globe {
+  position: relative;
+  width: min(300px, 100%);
+  aspect-ratio: 1;
+  justify-self: center;
+  border: 1px solid rgba(144, 230, 188, 0.3);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 30%, #4c8d72 0 8%, transparent 9%),
+    radial-gradient(ellipse at 56% 58%, #2d6853 0 18%, transparent 19%),
+    radial-gradient(circle at 40% 32%, #193f34, #081713 72%);
+  box-shadow:
+    inset -40px -30px 65px rgba(0, 0, 0, 0.62),
+    0 0 65px rgba(70, 180, 130, 0.13);
+  transition:
+    border-radius 220ms ease,
+    transform 220ms ease;
+}
+
+.mini-globe::after {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  border: 1px solid rgba(160, 231, 199, 0.15);
+  border-radius: inherit;
+}
+
+.mini-globe i,
+.mini-globe b {
+  position: absolute;
+  top: 32%;
+  left: 31%;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #c9f5df;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 10px rgba(125, 232, 181, 0.1),
+    0 0 30px #75dca8;
+}
+
+.mini-globe.stage-settlement {
+  transform: scale(1.08);
+}
+.mini-globe.stage-street {
+  border-radius: 34%;
+  transform: scale(1.12);
+}
+.mini-globe.stage-person {
+  border-radius: 22%;
+  transform: scale(1.14);
+}
+.mini-globe.stage-person b {
+  top: 55%;
+  left: 58%;
+  width: 34px;
+  height: 34px;
+  background: rgba(115, 220, 171, 0.16);
+}
+
+.journey-copy > p:not(.kicker) {
+  color: #93a9a0;
+}
+
+.tracer-actions,
+.trace-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 24px 0;
+}
+
+button {
+  padding: 11px 16px;
+  border: 1px solid #7ad6aa;
+  border-radius: 999px;
+  color: #082017;
+  background: #8ce3b9;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button.secondary {
+  color: #cde9dc;
+  background: transparent;
+  border-color: rgba(177, 224, 202, 0.28);
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.observer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.observer-grid article,
+.trace-controls,
+.reality-budget {
+  padding: 24px;
+  border: 1px solid rgba(199, 226, 213, 0.13);
+  border-radius: 18px;
+  background: rgba(15, 32, 27, 0.72);
+}
+
+.observer-grid h2 {
+  font-size: 1.5rem;
+}
+.observer-empty {
+  color: #6f857c;
+}
+.person-facts {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+}
+.person-facts div {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(3, 17, 13, 0.42);
+}
+.match {
+  color: #8ce3b9;
+  font-weight: 700;
+}
+.match::before {
+  content: "✓ ";
+}
+
+.trace-controls {
+  justify-content: space-between;
+}
+.trace-controls p {
+  margin: 0;
+  color: #9fc1b2;
+}
+
+.reality-budget {
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr;
+  gap: 30px;
+  margin-top: 16px;
+  opacity: 0.42;
+}
+
+.reality-budget.revealed {
+  opacity: 1;
+  border-color: rgba(124, 221, 175, 0.35);
+}
+.reality-budget dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.reality-budget dl div {
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(3, 17, 13, 0.42);
+}
+
 @media (max-width: 760px) {
   .observatory {
     width: min(100% - 24px, 620px);
@@ -303,8 +493,15 @@ footer code {
   }
 
   .world-card,
-  .diagnostics {
+  .diagnostics,
+  .tracer-world,
+  .observer-grid,
+  .reality-budget {
     grid-template-columns: 1fr;
+  }
+
+  .tracer-header {
+    flex-direction: column;
   }
 
   .world-card {
