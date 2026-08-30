@@ -42,7 +42,10 @@
     "vector:hash": "node scripts/deterministic-vectors.mjs",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "checkpoint:corruption": "pnpm --silent --filter @ten-billion-lives/sim build && node scripts/check-checkpoint-corruption.mjs && prettier --write docs/evidence/issue-10/corruption-report.json",
-    "experience:copy-check": "node scripts/check-experience-copy.mjs"
+    "experience:copy-check": "node scripts/check-experience-copy.mjs",
+    "gate:m2:capture": "pnpm build && node scripts/capture-m2-gate.mjs",
+    "gate:m2:playwright": "node scripts/capture-playwright-summary.mjs",
+    "gate:m2:replay": "pnpm build && node scripts/capture-m2-replay.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

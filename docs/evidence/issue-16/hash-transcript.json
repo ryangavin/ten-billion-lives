@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "seed": "ten-billion-lives/baseline/v1",
+  "browser": "151.0.7922.34",
+  "baseline": {
+    "representedPopulation": "10,000,000,000",
+    "worldHash": "ed66e344fcd7e737",
+    "stateHash": "state-42f76c85",
+    "manifestationHash": "dac9fd526f82c8f0",
+    "eventHash": "b0bd84480511f52f"
+  },
+  "cameraInvariant": {
+    "before": {
+      "representedPopulation": "10,000,000,000",
+      "worldHash": "ed66e344fcd7e737",
+      "stateHash": "state-42f76c85",
+      "manifestationHash": "dac9fd526f82c8f0",
+      "eventHash": "b0bd84480511f52f"
+    },
+    "after": {
+      "stateHash": "state-42f76c85",
+      "manifestationHash": "dac9fd526f82c8f0",
+      "eventHash": "b0bd84480511f52f"
+    }
+  },
+  "planetaryRhythm": {
+    "dayHash": "c09cdd840c68bab2",
+    "openFlow": "Open · 8,180,688 / 10,225,860",
+    "festivalSummary": "Lantern Confluence · 100,000 attending from 2 surrounding regions"
+  },
+  "personJourney": {
+    "selectedPerson": "person_27yi09s_1obkbba",
+    "household": "Field 0-12 · housemate · household_0yojqkh506h6x_0855mue · 4 members",
+    "activityTransitions": [
+      "Tick 7 · transit",
+      "Tick 19 · leisure",
+      "Tick 23 · sleep",
+      "Tick 10 · work at North Works"
+    ]
+  },
+  "observerAgreement": {
+    "personA": "person_27yi09s_1obkbba",
+    "personB": "person_27yi09s_1obkbba",
+    "manifestationA": "0b21e681edada68a",
+    "manifestationB": "0b21e681edada68a",
+    "eventA": "b0bd84480511f52f",
+    "eventB": "b0bd84480511f52f",
+    "result": "Semantic match"
+  },
+  "continuity": {
+    "manifestationHashBeforeLeave": "0b21e681edada68a",
+    "manifestationHashAfterReturn": "0b21e681edada68a",
+    "replayResult": "trace-5182c8d2 restored",
+    "realityBudgetRevealed": true
+  },
+  "festival": {
+    "person": "person_0000a4q_0yrj2dd",
+    "itinerary": "Tick 19 · festival",
+    "events": "festival · festival/lantern-confluence · arrival · festival/lantern-confluence",
+    "departure": "intercity · 16 graph edges · festival return → region/region-0-0"
+  },
+  "branch": {
+    "active": "Closure branch",
+    "person": "person_1iy9k0p_1by3xrw",
+    "baselineRoute": "1 edge",
+    "closureRoute": "31 edges",
+    "fieldComparison": "Identical field state",
+    "eventHash": "1e16e91d275330e3"
+  }
+}

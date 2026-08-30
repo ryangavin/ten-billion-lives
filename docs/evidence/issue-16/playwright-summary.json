@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "command": "pnpm exec playwright test --reporter=json",
+  "productionWebServer": "pnpm build && pnpm preview --host 127.0.0.1 --port 4173",
+  "startTime": "2026-08-30T20:25:12.428Z",
+  "wallDurationMs": 35111.911,
+  "expected": 12,
+  "unexpected": 0,
+  "flaky": 0,
+  "skipped": 0,
+  "projects": {
+    "chromium": {
+      "passed": 6,
+      "total": 6,
+      "durationMs": 16457
+    },
+    "webkit": {
+      "passed": 6,
+      "total": 6,
+      "durationMs": 27400
+    }
+  },
+  "cases": [
+    {
+      "title": "smoke.spec.ts › production build exposes the deterministic local smoke surface",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 1704,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › inspects deterministic geography across hierarchy, seam, and pole",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 2105,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › traces planet to person across two independent local observers",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 3402,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › selects, searches, and opens a validated person link in a fresh session",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 5172,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › follows festival meetings and departure, then compares the local closure branch",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 2246,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › keeps the forced Canvas fallback navigable through loss, resize, and reduced motion",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 1828,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › production build exposes the deterministic local smoke surface",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 3162,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › inspects deterministic geography across hierarchy, seam, and pole",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 3695,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › traces planet to person across two independent local observers",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 5795,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › selects, searches, and opens a validated person link in a fresh session",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 8454,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › follows festival meetings and departure, then compares the local closure branch",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 3513,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › keeps the forced Canvas fallback navigable through loss, resize, and reduced motion",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 2781,
+      "retries": 0,
+      "ok": true
+    }
+  ],
+  "passed": true
+}

@@ -1,8 +1,8 @@
 # Progress
 
-- Current issue: #15 — person inspection, following, sharing, festival, and peaceful intervention UX.
-- Last green commit: `5aa84e1` (#15 selectable/shareable person journey, festival, local branch, two observers, and projection caching; final evidence pending commit).
-- Evidence produced: #15 root check passed 15 files/73 tests and production build; Chromium/WebKit passed 12/12; fresh-session deep link and invalid-link recovery passed; planet-to-person 1.88 s, follow p95 262.07 ms, Observer B 129.69 ms, deep-link load 1.04 s, browser heap 82.40 MiB, zero person rows; seven inspected screenshots; copy audit passed.
-- Next action: run the final root checks over the evidence scripts, commit and push #15 evidence, post the closing comment, close #15, then begin the #16 M2 gate outer loop from a clean checkout.
-- Decisions: URL schema 1 is a validated local view over procedural queries; the no-event kernel is immutable baseline and the two-event signature log is a reversible closure branch; immutable semantic projections may be cached by state/person/LOD without promoting a person into authority.
+- Current issue: #16 — M2 complete local vertical-slice gate.
+- Last green commit: `c098ae6` (#15 closed with complete local person journey, branch, browser, performance, copy, and visual evidence).
+- Evidence produced: fresh origin/main clone at `c098ae6` passed frozen install, root check (15 files/73 tests), production build, 12/12 Chromium/WebKit journeys, byte-identical double replay for four vectors, every committed performance/memory budget, and exact 10,000,000,000 conservation. The retained uninterrupted browser recording, inspected final frame, hash transcript, Playwright summary, benchmark summary, and accessibility smoke all pass.
+- Next action: run the root check over the gate tooling and evidence, commit/push #16, revalidate the final commit from a fresh clone, then close #16 with the artifact links and begin the smallest unblocked M3 local issue.
+- Decisions: the M2 gate changes no product semantics. Its repeatable capture scripts assert keyboard access, camera independence, person continuity, independent observer equality, replay, field overlays, festival behavior, and baseline/closure contrast. The accessibility result is explicitly a scoped smoke, not formal certification.
 - Blockers: none. Server deployment is outside the local-MVP goal.

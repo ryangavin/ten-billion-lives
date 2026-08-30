@@ -1,0 +1,18 @@
+{
+  "standard": "WCAG-oriented local smoke (automated semantics plus keyboard journey)",
+  "language": "en",
+  "mainCount": 1,
+  "headingCount": 1,
+  "duplicateIds": [],
+  "unnamedControls": [],
+  "unlabelledInputs": [],
+  "unlabelledCanvases": [],
+  "horizontalOverflow": false,
+  "keyboardJourney": [
+    "Enter Brindle Bay",
+    "Enter Harbor Street",
+    "Inspect highlighted resident"
+  ],
+  "failures": [],
+  "passed": true
+}
