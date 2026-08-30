@@ -132,6 +132,8 @@ try {
   await streetSurface.focus();
   await desktop.keyboard.press("Enter");
   assert.equal(await text(desktop, "observer-a-stage"), "Person");
+  await pause(desktop);
+  await desktop.screenshot({ path: `${outputDirectory}/person.png` });
 
   await desktop.getByRole("button", { name: "Visit Lantern Tide" }).click();
   await desktop.getByRole("button", { name: "Initialize observer B" }).click();
