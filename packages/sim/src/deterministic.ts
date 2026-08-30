@@ -10,17 +10,23 @@ function assertInteger(value: number, name: string): void {
     throw new RangeError(`${name} must be a safe integer`);
 }
 
+function assertU32(value: number, name: string): void {
+  assertInteger(value, name);
+  if (value < 0 || value > U32_MAX)
+    throw new RangeError(`${name} must be a uint32`);
+}
+
 /** Semantic uint32 addition with explicit modulo-2^32 overflow. */
 export function u32Add(left: number, right: number): number {
-  assertInteger(left, "left");
-  assertInteger(right, "right");
+  assertU32(left, "left");
+  assertU32(right, "right");
   return (left + right) >>> 0;
 }
 
 /** Semantic uint32 multiplication using the low 32 bits. */
 export function u32Mul(left: number, right: number): number {
-  assertInteger(left, "left");
-  assertInteger(right, "right");
+  assertU32(left, "left");
+  assertU32(right, "right");
   return Math.imul(left, right) >>> 0;
 }
 
@@ -33,6 +39,25 @@ export function saturatingI32Add(left: number, right: number): number {
 /** Multiplies two signed fixed-point values and rounds toward zero. */
 export function fixedMul(left: bigint, right: bigint): bigint {
   return (left * right) / FIXED_SCALE;
+}
+
+export interface U64Words {
+  readonly high: number;
+  readonly low: number;
+}
+
+export function splitU64(value: bigint): U64Words {
+  if (value < 0n || value > U64_MAX) throw new RangeError("u64 out of range");
+  return Object.freeze({
+    high: Number((value >> 32n) & 0xffff_ffffn),
+    low: Number(value & 0xffff_ffffn),
+  });
+}
+
+export function joinU64(high: number, low: number): bigint {
+  assertU32(high, "high");
+  assertU32(low, "low");
+  return (BigInt(high) << 32n) | BigInt(low);
 }
 
 /** FNV-1a 64 is the frozen M1 non-cryptographic semantic checksum. */
@@ -168,6 +193,26 @@ export function tickToMinuteOfDay(tick: bigint, ticksPerDay: bigint): number {
   )
     throw new RangeError("invalid tick epoch");
   return Number(tick % ticksPerDay);
+}
+
+export class DeterministicClock {
+  #tick: bigint;
+
+  constructor(initialTick = 0n) {
+    if (initialTick < 0n)
+      throw new RangeError("initial tick must be nonnegative");
+    this.#tick = initialTick;
+  }
+
+  now(): bigint {
+    return this.#tick;
+  }
+
+  advance(delta: bigint): bigint {
+    if (delta < 0n) throw new RangeError("clock delta must be nonnegative");
+    this.#tick += delta;
+    return this.#tick;
+  }
 }
 
 /** Canonical digest of the public primitive vectors, shared by Node and browsers. */

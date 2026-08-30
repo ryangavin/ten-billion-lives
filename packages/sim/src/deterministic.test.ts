@@ -2,14 +2,17 @@ import { describe, expect, it } from "vitest";
 
 import {
   CanonicalWriter,
+  DeterministicClock,
   FIXED_SCALE,
   deterministicVectorHash,
   fixedMul,
   fnv1a64,
   largestRemainder,
+  joinU64,
   randomU32,
   saturatingI32Add,
   stablePermutation,
+  splitU64,
   tickToMinuteOfDay,
   u32Add,
   u32Mul,
@@ -23,6 +26,21 @@ describe("deterministic primitive golden vectors", () => {
     expect(saturatingI32Add(-0x8000_0000, -1)).toBe(-0x8000_0000);
     expect(fixedMul(1_500_000n, 2_250_000n)).toBe(3_375_000n);
     expect(FIXED_SCALE).toBe(1_000_000n);
+    expect(() => u32Add(-1, 1)).toThrow(RangeError);
+    expect(() => u32Mul(0x1_0000_0000, 1)).toThrow(RangeError);
+  });
+
+  it("round-trips explicit high/low words through trillion and uint64 max", () => {
+    for (const value of [0n, 1_000_000_000_000n, 0xffff_ffff_ffff_ffffn]) {
+      const words = splitU64(value);
+      expect(joinU64(words.high, words.low)).toBe(value);
+    }
+    expect(splitU64(1_000_000_000_000n)).toEqual({
+      high: 232,
+      low: 3_567_587_328,
+    });
+    expect(() => splitU64(-1n)).toThrow(RangeError);
+    expect(() => joinU64(-1, 0)).toThrow(RangeError);
   });
 
   it("matches published FNV-1a 64 vectors and canonical little-endian bytes", () => {
@@ -99,5 +117,13 @@ describe("deterministic primitive properties", () => {
     expect(() => new CanonicalWriter("", 1)).toThrow(RangeError);
     expect(() => new CanonicalWriter("x", 0)).toThrow(RangeError);
     expect(() => new CanonicalWriter("x", 1).u64(-1n)).toThrow(RangeError);
+  });
+
+  it("advances an injected deterministic clock without ambient time", () => {
+    const clock = new DeterministicClock(12n);
+    expect(clock.now()).toBe(12n);
+    expect(clock.advance(3n)).toBe(15n);
+    expect(clock.now()).toBe(15n);
+    expect(() => clock.advance(-1n)).toThrow(RangeError);
   });
 });

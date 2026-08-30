@@ -10,15 +10,19 @@ export {
 export type { LocalSnapshot, PopulationCell } from "./snapshot";
 export {
   CanonicalWriter,
+  DeterministicClock,
   FIXED_SCALE,
   deterministicVectorHash,
   fixedMul,
   fnv1a64,
   largestRemainder,
+  joinU64,
   randomU32,
   saturatingI32Add,
   stablePermutation,
+  splitU64,
   tickToMinuteOfDay,
   u32Add,
   u32Mul,
 } from "./deterministic";
+export type { U64Words } from "./deterministic";
