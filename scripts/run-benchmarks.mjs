@@ -134,7 +134,14 @@ async function measureBrowser(qualityTiers) {
     const measured = await page.evaluate(async (tiers) => {
       const navigation = performance.getEntriesByType("navigation")[0];
       const startupMs = navigation ? navigation.duration : performance.now();
-      const memory = performance.memory?.usedJSHeapSize ?? 0;
+      const detailedMemory = performance.measureUserAgentSpecificMemory
+        ? await performance.measureUserAgentSpecificMemory()
+        : null;
+      const memory =
+        detailedMemory?.bytes ?? performance.memory?.usedJSHeapSize ?? 0;
+      const memoryMethod = detailedMemory
+        ? "measureUserAgentSpecificMemory"
+        : "performance.memory.usedJSHeapSize";
       const gpu = navigator.gpu;
       const adapter = gpu ? await gpu.requestAdapter() : null;
       const canvas = globalThis.document.createElement("canvas");
@@ -168,6 +175,7 @@ async function measureBrowser(qualityTiers) {
       return {
         startupMs,
         browserMemoryMiB: memory / 1_048_576,
+        memoryMethod,
         webgpu: {
           navigatorPresent: Boolean(gpu),
           adapterAvailable: Boolean(adapter),
@@ -204,6 +212,7 @@ const result = {
   capabilities: {
     webgpu: browser.webgpu,
     fallback: { canvas2d: true, profile: "fallback" },
+    memoryMeasurement: browser.memoryMethod,
   },
   percentiles: { ...cpu.percentiles, render: browser.tierMetrics },
   metrics: {
