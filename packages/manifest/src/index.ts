@@ -23,3 +23,16 @@ export type {
   Relationship,
   RelationshipKind,
 } from "./person";
+export {
+  AnalyticalItineraryIndex,
+  createAnalyticalItineraryIndex,
+} from "./itinerary";
+export type {
+  PersonActivity,
+  PersonEncounter,
+  PersonItineraryPoint,
+  PersonQueryLod,
+  PersonQueryOptions,
+  PersonRoute,
+  PersonSemanticLocation,
+} from "./itinerary";
