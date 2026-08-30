@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "local-scaffold-v1",
+  "commit": "b4c3c010279781b1470b470a0195c15101d6ad1b",
+  "seed": "ten-billion-lives/benchmark/v1",
+  "generatedAt": "2026-08-30T16:52:50.854Z",
+  "profile": {
+    "schemaVersion": 1,
+    "profileId": "apple-m1-max-32gb-chromium",
+    "device": {
+      "model": "MacBook Pro MacBookPro18,2",
+      "cpu": "Apple M1 Max, 10 cores",
+      "memoryGiB": 32,
+      "architecture": "arm64",
+      "os": "macOS 26.5.2 (25F84)"
+    },
+    "browser": {
+      "engine": "Chromium",
+      "driver": "Playwright 1.62.1",
+      "mode": "headless desktop"
+    }
+  },
+  "workload": {
+    "cellCount": 65536,
+    "simulationPassesPerSample": 12,
+    "snapshotCells": 16384,
+    "identityCountPerSample": 500000,
+    "layout": "scaffold-typed-arrays-v1",
+    "qualityTiers": {
+      "fallback": {
+        "renderedManifestations": 25000,
+        "targetFps": 30
+      },
+      "baseline": {
+        "renderedManifestations": 250000,
+        "targetFps": 60
+      },
+      "showcase": {
+        "renderedManifestations": 1000000,
+        "targetFps": 30
+      }
+    }
+  },
+  "capabilities": {
+    "webgpu": {
+      "navigatorPresent": true,
+      "adapterAvailable": false,
+      "selectedProfile": "fallback"
+    },
+    "fallback": {
+      "canvas2d": true,
+      "profile": "fallback"
+    },
+    "memoryMeasurement": "performance.memory.usedJSHeapSize"
+  },
+  "percentiles": {
+    "simulationCellsPerSecond": {
+      "p50": 651694220.0124303,
+      "p95": 721276894.3066105
+    },
+    "snapshotSerializeMiBPerSecond": {
+      "p50": 414.0447287841236,
+      "p95": 472.1014565628001
+    },
+    "replaySnapshotsPerSecond": {
+      "p50": 2532.153282379658,
+      "p95": 2652.930499985869
+    },
+    "identitiesPerSecond": {
+      "p50": 499106100.9731443,
+      "p95": 597401542.2518348
+    },
+    "render": {
+      "fallback": {
+        "renderedManifestations": 25000,
+        "frameTimeP50Ms": 7.615000009536743,
+        "frameTimeP95Ms": 9.7950000166893
+      },
+      "baseline": {
+        "renderedManifestations": 250000,
+        "frameTimeP50Ms": 86.3299999833107,
+        "frameTimeP95Ms": 88.0799999833107
+      },
+      "showcase": {
+        "renderedManifestations": 1000000,
+        "frameTimeP50Ms": 352.6899999976158,
+        "frameTimeP95Ms": 354.43000000715256
+      }
+    }
+  },
+  "metrics": {
+    "simulationCellsPerSecond": 651694220.0124303,
+    "snapshotSerializeMiBPerSecond": 414.0447287841236,
+    "replaySnapshotsPerSecond": 2532.153282379658,
+    "identitiesPerSecond": 499106100.9731443,
+    "baselineFrameTimeP95Ms": 88.0799999833107,
+    "browserMemoryMiB": 9.5367431640625,
+    "startupMs": 57.88499999046326
+  },
+  "browser": {
+    "version": "151.0.7922.34",
+    "device": {
+      "model": "MacBook Pro MacBookPro18,2",
+      "cpu": "Apple M1 Max, 10 cores",
+      "memoryGiB": 32,
+      "architecture": "arm64",
+      "os": "macOS 26.5.2 (25F84)"
+    }
+  }
+}
