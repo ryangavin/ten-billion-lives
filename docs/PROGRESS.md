@@ -1,8 +1,8 @@
 # Progress
 
 - Current issue: #6 — deterministic integer math, hashing, allocation, and golden vectors.
-- Last green commit: `96f4345` (#6 deterministic integer primitives; root check passes).
-- Evidence produced: M0 clean-checkout evidence remains green; the #6 focused suite first failed on the absent deterministic module, then passed 13 total tests covering golden arithmetic/encoding/hash vectors, conservation to one trillion, permutation bijection, domain separation, repeatability, bounds, and malformed input.
-- Next action: validate/commit the cross-runtime vector runner, two-browser coverage, public API contract, and primitive benchmark; then retain process/browser hash and performance evidence.
+- Last green commit: `e081498` (#6 complete deterministic primitive API; root and two-browser checks pass).
+- Evidence produced: 6 files / 16 tests; vector digest `050e18e9f2d20dff` matches in two Node processes, Chromium, and WebKit; versioned primitive benchmark is 570,253 ops/s p50; public semantic/failure contract documented.
+- Next action: commit/push #6 evidence, close #6, then read #7 and its direct dependencies.
 - Decisions: #6 will use explicit bigint/uint32 operations and canonical little-endian bytes; all randomness is counter-based and domain-separated; browser equality is semantic byte/hash equality, not timing or pixels.
 - Blockers: none. Server deployment is outside the local-MVP goal.
