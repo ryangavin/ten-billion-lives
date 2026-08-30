@@ -49,6 +49,8 @@ describe("deterministic planetary transport day", () => {
     const commands = createSignatureCommandLog(graph);
     const first = simulatePlanetaryDay(world, commands);
     const second = simulatePlanetaryDay(world, commands);
+    expect(first.graph.graphHash).toBe("784fcc1635c75fc3");
+    expect(first.dayHash).toBe("c09cdd840c68bab2");
     expect(first.dayHash).toBe(second.dayHash);
     expect(first.ticks.map((tick) => tick.edgeFlowHash)).toEqual(
       second.ticks.map((tick) => tick.edgeFlowHash),

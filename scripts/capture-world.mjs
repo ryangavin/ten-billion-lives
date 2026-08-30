@@ -4,8 +4,10 @@ import { chromium } from "@playwright/test";
 
 const outputDirectory = "docs/evidence/issue-7";
 const fieldOutputDirectory = "docs/evidence/issue-8";
+const transportOutputDirectory = "docs/evidence/issue-9";
 await mkdir(outputDirectory, { recursive: true });
 await mkdir(fieldOutputDirectory, { recursive: true });
+await mkdir(transportOutputDirectory, { recursive: true });
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 1100 } });
@@ -30,6 +32,19 @@ await page.getByRole("heading", { name: /Tick 1/ }).scrollIntoViewIfNeeded();
 await page.screenshot({
   path: `${fieldOutputDirectory}/field-channels-flux.png`,
   fullPage: true,
+});
+
+const transportPanel = page.locator(".transport-debug");
+await transportPanel.screenshot({
+  path: `${transportOutputDirectory}/route-closed-tick7.png`,
+});
+await page.getByRole("button", { name: "Tick 9 · reopened" }).click();
+await transportPanel.screenshot({
+  path: `${transportOutputDirectory}/route-reopened-tick9.png`,
+});
+await page.getByRole("button", { name: "Tick 19 · festival" }).click();
+await transportPanel.screenshot({
+  path: `${transportOutputDirectory}/festival-peak-tick19.png`,
 });
 
 await browser.close();

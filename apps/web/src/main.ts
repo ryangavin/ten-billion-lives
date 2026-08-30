@@ -9,14 +9,18 @@ import {
   FIELD_TICKS_PER_DAY,
   FieldSimulationRunner,
   WORLD_LEVEL,
+  buildTransportGraph,
   createFieldState,
   createPlaceholderSnapshot,
+  createSignatureCommandLog,
   deterministicVectorHash,
+  explainFlow,
   generateWorld,
   getCell,
   invariantReport,
   populationAt,
   replayPlaceholder,
+  simulatePlanetaryDay,
   type FictionalWorld,
   type LocalSnapshot,
 } from "@ten-billion-lives/sim";
@@ -33,6 +37,11 @@ const nextLabels = [
 const snapshotA = createPlaceholderSnapshot();
 const world = generateWorld(BASELINE_WORLD_SEED);
 const fieldRunner = new FieldSimulationRunner(createFieldState(world));
+const transportGraph = buildTransportGraph(world);
+const planetaryDay = simulatePlanetaryDay(
+  world,
+  createSignatureCommandLog(transportGraph),
+);
 let stageIndex = 0;
 let cameraDegrees = 0;
 let personA: PlaceholderManifestation | null = null;
@@ -42,6 +51,7 @@ let fieldsRevealed = false;
 let debugVisible = false;
 let debugLevel: 2 | 3 | 5 = WORLD_LEVEL;
 let selectedCellId = "L5/12/0";
+let selectedDayTick = 7;
 
 const biomeColors = {
   ocean: "#0d3441",
@@ -151,6 +161,42 @@ function personCard(
   </dl>`;
 }
 
+function transportDebugPanel(): string {
+  const tick = planetaryDay.ticks[selectedDayTick];
+  const signatureEdgeId = planetaryDay.commands[0]?.edgeId;
+  const signatureFlow = tick?.edgeFlows.find(
+    (flow) => flow.edgeId === signatureEdgeId,
+  );
+  if (tick === undefined || signatureFlow === undefined)
+    throw new Error("Missing signature transport diagnostic");
+  const flowTotals = planetaryDay.ticks.map((sample) =>
+    sample.edgeFlows.reduce((sum, flow) => sum + flow.count, 0n),
+  );
+  const maximumFlow = flowTotals.reduce(
+    (maximum, value) => (value > maximum ? value : maximum),
+    1n,
+  );
+  const points = (values: readonly bigint[], maximum: bigint): string =>
+    values
+      .map((value, index) => {
+        const x = 24 + (index * 720) / 23;
+        const y = 170 - (Number(value) / Number(maximum)) * 130;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .join(" ");
+  const markerX = 24 + (selectedDayTick * 720) / 23;
+  const bottlenecks = tick.edgeFlows.filter(
+    (flow) => flow.bottleneck && !flow.closed,
+  );
+  const activities = Object.entries(tick.activityTotals)
+    .map(([name, count]) => `${name} ${count.toLocaleString("en-US")}`)
+    .join(" · ");
+  return `<article class="transport-debug" aria-labelledby="transport-debug-title"><div class="field-debug-heading"><div><p class="kicker">Representative planetary day</p><h2 id="transport-debug-title">Tick <span data-testid="transport-tick">${tick.tick}</span> · <code data-testid="planetary-day-hash">${planetaryDay.dayHash}</code></h2></div><div class="debug-controls"><button type="button" class="secondary" data-day-tick="7">Tick 7 · closure</button><button type="button" class="secondary" data-day-tick="9">Tick 9 · reopened</button><button type="button" class="secondary" data-day-tick="19">Tick 19 · festival</button></div></div><svg class="day-chart" viewBox="0 0 768 200" role="img" aria-label="Full-day aggregate movement and festival attendance"><line x1="24" y1="170" x2="744" y2="170"></line><line x1="24" y1="105" x2="744" y2="105"></line><line x1="24" y1="40" x2="744" y2="40"></line><polyline class="movement-line" points="${points(flowTotals, maximumFlow)}"></polyline><polyline class="festival-line" points="${points(
+    planetaryDay.ticks.map((sample) => sample.festivalAttendance),
+    planetaryDay.graph.festival.peakAttendance,
+  )}"></polyline><line class="tick-marker" x1="${markerX}" y1="28" x2="${markerX}" y2="176"></line><text x="24" y="193">00</text><text x="205" y="193">06</text><text x="393" y="193">12</text><text x="581" y="193">18</text><text x="728" y="193">23</text></svg><div class="chart-legend"><span class="movement">aggregate movement</span><span class="festival">festival attendance</span><span>vertical marker: selected tick</span></div><dl class="field-channels"><div><dt>Cohort activity reconciliation</dt><dd>${activities}</dd></div><div><dt>Festival</dt><dd>${planetaryDay.graph.festival.name} · ${tick.festivalAttendance.toLocaleString("en-US")} attending from ${tick.festivalOrigins.length} surrounding regions</dd></div><div><dt>Signature route</dt><dd data-testid="signature-route">${signatureFlow.closed ? "Closed" : "Open"} · ${signatureFlow.count.toLocaleString("en-US")} / ${signatureFlow.capacity.toLocaleString("en-US")}</dd></div><div><dt>Bottlenecks</dt><dd>${bottlenecks.length.toLocaleString("en-US")} capacity-limited edges at regional/globe LOD</dd></div><div class="flow-explanation"><dt>Why this flow?</dt><dd data-testid="flow-explanation">${explainFlow(planetaryDay, selectedDayTick, signatureFlow.edgeId)}</dd></div><div><dt>Invariant failures</dt><dd class="valid">${tick.invariantIssues.length === 0 ? "None — activities and routes valid" : tick.invariantIssues.join("; ")}</dd></div></dl></article>`;
+}
+
 function render(root: HTMLElement): void {
   const smoke = createSmokeModel();
   const stage = stages[stageIndex] ?? "Planet";
@@ -197,7 +243,7 @@ function render(root: HTMLElement): void {
     </section>
     <section class="trace-controls" aria-label="Replay and field controls"><button type="button" data-action="replay" ${personA ? "" : "disabled"}>Rewind and replay</button><p data-testid="replay-result">${replayResult}</p><button type="button" class="secondary" data-action="fields">Reveal fields</button><button type="button" class="secondary" data-action="debug" aria-expanded="${debugVisible}">${debugVisible ? "Hide debug world" : "Inspect debug world"}</button></section>
     <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Authoritative world budget</p><h2><span data-testid="represented-population">${world.totalPopulation.toLocaleString("en-US")}</span> represented lives</h2></div><dl><div><dt>Authority</dt><dd>${world.cells.length.toLocaleString("en-US")} integer cells</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Settlements</dt><dd>${world.settlements.length} land anchors</dd></div><div><dt>Observer state</dt><dd>Camera excluded from hash</dd></div></dl></section>
-    ${debugVisible ? `<section class="debug-world" aria-labelledby="debug-title"><div class="debug-heading"><div><p class="kicker">Seeded semantic atlas</p><h2 id="debug-title">Debug globe · L${debugLevel}</h2><p>Fictional geography; orange edges are the wrapped seam. Cell population brightens land.</p></div><div class="debug-controls" aria-label="Debug world level"><button type="button" class="secondary" data-debug-level="2" aria-pressed="${debugLevel === 2}">L2 regions</button><button type="button" class="secondary" data-debug-level="3" aria-pressed="${debugLevel === 3}">L3</button><button type="button" class="secondary" data-debug-level="5" aria-pressed="${debugLevel === 5}">L5 cells</button></div></div><canvas width="768" height="384" data-testid="debug-globe" aria-label="Fictional world cell map" aria-describedby="debug-cell-details">A deterministic map of fictional geography and population.</canvas><div class="debug-inspector" id="debug-cell-details"><div><dt>Selected cell</dt><dd data-testid="debug-cell-id">${selectedCell.id}</dd></div><div><dt>Hierarchy</dt><dd>${selectedParent} → ${selectedCell.id}</dd></div><div><dt>Geography</dt><dd>${selectedCell.biome} · ${selectedCell.elevationMeters.toLocaleString("en-US")} m</dd></div><div><dt>Population</dt><dd>${selectedCell.population.toLocaleString("en-US")}</dd></div><div><dt>Region</dt><dd>${selectedCell.regionId}</dd></div></div><div class="debug-probes"><button type="button" data-debug-cell="L5/12/0">Inspect seam</button><button type="button" data-debug-cell="L5/0/3">Inspect north pole</button></div><article class="field-debug" aria-labelledby="field-debug-title"><div class="field-debug-heading"><div><p class="kicker">Conservative field simulation</p><h2 id="field-debug-title">Tick <span data-testid="field-tick">${fieldState.tick}</span> · <code data-testid="field-hash">${fieldState.stateHash}</code></h2></div><div class="debug-controls"><button type="button" data-action="field-step">Single-step</button><button type="button" class="secondary" data-action="field-day">Advance one day</button></div></div><dl class="field-channels"><div><dt>Resident cohorts</dt><dd>${selectedFieldCell.cohorts.young.toLocaleString("en-US")} young · ${selectedFieldCell.cohorts.adult.toLocaleString("en-US")} adult · ${selectedFieldCell.cohorts.older.toLocaleString("en-US")} older</dd></div><div><dt>Activity channels</dt><dd>sleep ${selectedFieldCell.activities.sleep.toLocaleString("en-US")} · home ${selectedFieldCell.activities.home.toLocaleString("en-US")} · work ${selectedFieldCell.activities.work.toLocaleString("en-US")} · transit ${selectedFieldCell.activities.transit.toLocaleString("en-US")} · community ${selectedFieldCell.activities.community.toLocaleString("en-US")}</dd></div><div><dt>Capacity / amenity</dt><dd>${selectedFieldCell.capacityPermille}‰ / ${selectedFieldCell.amenityPermille}‰ · demand ${selectedFieldCell.flowDemand.toLocaleString("en-US")}</dd></div><div><dt>Sparse active regions</dt><dd>${fieldState.activeCellIds.length}</dd></div><div><dt>Flux ledger</dt><dd>${fieldState.lastFluxes.length.toLocaleString("en-US")} transfers; ${selectedFluxes.length} touch this cell${selectedFluxes[0] ? ` · #${selectedFluxes[0].processingOrder} ${selectedFluxes[0].sourceCellId} → ${selectedFluxes[0].destinationCellId} (${selectedFluxes[0].count.toLocaleString("en-US")})` : ""}</dd></div><div><dt>Invariant failures</dt><dd class="${fieldInvariant.valid ? "valid" : "invalid"}" data-testid="field-invariants">${fieldInvariant.valid ? "None — exact conservation" : fieldInvariant.issues.join("; ")}</dd></div></dl></article></section>` : ""}
+    ${debugVisible ? `<section class="debug-world" aria-labelledby="debug-title"><div class="debug-heading"><div><p class="kicker">Seeded semantic atlas</p><h2 id="debug-title">Debug globe · L${debugLevel}</h2><p>Fictional geography; orange edges are the wrapped seam. Cell population brightens land.</p></div><div class="debug-controls" aria-label="Debug world level"><button type="button" class="secondary" data-debug-level="2" aria-pressed="${debugLevel === 2}">L2 regions</button><button type="button" class="secondary" data-debug-level="3" aria-pressed="${debugLevel === 3}">L3</button><button type="button" class="secondary" data-debug-level="5" aria-pressed="${debugLevel === 5}">L5 cells</button></div></div><canvas width="768" height="384" data-testid="debug-globe" aria-label="Fictional world cell map" aria-describedby="debug-cell-details">A deterministic map of fictional geography and population.</canvas><div class="debug-inspector" id="debug-cell-details"><div><dt>Selected cell</dt><dd data-testid="debug-cell-id">${selectedCell.id}</dd></div><div><dt>Hierarchy</dt><dd>${selectedParent} → ${selectedCell.id}</dd></div><div><dt>Geography</dt><dd>${selectedCell.biome} · ${selectedCell.elevationMeters.toLocaleString("en-US")} m</dd></div><div><dt>Population</dt><dd>${selectedCell.population.toLocaleString("en-US")}</dd></div><div><dt>Region</dt><dd>${selectedCell.regionId}</dd></div></div><div class="debug-probes"><button type="button" data-debug-cell="L5/12/0">Inspect seam</button><button type="button" data-debug-cell="L5/0/3">Inspect north pole</button></div><article class="field-debug" aria-labelledby="field-debug-title"><div class="field-debug-heading"><div><p class="kicker">Conservative field simulation</p><h2 id="field-debug-title">Tick <span data-testid="field-tick">${fieldState.tick}</span> · <code data-testid="field-hash">${fieldState.stateHash}</code></h2></div><div class="debug-controls"><button type="button" data-action="field-step">Single-step</button><button type="button" class="secondary" data-action="field-day">Advance one day</button></div></div><dl class="field-channels"><div><dt>Resident cohorts</dt><dd>${selectedFieldCell.cohorts.young.toLocaleString("en-US")} young · ${selectedFieldCell.cohorts.adult.toLocaleString("en-US")} adult · ${selectedFieldCell.cohorts.older.toLocaleString("en-US")} older</dd></div><div><dt>Activity channels</dt><dd>sleep ${selectedFieldCell.activities.sleep.toLocaleString("en-US")} · home ${selectedFieldCell.activities.home.toLocaleString("en-US")} · work ${selectedFieldCell.activities.work.toLocaleString("en-US")} · transit ${selectedFieldCell.activities.transit.toLocaleString("en-US")} · community ${selectedFieldCell.activities.community.toLocaleString("en-US")}</dd></div><div><dt>Capacity / amenity</dt><dd>${selectedFieldCell.capacityPermille}‰ / ${selectedFieldCell.amenityPermille}‰ · demand ${selectedFieldCell.flowDemand.toLocaleString("en-US")}</dd></div><div><dt>Sparse active regions</dt><dd>${fieldState.activeCellIds.length}</dd></div><div><dt>Flux ledger</dt><dd>${fieldState.lastFluxes.length.toLocaleString("en-US")} transfers; ${selectedFluxes.length} touch this cell${selectedFluxes[0] ? ` · #${selectedFluxes[0].processingOrder} ${selectedFluxes[0].sourceCellId} → ${selectedFluxes[0].destinationCellId} (${selectedFluxes[0].count.toLocaleString("en-US")})` : ""}</dd></div><div><dt>Invariant failures</dt><dd class="${fieldInvariant.valid ? "valid" : "invalid"}" data-testid="field-invariants">${fieldInvariant.valid ? "None — exact conservation" : fieldInvariant.issues.join("; ")}</dd></div></dl></article>${transportDebugPanel()}</section>` : ""}
     <footer><span>World seed <code>${world.seed}</code> · hash <code data-testid="world-hash">${world.worldHash}</code> · vectors <code data-testid="deterministic-vector-hash">${deterministicVectorHash()}</code></span><span>Run <code>pnpm check</code> from the repository root if a diagnostic fails.</span></footer>
   </main>`;
 
@@ -265,6 +311,14 @@ function render(root: HTMLElement): void {
   )) {
     control.addEventListener("click", () => {
       selectedCellId = control.dataset["debugCell"] ?? selectedCellId;
+      render(root);
+    });
+  }
+  for (const control of root.querySelectorAll<HTMLButtonElement>(
+    "[data-day-tick]",
+  )) {
+    control.addEventListener("click", () => {
+      selectedDayTick = Number(control.dataset["dayTick"]);
       render(root);
     });
   }

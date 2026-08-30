@@ -35,6 +35,20 @@ test("inspects deterministic geography across hierarchy, seam, and pole", async 
   await expect(page.getByTestId("field-invariants")).toHaveText(
     "None — exact conservation",
   );
+  await expect(page.getByTestId("planetary-day-hash")).toHaveText(
+    "c09cdd840c68bab2",
+  );
+  await expect(page.getByTestId("signature-route")).toContainText("Closed · 0");
+  await page.getByRole("button", { name: "Tick 9 · reopened" }).click();
+  await expect(page.getByTestId("transport-tick")).toHaveText("9");
+  await expect(page.getByTestId("signature-route")).toContainText(
+    "Open · 8,180,688",
+  );
+  await page.getByRole("button", { name: "Tick 19 · festival" }).click();
+  await expect(
+    page.getByText(/100,000 attending from 2 surrounding regions/),
+  ).toBeVisible();
+  await expect(page.getByTestId("flow-explanation")).toContainText("capacity");
   await page.getByRole("button", { name: "Single-step" }).click();
   await expect(page.getByTestId("field-tick")).toHaveText("1");
   await expect(page.getByText(/transfers; \d+ touch this cell/)).toBeVisible();
