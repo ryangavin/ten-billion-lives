@@ -1,8 +1,8 @@
 # Progress
 
-- Current issue: #10 — M1 snapshot, event, replay, and frozen world-kernel gate.
-- Last green commit: `8b574c3` (#9 closed with deterministic day, intervention, browser, visual, and performance evidence).
-- Evidence produced: #10 focused/golden/browser evidence is green. The clean-checkout outer loop at `8145a58` passed frozen install; 10 files / 41 tests and full root check; byte-identical two-process replay to `6e190d289164581d`; 6 Chromium/WebKit journeys; all world/field/day/kernel/browser budgets; conservation; retained visual review; and zero open P0 bug issues. Clean metrics are retained in `docs/evidence/issue-10/outer-loop.md` and refreshed benchmark artifacts.
-- Next action: commit the clean-checkout gate artifacts, post #10 closing evidence and M1 gate status, close #10, then read #11 and its direct dependencies.
-- Decisions: serialize only authoritative dynamic field rows plus seed/version/hash metadata; regenerate and verify static world data on restore; keep transport events as a sparse ordered local log; reject rather than guess migrations; design no network/deployment format.
+- Current issue: #11 — stable procedural people, households, places, and reciprocal relationships.
+- Last green commit: `1ccd60c` (M1 gate #10 closed; clean-checkout outer loop and status posted).
+- Evidence produced: #11 focused suite covers stable opaque reconstruction, exact cohort/place boundary ranks, household/place membership, reciprocal relationship walks, 100,000 collision-free IDs, invalid-ID non-disclosure, query purity, and zero retained person rows. A 50,000-person distribution sample is compared with authoritative quotas.
+- Next action: run the full root check and commit the compact manifestation kernel, then add million-ID/query benchmarks, golden fixtures, and Chromium/WebKit person/household diagnostics.
+- Decisions: use a keyed reversible permutation over the exact ten-billion ordinal domain; retain only compact cell prefix/quota metadata; derive cell-local cohort slots by coprime affine permutation; encode household/place tuples with checksummed opaque tokens; construct relationship adjacency symmetrically without person rows.
 - Blockers: none. Server deployment is outside the local-MVP goal.

@@ -13,3 +13,13 @@ export type {
   PlaceholderManifestation,
   TracerLod,
 } from "./placeholder";
+export { ManifestationIndex, createManifestationIndex } from "./person";
+export type {
+  CohortQuotas,
+  PersonCard,
+  PersonCohort,
+  PlaceKind,
+  PlaceQuota,
+  Relationship,
+  RelationshipKind,
+} from "./person";
