@@ -169,3 +169,16 @@ export function tickToMinuteOfDay(tick: bigint, ticksPerDay: bigint): number {
     throw new RangeError("invalid tick epoch");
   return Number(tick % ticksPerDay);
 }
+
+/** Canonical digest of the public primitive vectors, shared by Node and browsers. */
+export function deterministicVectorHash(): string {
+  const allocation = largestRemainder(1_000_000_000_000n, [1n, 1n, 1n]);
+  const writer = new CanonicalWriter("deterministic-vectors", 1)
+    .u32(u32Add(U32_MAX, 2))
+    .u32(u32Mul(U32_MAX, 2))
+    .i32(saturatingI32Add(I32_MAX, 1))
+    .u64(fnv1a64(new TextEncoder().encode("hello")))
+    .u32(randomU32("simulation", 42n, 7n));
+  for (const value of allocation) writer.u64(value);
+  return fnv1a64(writer.bytes()).toString(16).padStart(16, "0");
+}

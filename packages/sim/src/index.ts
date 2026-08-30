@@ -11,6 +11,7 @@ export type { LocalSnapshot, PopulationCell } from "./snapshot";
 export {
   CanonicalWriter,
   FIXED_SCALE,
+  deterministicVectorHash,
   fixedMul,
   fnv1a64,
   largestRemainder,

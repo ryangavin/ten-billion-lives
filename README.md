@@ -38,7 +38,7 @@ nvm install
 corepack enable
 corepack install --global pnpm@11.24.0
 pnpm install --frozen-lockfile
-pnpm exec playwright install chromium
+pnpm exec playwright install chromium webkit
 pnpm check
 pnpm test:e2e
 ```
@@ -61,3 +61,5 @@ The root commands are:
 `pnpm format` updates supported text files. The smoke fixture is seed- and tick-driven and does not consult ambient time. If the browser surface fails to render, its fallback message points back to `pnpm check`; terminal failures retain the failing command and package.
 
 The workspace contains the local Vite app in `apps/web` and deterministic seams in `packages/sim`, `packages/manifest`, `packages/render`, and `packages/testkit`. There is no server package or remote runtime dependency.
+
+The [deterministic primitive contract](docs/DETERMINISM.md) documents authoritative arithmetic, encoding, hashing, domain separation, allocation, permutation, tick, failure, and cross-runtime golden guarantees.

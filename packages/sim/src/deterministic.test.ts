@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   CanonicalWriter,
   FIXED_SCALE,
+  deterministicVectorHash,
   fixedMul,
   fnv1a64,
   largestRemainder,
@@ -45,6 +46,10 @@ describe("deterministic primitive golden vectors", () => {
     const simulation = randomU32("simulation", 42n, 7n);
     expect(simulation).toBe(randomU32("simulation", 42n, 7n));
     expect(randomU32("visual", 42n, 7n)).not.toBe(simulation);
+  });
+
+  it("freezes the cross-runtime primitive vector digest", () => {
+    expect(deterministicVectorHash()).toBe("050e18e9f2d20dff");
   });
 });
 

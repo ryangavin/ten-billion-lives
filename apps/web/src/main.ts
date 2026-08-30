@@ -6,6 +6,7 @@ import {
 } from "@ten-billion-lives/manifest";
 import {
   createPlaceholderSnapshot,
+  deterministicVectorHash,
   replayPlaceholder,
   type LocalSnapshot,
 } from "@ten-billion-lives/sim";
@@ -79,7 +80,7 @@ function render(root: HTMLElement): void {
     </section>
     <section class="trace-controls" aria-label="Replay and field controls"><button type="button" data-action="replay" ${personA ? "" : "disabled"}>Rewind and replay</button><p data-testid="replay-result">${replayResult}</p><button type="button" class="secondary" data-action="fields">Reveal fields</button></section>
     <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Early reality budget</p><h2><span data-testid="represented-population">${smoke.representedPopulation.toLocaleString("en-US")}</span> represented lives</h2></div><dl><div><dt>Authority</dt><dd>3 authoritative cells</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Visible manifestation</dt><dd>${personA ? "1 × weight 128" : "0"}</dd></div><div><dt>Observer state</dt><dd>Camera excluded from hash</dd></div></dl></section>
-    <footer><span>Seed <code>${smoke.seed}</code></span><span>Run <code>pnpm check</code> from the repository root if a diagnostic fails.</span></footer>
+    <footer><span>Seed <code>${smoke.seed}</code> · vectors <code data-testid="deterministic-vector-hash">${deterministicVectorHash()}</code></span><span>Run <code>pnpm check</code> from the repository root if a diagnostic fails.</span></footer>
   </main>`;
 
   root.querySelector('[data-action="next"]')?.addEventListener("click", () => {

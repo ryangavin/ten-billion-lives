@@ -17,6 +17,9 @@ test("production build exposes the deterministic local smoke surface", async ({
   await expect(
     page.getByText("ten-billion-lives/local-smoke/v1"),
   ).toBeVisible();
+  await expect(page.getByTestId("deterministic-vector-hash")).toHaveText(
+    "050e18e9f2d20dff",
+  );
   await expect(
     page.getByText("Run pnpm check from the repository root"),
   ).toBeVisible();

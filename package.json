@@ -16,6 +16,7 @@
     "benchmark": "pnpm build && node scripts/run-benchmarks.mjs && prettier --write benchmarks/results && pnpm benchmark:check",
     "benchmark:check": "node scripts/check-benchmark.mjs",
     "benchmark:degraded": "node scripts/check-benchmark.mjs benchmarks/fixtures/degraded.json",
+    "benchmark:primitives": "node scripts/benchmark-primitives.mjs && prettier --write benchmarks/results/deterministic-primitives.json",
     "preview": "pnpm --filter @ten-billion-lives/web preview",
     "replay:tracer": "node scripts/replay-tracer.mjs",
     "test": "pnpm test:contracts && vitest run",
@@ -25,6 +26,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "pnpm -r --if-present typecheck",
+    "vector:hash": "node scripts/deterministic-vectors.mjs",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "devDependencies": {
