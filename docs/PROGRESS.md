@@ -1,8 +1,8 @@
 # Progress
 
-- Current issue: #5 — M0 thin globe-to-person tracer gate.
+- Current issue: #6 — deterministic integer math, hashing, allocation, and golden vectors.
 - Last green commit: `d0854fd` (#5 tracer plus state/event replay command; clean-checkout outer loop passes).
-- Evidence produced: clean frozen install/root check; two byte-identical replay hash runs; 2/2 production Chromium journeys; same-profile benchmark pass; two inspected screenshots; zero open local P0 defects.
-- Next action: commit/push M0 gate evidence, close #5, post the compact milestone status, then read #6 and only its direct dependencies.
-- Decisions: M0 freezes readonly snapshot/query/projection directions; placeholder state hash `state-42f76c85`, person `person-5d19f85f`, and trace `trace-b11350f7` are tracer goldens only; camera/pane state remains app-local; the production hash format belongs to #6/#10.
+- Evidence produced: M0 clean-checkout evidence remains green; the #6 focused suite first failed on the absent deterministic module, then passed 13 total tests covering golden arithmetic/encoding/hash vectors, conservation to one trillion, permutation bijection, domain separation, repeatability, bounds, and malformed input.
+- Next action: validate/commit the deterministic primitive core, then add a canonical vector-result hash runner and prove identical output in two Node processes plus Chromium and WebKit.
+- Decisions: #6 will use explicit bigint/uint32 operations and canonical little-endian bytes; all randomness is counter-based and domain-separated; browser equality is semantic byte/hash equality, not timing or pixels.
 - Blockers: none. Server deployment is outside the local-MVP goal.
