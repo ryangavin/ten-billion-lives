@@ -24,6 +24,8 @@ The focused suite verifies stable neighborhood→settlement→region hierarchy, 
 
 The signature route `intercity:region/region-0-0>region/region-0-1` carries 8,180,688 people in the uninterrupted morning profile, carries zero while closed at ticks 7–8, and returns to 8,180,688 when reopened at tick 9. All 24 edge-flow hashes are retained in the benchmark result.
 
+`pnpm benchmark` passed the production-browser regression gate at `22561b1e02e645cfda91785c00750b9561cb6cdd`: 301.09 ms startup, 14.50 MiB browser heap, and 90.10 ms p95 for the pre-existing 250k Canvas2D scaffold. Startup and heap remain well inside the 5,000 ms / 256 MiB limits; the known rendering aspiration remains visible for later work.
+
 ## Festival and browser evidence
 
 The fictional Lantern Confluence converges from two surrounding regions: attendance rises from 25,000 at tick 17 to 50,000 at tick 18 and 100,000 at tick 19, then disperses to 75,000, 33,333, and zero. Both Chromium and WebKit pass the day-hash, closure, reopening, festival, capacity-explanation, and invariant checks.
@@ -39,6 +41,7 @@ Manual inspection confirmed daily rhythms, selected-tick markers, regional/globe
 ```sh
 pnpm exec vitest run packages/sim/src/transport.test.ts
 pnpm benchmark:transport
+pnpm benchmark
 pnpm check
 pnpm test:e2e
 ```

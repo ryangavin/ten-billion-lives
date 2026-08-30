@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "local-scaffold-v1",
-  "commit": "8ba96464fcfd7c17b7726d37663a5c146adb7d74",
+  "commit": "22561b1e02e645cfda91785c00750b9561cb6cdd",
   "seed": "ten-billion-lives/benchmark/v1",
-  "generatedAt": "2026-08-30T17:50:34.948Z",
+  "generatedAt": "2026-08-30T18:04:14.899Z",
   "profile": {
     "schemaVersion": 1,
     "profileId": "apple-m1-max-32gb-chromium",
@@ -55,47 +55,47 @@
   },
   "percentiles": {
     "simulationCellsPerSecond": {
-      "p50": 658883378.8684894,
-      "p95": 724126691.2329601
+      "p50": 648291996.5080796,
+      "p95": 710256942.8765
     },
     "snapshotSerializeMiBPerSecond": {
-      "p50": 435.67913572943536,
-      "p95": 478.0489590630751
+      "p50": 434.55694494276577,
+      "p95": 479.611631246389
     },
     "replaySnapshotsPerSecond": {
-      "p50": 2465.9644504098915,
-      "p95": 2503.415911010559
+      "p50": 2574.1960528307477,
+      "p95": 2651.127875960099
     },
     "identitiesPerSecond": {
-      "p50": 545504335.1229496,
-      "p95": 610344857.0511305
+      "p50": 507356671.74023247,
+      "p95": 596777639.4579499
     },
     "render": {
       "fallback": {
         "renderedManifestations": 25000,
-        "frameTimeP50Ms": 7.580000042915344,
-        "frameTimeP95Ms": 9.504999995231628
+        "frameTimeP50Ms": 8.125,
+        "frameTimeP95Ms": 10.225000023841858
       },
       "baseline": {
         "renderedManifestations": 250000,
-        "frameTimeP50Ms": 82.79000002145767,
-        "frameTimeP95Ms": 87.98500001430511
+        "frameTimeP50Ms": 88.58499997854233,
+        "frameTimeP95Ms": 90.09500002861023
       },
       "showcase": {
         "renderedManifestations": 1000000,
-        "frameTimeP50Ms": 335.8899999856949,
-        "frameTimeP95Ms": 344.75999999046326
+        "frameTimeP50Ms": 362.6350000500679,
+        "frameTimeP95Ms": 370.38499999046326
       }
     }
   },
   "metrics": {
-    "simulationCellsPerSecond": 658883378.8684894,
-    "snapshotSerializeMiBPerSecond": 435.67913572943536,
-    "replaySnapshotsPerSecond": 2465.9644504098915,
-    "identitiesPerSecond": 545504335.1229496,
-    "baselineFrameTimeP95Ms": 87.98500001430511,
-    "browserMemoryMiB": 9.5367431640625,
-    "startupMs": 166.48499995470047
+    "simulationCellsPerSecond": 648291996.5080796,
+    "snapshotSerializeMiBPerSecond": 434.55694494276577,
+    "replaySnapshotsPerSecond": 2574.1960528307477,
+    "identitiesPerSecond": 507356671.74023247,
+    "baselineFrameTimeP95Ms": 90.09500002861023,
+    "browserMemoryMiB": 14.495849609375,
+    "startupMs": 301.0900000333786
   },
   "browser": {
     "version": "151.0.7922.34",
