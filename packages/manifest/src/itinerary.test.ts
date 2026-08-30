@@ -245,5 +245,12 @@ describe("analytical person itineraries", () => {
     expect(() => itinerary.queryPerson(adultId, 7n, stateAt(6))).toThrow(
       /tick does not match world state/,
     );
+    expect(() =>
+      itinerary.queryPerson(
+        adultId,
+        0n,
+        createWorldKernel("ten-billion-lives/other/v1"),
+      ),
+    ).toThrow(/world does not match itinerary index/);
   });
 });

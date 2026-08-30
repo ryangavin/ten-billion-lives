@@ -91,6 +91,9 @@ test("traces planet to person across two independent local observers", async ({
   );
   await expect(page.getByText("Dara Grove · age 28 · adult")).toBeVisible();
   await expect(page.getByText("North Works · 512/512")).toBeVisible();
+  await expect(page.getByTestId("observer-a-itinerary")).toHaveText(
+    "Tick 10 · work at North Works",
+  );
   await expect(page.getByTestId("observer-a-household-id")).toContainText(
     "household_0yojqkh506h6x_0855mue",
   );
@@ -101,9 +104,25 @@ test("traces planet to person across two independent local observers", async ({
   );
   await expect(page.getByTestId("observer-match")).toHaveText("Semantic match");
 
+  await page.getByRole("button", { name: "Tick 7 · commute" }).click();
+  await expect(page.getByTestId("observer-a-itinerary")).toHaveText(
+    "Tick 7 · transit",
+  );
+  await expect(page.getByTestId("observer-b-itinerary")).toHaveText(
+    "Tick 7 · transit",
+  );
+  await expect(page.getByTestId("observer-match")).toHaveText("Semantic match");
+  await page.getByRole("button", { name: "Tick 19 · festival hour" }).click();
+  await expect(page.getByTestId("observer-a-itinerary")).toHaveText(
+    "Tick 19 · leisure",
+  );
+  await page
+    .getByRole("button", { name: "Tick 10 · primary activity" })
+    .click();
+
   await page.getByRole("button", { name: "Rewind and replay" }).click();
   await expect(page.getByTestId("replay-result")).toHaveText(
-    "trace-036aeda5 restored",
+    "trace-1a66653c restored",
   );
   await page.getByRole("button", { name: "Reveal fields" }).click();
   await expect(page.getByTestId("reality-budget")).toContainText(

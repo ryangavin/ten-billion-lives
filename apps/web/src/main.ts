@@ -1,9 +1,10 @@
 import "./style.css";
 
 import {
-  createManifestationIndex,
+  createAnalyticalItineraryIndex,
   manifestPlaceholder,
   type PersonCard,
+  type PersonItineraryPoint,
 } from "@ten-billion-lives/manifest";
 import {
   BASELINE_WORLD_SEED,
@@ -44,7 +45,8 @@ const nextLabels = [
 ];
 const snapshotA = createPlaceholderSnapshot();
 const world = generateWorld(BASELINE_WORLD_SEED);
-const manifestationIndex = createManifestationIndex(world);
+const itineraryIndex = createAnalyticalItineraryIndex(world);
+const manifestationIndex = itineraryIndex.manifestation;
 const manifestationCellId = world.settlements[0]?.cellId;
 if (manifestationCellId === undefined)
   throw new Error("Baseline world requires a manifestation settlement");
@@ -64,7 +66,7 @@ let stageIndex = 0;
 let cameraDegrees = 0;
 type ManifestedPerson = PersonCard &
   Readonly<{
-    activity: string;
+    itinerary: PersonItineraryPoint;
     traceHash: string;
     relationshipSummary: string;
   }>;
@@ -77,6 +79,7 @@ let debugVisible = false;
 let debugLevel: 2 | 3 | 5 = WORLD_LEVEL;
 let selectedCellId = "L5/12/0";
 let selectedDayTick = 7;
+let selectedPersonTick = 10;
 let checkpointResult = "Not restored";
 
 const biomeColors = {
@@ -172,14 +175,23 @@ function queryPerson(snapshot: LocalSnapshot): ManifestedPerson {
     lod: "person",
   });
   const card = manifestationIndex.person(manifestationPersonId);
+  const itineraryState = advanceWorldKernel(
+    createWorldKernel(),
+    selectedPersonTick,
+  );
+  const itinerary = itineraryIndex.queryPerson(
+    card.personId,
+    BigInt(selectedPersonTick),
+    itineraryState,
+  );
   const relationships = manifestationIndex.relationships(card.personId);
   const counts = new Map<string, number>();
   for (const relationship of relationships)
     counts.set(relationship.kind, (counts.get(relationship.kind) ?? 0) + 1);
   return Object.freeze({
     ...card,
-    activity: `Working at ${card.primaryPlace.name}`,
-    traceHash: `trace-${card.semanticHash.slice(0, 8)}`,
+    itinerary,
+    traceHash: `trace-${itinerary.semanticHash.slice(0, 8)}`,
     relationshipSummary: Array.from(counts)
       .map(([kind, count]) => `${count} ${kind}`)
       .join(" · "),
@@ -195,10 +207,14 @@ function personCard(
   return `<dl class="person-facts">
     <div><dt>Person ID</dt><dd data-testid="observer-${observer}-person-id">${person.personId}</dd></div>
     <div><dt>Identity</dt><dd>${person.name} · age ${person.ageYears} · ${person.cohort}</dd></div>
-    <div><dt>Now</dt><dd>${person.activity}</dd></div>
+    <div><dt>Now</dt><dd data-testid="observer-${observer}-itinerary">Tick ${person.itinerary.tick} · ${person.itinerary.activity}${person.itinerary.activity === "work" || person.itinerary.activity === "school" || person.itinerary.activity === "service" ? ` at ${person.primaryPlace.name}` : ""}</dd></div>
+    <div><dt>Semantic location</dt><dd><code>${person.itinerary.location.semanticId}</code> · ${person.itinerary.location.positionPermille}‰</dd></div>
     <div><dt>Household</dt><dd data-testid="observer-${observer}-household-id"><code>${person.household.id}</code> · ${person.household.role} · ${person.household.memberCount} members</dd></div>
     <div><dt>Recurring place</dt><dd>${person.primaryPlace.name} · ${person.primaryPlace.memberCount}/${person.primaryPlace.capacity}</dd></div>
     <div><dt>Relationships</dt><dd>${person.relationshipSummary}</dd></div>
+    <div><dt>Co-located encounters</dt><dd>${person.itinerary.encounters.length} known · <code>${person.itinerary.encounterGroupId}</code></dd></div>
+    <div><dt>Field reconciliation</dt><dd>${person.itinerary.fieldMembership.channel} · ${person.itinerary.fieldMembership.channelPopulation.toLocaleString("en-US")} in home-cell channel</dd></div>
+    <div><dt>Route</dt><dd>${person.itinerary.route ? `${person.itinerary.route.mode} · ${person.itinerary.route.edgeIds.length} graph edges · ${person.itinerary.route.reason}` : "stationary analytical segment"}</dd></div>
     <div><dt>Appearance</dt><dd>${person.appearance.stature} · ${person.appearance.hair} hair · ${person.appearance.wardrobe} layers</dd></div>
     <div><dt>Semantic trace</dt><dd><code>${person.traceHash}</code></dd></div>
   </dl>`;
@@ -274,16 +290,32 @@ function render(root: HTMLElement): void {
   );
 
   root.innerHTML = `<main class="observatory" aria-labelledby="app-title">
-    <header class="tracer-header"><div><p class="eyebrow"><span aria-hidden="true"></span> Deterministic world / M1</p><h1 id="app-title">Ten Billion Lives</h1></div><div class="status" data-testid="smoke-status"><span aria-hidden="true"></span>${smoke.status}</div></header>
+    <header class="tracer-header"><div><p class="eyebrow"><span aria-hidden="true"></span> Deterministic world / M2</p><h1 id="app-title">Ten Billion Lives</h1></div><div class="status" data-testid="smoke-status"><span aria-hidden="true"></span>${smoke.status}</div></header>
     <section class="tracer-world" aria-labelledby="journey-title">
       <div class="mini-globe ${projection.cssStage}" data-projection-key="${projection.semanticKey}" aria-hidden="true"><i></i><b></b></div>
-      <div class="journey-copy"><p class="kicker">Observer A · <span data-testid="observer-a-stage">${stage}</span></p><h2 id="journey-title">${stage === "Planet" ? "Seeded fictional planet" : stage === "Settlement" ? (world.settlements[0]?.name ?? "Settlement") : stage === "Street" ? (world.settlements[0]?.neighborhoodIds[0] ?? "Neighborhood") : (personA?.name ?? "Resident")}</h2><p>Camera ${cameraDegrees}° · tick ${snapshotA.tick} · <code data-testid="state-hash">${snapshotA.stateHash}</code></p>
+      <div class="journey-copy"><p class="kicker">Observer A · <span data-testid="observer-a-stage">${stage}</span></p><h2 id="journey-title">${stage === "Planet" ? "Seeded fictional planet" : stage === "Settlement" ? (world.settlements[0]?.name ?? "Settlement") : stage === "Street" ? (world.settlements[0]?.neighborhoodIds[0] ?? "Neighborhood") : (personA?.name ?? "Resident")}</h2><p>Camera ${cameraDegrees}° · tick <span data-testid="person-tick">${personA?.itinerary.tick ?? snapshotA.tick}</span> · <code data-testid="state-hash">${snapshotA.stateHash}</code></p>
       <div class="tracer-actions">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}<button type="button" class="secondary" data-action="camera">Orbit camera</button></div></div>
     </section>
     <section class="observer-grid" aria-label="Independent observer comparison">
       <article><p class="kicker">Observer A</p><h2>${personA?.name ?? "Journey in progress"}</h2>${personCard(personA, "a")}</article>
       <article><p class="kicker">Observer B · independent instance</p><h2>${personB?.name ?? "Not initialized"}</h2>${personCard(personB, "b")}${personA && !personB ? '<button type="button" data-action="observer-b">Initialize observer B</button>' : ""}${semanticMatch ? '<p class="match" data-testid="observer-match">Semantic match</p>' : ""}</article>
     </section>
+    ${
+      personA
+        ? `<section class="trace-controls" aria-label="Analytical person time"><p><strong>Analytical time</strong> · direct random access, no resident stepping</p>${[
+            [0, "midnight"],
+            [7, "commute"],
+            [10, "primary activity"],
+            [19, "festival hour"],
+            [23, "sleep"],
+          ]
+            .map(
+              ([tick, label]) =>
+                `<button type="button" class="secondary" data-person-tick="${tick}" aria-pressed="${selectedPersonTick === tick}">Tick ${tick} · ${label}</button>`,
+            )
+            .join("")}</section>`
+        : ""
+    }
     <section class="trace-controls" aria-label="Replay and field controls"><button type="button" data-action="replay" ${personA ? "" : "disabled"}>Rewind and replay</button><p data-testid="replay-result">${replayResult}</p><button type="button" class="secondary" data-action="fields">Reveal fields</button><button type="button" class="secondary" data-action="debug" aria-expanded="${debugVisible}">${debugVisible ? "Hide debug world" : "Inspect debug world"}</button></section>
     <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Authoritative world budget</p><h2><span data-testid="represented-population">${world.totalPopulation.toLocaleString("en-US")}</span> represented lives</h2></div><dl><div><dt>Authority</dt><dd>${world.cells.length.toLocaleString("en-US")} integer cells</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Manifested query</dt><dd>${personA ? `${personA.name} · ${personA.semanticHash}` : "none"}</dd></div><div><dt>Observer state</dt><dd>Camera excluded from hash</dd></div></dl></section>
     ${debugVisible ? `<section class="debug-world" aria-labelledby="debug-title"><div class="debug-heading"><div><p class="kicker">Seeded semantic atlas</p><h2 id="debug-title">Debug globe · L${debugLevel}</h2><p>Fictional geography; orange edges are the wrapped seam. Cell population brightens land.</p></div><div class="debug-controls" aria-label="Debug world level"><button type="button" class="secondary" data-debug-level="2" aria-pressed="${debugLevel === 2}">L2 regions</button><button type="button" class="secondary" data-debug-level="3" aria-pressed="${debugLevel === 3}">L3</button><button type="button" class="secondary" data-debug-level="5" aria-pressed="${debugLevel === 5}">L5 cells</button></div></div><canvas width="768" height="384" data-testid="debug-globe" aria-label="Fictional world cell map" aria-describedby="debug-cell-details">A deterministic map of fictional geography and population.</canvas><div class="debug-inspector" id="debug-cell-details"><div><dt>Selected cell</dt><dd data-testid="debug-cell-id">${selectedCell.id}</dd></div><div><dt>Hierarchy</dt><dd>${selectedParent} → ${selectedCell.id}</dd></div><div><dt>Geography</dt><dd>${selectedCell.biome} · ${selectedCell.elevationMeters.toLocaleString("en-US")} m</dd></div><div><dt>Population</dt><dd>${selectedCell.population.toLocaleString("en-US")}</dd></div><div><dt>Region</dt><dd>${selectedCell.regionId}</dd></div></div><div class="debug-probes"><button type="button" data-debug-cell="L5/12/0">Inspect seam</button><button type="button" data-debug-cell="L5/0/3">Inspect north pole</button></div><article class="field-debug" aria-labelledby="field-debug-title"><div class="field-debug-heading"><div><p class="kicker">Conservative field simulation</p><h2 id="field-debug-title">Tick <span data-testid="field-tick">${fieldState.tick}</span> · <code data-testid="field-hash">${fieldState.stateHash}</code></h2></div><div class="debug-controls"><button type="button" data-action="field-step">Single-step</button><button type="button" class="secondary" data-action="field-day">Advance one day</button></div></div><dl class="field-channels"><div><dt>Resident cohorts</dt><dd>${selectedFieldCell.cohorts.young.toLocaleString("en-US")} young · ${selectedFieldCell.cohorts.adult.toLocaleString("en-US")} adult · ${selectedFieldCell.cohorts.older.toLocaleString("en-US")} older</dd></div><div><dt>Activity channels</dt><dd>sleep ${selectedFieldCell.activities.sleep.toLocaleString("en-US")} · home ${selectedFieldCell.activities.home.toLocaleString("en-US")} · work ${selectedFieldCell.activities.work.toLocaleString("en-US")} · transit ${selectedFieldCell.activities.transit.toLocaleString("en-US")} · community ${selectedFieldCell.activities.community.toLocaleString("en-US")}</dd></div><div><dt>Capacity / amenity</dt><dd>${selectedFieldCell.capacityPermille}‰ / ${selectedFieldCell.amenityPermille}‰ · demand ${selectedFieldCell.flowDemand.toLocaleString("en-US")}</dd></div><div><dt>Sparse active regions</dt><dd>${fieldState.activeCellIds.length}</dd></div><div><dt>Flux ledger</dt><dd>${fieldState.lastFluxes.length.toLocaleString("en-US")} transfers; ${selectedFluxes.length} touch this cell${selectedFluxes[0] ? ` · #${selectedFluxes[0].processingOrder} ${selectedFluxes[0].sourceCellId} → ${selectedFluxes[0].destinationCellId} (${selectedFluxes[0].count.toLocaleString("en-US")})` : ""}</dd></div><div><dt>Invariant failures</dt><dd class="${fieldInvariant.valid ? "valid" : "invalid"}" data-testid="field-invariants">${fieldInvariant.valid ? "None — exact conservation" : fieldInvariant.issues.join("; ")}</dd></div></dl></article>${transportDebugPanel()}</section>` : ""}
@@ -369,6 +401,17 @@ function render(root: HTMLElement): void {
   )) {
     control.addEventListener("click", () => {
       selectedDayTick = Number(control.dataset["dayTick"]);
+      render(root);
+    });
+  }
+  for (const control of root.querySelectorAll<HTMLButtonElement>(
+    "[data-person-tick]",
+  )) {
+    control.addEventListener("click", () => {
+      selectedPersonTick = Number(control.dataset["personTick"]);
+      personA = queryPerson(snapshotA);
+      if (personB !== null) personB = queryPerson(createPlaceholderSnapshot());
+      replayResult = "Not run";
       render(root);
     });
   }
