@@ -134,6 +134,10 @@ const projectionCache = new WeakMap<
   IllusionEngine,
   Map<string, IllusionProjection>
 >();
+const maximumCachedRenderScenes = 8;
+const maximumCachedProjections = 32;
+const localBenchmarkCanvas = document.createElement("canvas");
+const localBenchmarkScenes = new Map<string, RenderScene>();
 const forceCanvasRenderer =
   new URLSearchParams(location.search).get("renderer") === "canvas";
 const requestedRenderQuality = new URLSearchParams(location.search).get(
@@ -161,6 +165,19 @@ let sustainedFrameTimesMs: number[] = [];
 
 function stageKey(stage: (typeof stages)[number]): ExperienceStage {
   return stage.toLowerCase() as ExperienceStage;
+}
+
+function setBoundedCache<K, V>(
+  cache: Map<K, V>,
+  key: K,
+  value: V,
+  maximumEntries: number,
+): void {
+  if (!cache.has(key) && cache.size >= maximumEntries) {
+    const oldestKey = cache.keys().next().value as K | undefined;
+    if (oldestKey !== undefined) cache.delete(oldestKey);
+  }
+  cache.set(key, value);
 }
 
 function stageLocationId(stage: (typeof stages)[number]): string {
@@ -231,7 +248,7 @@ function projectionFor(
       quality: "browser-detected",
     },
   );
-  cache.set(key, projection);
+  setBoundedCache(cache, key, projection, maximumCachedProjections);
   return projection;
 }
 
@@ -282,7 +299,7 @@ function renderSceneFor(
     viewport: { width: 768, height: 480 },
     reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
   });
-  renderSceneCache.set(key, scene);
+  setBoundedCache(renderSceneCache, key, scene, maximumCachedRenderScenes);
   return scene;
 }
 
@@ -1060,20 +1077,24 @@ if (root === null) throw new Error("Missing #app mount point");
     frames > 120
   )
     throw new RangeError("invalid local render benchmark workload");
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const scene = createRenderScene({
-    worldSeed: world.seed,
-    stateHash: snapshotA.stateHash,
-    selectionId: selectedPersonId,
-    stage: "street",
-    quality,
-    viewport: { width, height },
-    reducedMotion: true,
-  });
+  localBenchmarkCanvas.width = width;
+  localBenchmarkCanvas.height = height;
+  const sceneKey = `${snapshotA.stateHash}/${selectedPersonId}/${quality}/${width}/${height}`;
+  let scene = localBenchmarkScenes.get(sceneKey);
+  if (scene === undefined) {
+    scene = createRenderScene({
+      worldSeed: world.seed,
+      stateHash: snapshotA.stateHash,
+      selectionId: selectedPersonId,
+      stage: "street",
+      quality,
+      viewport: { width, height },
+      reducedMotion: true,
+    });
+    setBoundedCache(localBenchmarkScenes, sceneKey, scene, 3);
+  }
   const frameTimesMs = Array.from({ length: frames }, () =>
-    drawCanvasScene(canvas, scene),
+    drawCanvasScene(localBenchmarkCanvas, scene),
   );
   return Object.freeze({
     frameTimesMs: Object.freeze(frameTimesMs),

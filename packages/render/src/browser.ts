@@ -211,6 +211,37 @@ function drawStageOverlay(
   context.restore();
 }
 
+interface CanvasFrameBuffer {
+  readonly width: number;
+  readonly height: number;
+  readonly image: ImageData;
+  readonly pixels: Uint32Array;
+}
+
+const canvasFrameBuffers = new WeakMap<HTMLCanvasElement, CanvasFrameBuffer>();
+
+function frameBuffer(
+  canvas: HTMLCanvasElement,
+  context: CanvasRenderingContext2D,
+): CanvasFrameBuffer {
+  const cached = canvasFrameBuffers.get(canvas);
+  if (
+    cached !== undefined &&
+    cached.width === canvas.width &&
+    cached.height === canvas.height
+  )
+    return cached;
+  const image = context.createImageData(canvas.width, canvas.height);
+  const created = {
+    width: canvas.width,
+    height: canvas.height,
+    image,
+    pixels: new Uint32Array(image.data.buffer),
+  };
+  canvasFrameBuffers.set(canvas, created);
+  return created;
+}
+
 export function drawCanvasScene(
   canvas: HTMLCanvasElement,
   scene: RenderScene,
@@ -220,8 +251,7 @@ export function drawCanvasScene(
   const started = performance.now();
   const width = canvas.width;
   const height = canvas.height;
-  const image = context.createImageData(width, height);
-  const pixels = new Uint32Array(image.data.buffer);
+  const { image, pixels } = frameBuffer(canvas, context);
   pixels.fill(0xff101a15);
   const inverseWord = 1 / 65_535;
   if (scene.stage === "street") {

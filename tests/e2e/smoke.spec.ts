@@ -1,4 +1,20 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function expectAdaptiveVisible(
+  page: Page,
+  counts: Readonly<Record<"fallback" | "baseline" | "showcase", number>>,
+): Promise<void> {
+  const quality = await page.getByTestId("render-quality").textContent();
+  if (
+    quality !== "fallback" &&
+    quality !== "baseline" &&
+    quality !== "showcase"
+  )
+    throw new Error(`unexpected render quality: ${quality}`);
+  await expect(page.getByTestId("render-visible")).toHaveText(
+    counts[quality].toLocaleString("en-US"),
+  );
+}
 
 test("production build exposes the deterministic local smoke surface", async ({
   page,
@@ -114,12 +130,24 @@ test("traces planet to person across two independent local observers", async ({
   await expect(
     page.getByRole("heading", { name: "Brindle Bay" }),
   ).toBeVisible();
-  await expect(page.getByTestId("render-visible")).toHaveText("125,000");
+  await expectAdaptiveVisible(page, {
+    fallback: 25_000,
+    baseline: 125_000,
+    showcase: 125_000,
+  });
   await page.getByRole("button", { name: "Enter Harbor Street" }).click();
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Street");
-  await expect(page.getByTestId("render-visible")).toHaveText("250,000");
+  await expectAdaptiveVisible(page, {
+    fallback: 25_000,
+    baseline: 250_000,
+    showcase: 1_000_000,
+  });
   await page.getByRole("button", { name: "Meet a resident" }).click();
-  await expect(page.getByTestId("render-visible")).toHaveText("50,000");
+  await expectAdaptiveVisible(page, {
+    fallback: 25_000,
+    baseline: 50_000,
+    showcase: 50_000,
+  });
   await expect(page.getByTestId("journey-renderer")).toHaveAttribute(
     "data-selection-id",
     "person_27yi09s_1obkbba",
