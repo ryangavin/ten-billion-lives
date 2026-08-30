@@ -1,8 +1,10 @@
-import { execFileSync, spawn } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
 
 import { chromium } from "@playwright/test";
+
+import { startProductionPreview } from "./lib/production-preview.mjs";
 
 const SEED = "ten-billion-lives/benchmark/v1";
 const RESULT_PATH = "benchmarks/results/local-baseline.json";
@@ -104,32 +106,14 @@ function measureCpu() {
   };
 }
 
-async function waitForPreview(url) {
-  for (let attempt = 0; attempt < 60; attempt += 1) {
-    try {
-      const response = await fetch(url);
-      if (response.ok) return;
-    } catch {
-      // The local preview may still be starting.
-    }
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
-  throw new Error(`Preview did not become ready: ${url}`);
-}
-
 async function measureBrowser(qualityTiers) {
-  const preview = spawn(
-    "pnpm",
-    ["preview", "--host", "127.0.0.1", "--port", "4173"],
-    { stdio: "ignore" },
-  );
+  const preview = await startProductionPreview();
   try {
-    await waitForPreview("http://127.0.0.1:4173");
     const browser = await chromium.launch();
     const page = await browser.newPage({
       viewport: { width: 1280, height: 720 },
     });
-    await page.goto("http://127.0.0.1:4173", { waitUntil: "networkidle" });
+    await page.goto(preview.url, { waitUntil: "networkidle" });
     await page.getByTestId("smoke-status").waitFor();
     const measured = await page.evaluate(async (tiers) => {
       const navigation = performance.getEntriesByType("navigation")[0];
@@ -193,7 +177,7 @@ async function measureBrowser(qualityTiers) {
     await browser.close();
     return { ...measured, browserVersion };
   } finally {
-    preview.kill("SIGINT");
+    await preview.close();
   }
 }
 

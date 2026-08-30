@@ -1,7 +1,9 @@
-import { execFileSync, spawn } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 
 import { chromium } from "@playwright/test";
+
+import { startProductionPreview } from "./lib/production-preview.mjs";
 
 function percentile(values, fraction) {
   const sorted = [...values].sort((left, right) => left - right);
@@ -10,32 +12,14 @@ function percentile(values, fraction) {
   ];
 }
 
-async function waitForPreview(url) {
-  for (let attempt = 0; attempt < 60; attempt += 1) {
-    try {
-      const response = await fetch(url);
-      if (response.ok) return;
-    } catch {
-      // The local production preview may still be starting.
-    }
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
-  throw new Error(`Preview did not become ready: ${url}`);
-}
-
-const preview = spawn(
-  "pnpm",
-  ["preview", "--host", "127.0.0.1", "--port", "4173"],
-  { stdio: "ignore" },
-);
+const preview = await startProductionPreview();
 try {
   await mkdir("docs/evidence/issue-13", { recursive: true });
-  await waitForPreview("http://127.0.0.1:4173");
   const browser = await chromium.launch();
   const page = await browser.newPage({
     viewport: { width: 1280, height: 900 },
   });
-  await page.goto("http://127.0.0.1:4173/?renderer=canvas", {
+  await page.goto(`${preview.url}/?renderer=canvas`, {
     waitUntil: "networkidle",
   });
   await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
@@ -69,7 +53,7 @@ try {
   const detectedPage = await browser.newPage({
     viewport: { width: 1280, height: 900 },
   });
-  await detectedPage.goto("http://127.0.0.1:4173/", {
+  await detectedPage.goto(preview.url, {
     waitUntil: "networkidle",
   });
   await detectedPage.getByRole("button", { name: "Enter Brindle Bay" }).click();
@@ -167,5 +151,5 @@ try {
   );
   console.log(JSON.stringify(result, null, 2));
 } finally {
-  preview.kill("SIGINT");
+  await preview.close();
 }

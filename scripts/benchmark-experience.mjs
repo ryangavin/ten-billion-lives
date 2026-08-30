@@ -1,23 +1,10 @@
-import { execFileSync, spawn } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { writeFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
 
 import { chromium } from "@playwright/test";
 
-const previewUrl = "http://127.0.0.1:4174";
-
-async function waitForPreview() {
-  for (let attempt = 0; attempt < 80; attempt += 1) {
-    try {
-      const response = await fetch(previewUrl);
-      if (response.ok) return;
-    } catch {
-      // The local production preview may still be starting.
-    }
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
-  throw new Error("person-experience preview did not become ready");
-}
+import { startProductionPreview } from "./lib/production-preview.mjs";
 
 function percentile(values, fraction) {
   const sorted = [...values].sort((left, right) => left - right);
@@ -26,20 +13,15 @@ function percentile(values, fraction) {
   ];
 }
 
-const preview = spawn(
-  "pnpm",
-  ["preview", "--host", "127.0.0.1", "--port", "4174"],
-  { stdio: "ignore" },
-);
+const preview = await startProductionPreview();
 try {
-  await waitForPreview();
   const browser = await chromium.launch();
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
   });
   const page = await context.newPage();
   let started = performance.now();
-  await page.goto(previewUrl, { waitUntil: "networkidle" });
+  await page.goto(preview.url, { waitUntil: "networkidle" });
   for (const name of [
     "Enter Brindle Bay",
     "Enter Harbor Street",
@@ -162,5 +144,5 @@ try {
   );
   console.log(JSON.stringify(result, null, 2));
 } finally {
-  preview.kill("SIGINT");
+  await preview.close();
 }
