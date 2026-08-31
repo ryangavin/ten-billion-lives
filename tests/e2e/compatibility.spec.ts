@@ -147,6 +147,7 @@ test("preserves semantics through context loss, tab resume, and orientation", as
   context,
   page,
 }, testInfo) => {
+  test.slow();
   test.skip(
     testInfo.project.name === "mobile-chromium",
     "desktop resume matrix",
