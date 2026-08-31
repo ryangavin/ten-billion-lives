@@ -45,6 +45,10 @@ import {
   createRenderScene,
   createTracerProjection,
   drawCanvasScene,
+  drawLivingCityCanvas,
+  livingCityFigureScreenPoint,
+  pickLivingCityFigure,
+  prepareLivingCityFrame,
   selectInitialRenderQuality,
   type BrowserRendererStatus,
   type LivingCityRenderInput,
@@ -173,6 +177,7 @@ const maximumCachedRenderScenes = 8;
 const maximumCachedLivingCityScenes = 12;
 const maximumCachedProjections = 32;
 const localBenchmarkCanvas = document.createElement("canvas");
+const localLivingCityBenchmarkCanvas = document.createElement("canvas");
 const localBenchmarkScenes = new Map<string, RenderScene>();
 const forceCanvasRenderer =
   new URLSearchParams(location.search).get("renderer") === "canvas";
@@ -347,6 +352,32 @@ type LocalRenderBenchmark = (
   frameTimesMs: readonly number[];
   visibleCount: number;
   bufferBytes: number;
+}>;
+
+type LocalLivingCityBenchmark = (
+  width: number,
+  height: number,
+  frames: number,
+  quality: RenderQuality,
+) => Readonly<{
+  frameTimesMs: readonly number[];
+  cpuPrepareTimesMs: readonly number[];
+  drawTimesMs: readonly number[];
+  uploadTimesMs: readonly number[];
+  pickTimesMs: readonly number[];
+  resizeTimesMs: readonly number[];
+  visibleCount: number;
+  representedPeople: string;
+  unsampledRemainder: string;
+  semanticKey: string;
+  selectedPersonId: string | null;
+  stateHash: string;
+  manifestationHash: string;
+  eventHash: string;
+  selectedTrajectoryHash: string | null;
+  pickedPersonId: string | null;
+  drawCount: 1;
+  backend: "canvas2d";
 }>;
 
 const biomeColors = {
@@ -1762,6 +1793,115 @@ if (root === null) throw new Error("Missing #app mount point");
     frameTimesMs: Object.freeze(frameTimesMs),
     visibleCount: scene.draw.visibleCount,
     bufferBytes: scene.buffer.byteLength,
+  });
+};
+(
+  window as Window & {
+    __tenBillionLivingCityBenchmark?: LocalLivingCityBenchmark;
+  }
+).__tenBillionLivingCityBenchmark = (width, height, frames, quality) => {
+  if (
+    !Number.isSafeInteger(width) ||
+    !Number.isSafeInteger(height) ||
+    !Number.isSafeInteger(frames) ||
+    width <= 0 ||
+    height <= 0 ||
+    frames <= 0 ||
+    frames > 120
+  )
+    throw new RangeError("invalid local living-city benchmark workload");
+  const projection = projectionFor(illusionEngine, "Person");
+  const scene = createProductionLivingCityScene({
+    projection,
+    city: brindleBayCity,
+    branch: activeBranch,
+    time: playbackState.poseTime,
+    selectedPersonId,
+    level: "person",
+    quality,
+    festivalPeakHour: transportGraph.festival.peakTick,
+    itineraryAt: itineraryQueryFor(itineraryIndex),
+  });
+  const inputFor = (viewportWidth: number, viewportHeight: number) =>
+    Object.freeze({
+      scene,
+      presentation: Object.freeze({
+        camera: livingCityCamera(scene),
+        viewport: Object.freeze({
+          width: viewportWidth,
+          height: viewportHeight,
+        }),
+        quality,
+        reducedMotion: true,
+      }),
+    });
+  const input = inputFor(width, height);
+  const frameTimesMs: number[] = [];
+  const cpuPrepareTimesMs: number[] = [];
+  const drawTimesMs: number[] = [];
+  let prepared = prepareLivingCityFrame(input);
+  for (let index = 0; index < frames; index += 1) {
+    const frameStarted = performance.now();
+    const preparationStarted = performance.now();
+    prepared = prepareLivingCityFrame(input);
+    cpuPrepareTimesMs.push(performance.now() - preparationStarted);
+    const draw = drawLivingCityCanvas(localLivingCityBenchmarkCanvas, prepared);
+    drawTimesMs.push(draw.drawMs);
+    frameTimesMs.push(performance.now() - frameStarted);
+  }
+  const selectedPoint =
+    scene.selectedPersonId === null
+      ? null
+      : livingCityFigureScreenPoint(
+          prepared,
+          scene.selectedPersonId,
+          scene.semanticKey,
+        );
+  const selectedTrajectoryHash =
+    scene.figures.find((figure) => figure.personId === scene.selectedPersonId)
+      ?.pose.trajectoryHash ?? null;
+  const pickTimesMs: number[] = [];
+  let pickedPersonId: string | null = null;
+  if (selectedPoint !== null) {
+    for (let index = 0; index < 120; index += 1) {
+      const started = performance.now();
+      pickedPersonId =
+        pickLivingCityFigure(
+          prepared,
+          selectedPoint.x,
+          selectedPoint.y,
+          scene.semanticKey,
+        )?.personId ?? null;
+      pickTimesMs.push(performance.now() - started);
+    }
+  }
+  const resizeTimesMs = Array.from({ length: 12 }, (_, index) => {
+    const resizeStarted = performance.now();
+    const resized = prepareLivingCityFrame(
+      inputFor(width - (index % 2 === 0 ? 64 : 0), height),
+    );
+    drawLivingCityCanvas(localLivingCityBenchmarkCanvas, resized);
+    return performance.now() - resizeStarted;
+  });
+  return Object.freeze({
+    frameTimesMs: Object.freeze(frameTimesMs),
+    cpuPrepareTimesMs: Object.freeze(cpuPrepareTimesMs),
+    drawTimesMs: Object.freeze(drawTimesMs),
+    uploadTimesMs: Object.freeze(frameTimesMs.map(() => 0)),
+    pickTimesMs: Object.freeze(pickTimesMs),
+    resizeTimesMs: Object.freeze(resizeTimesMs),
+    visibleCount: scene.figures.length,
+    representedPeople: scene.representedPeople.toString(),
+    unsampledRemainder: scene.unsampledRemainder.toString(),
+    semanticKey: scene.semanticKey,
+    selectedPersonId: scene.selectedPersonId,
+    stateHash: scene.context.stateHash,
+    manifestationHash: scene.context.manifestationHash,
+    eventHash: scene.context.eventHash,
+    selectedTrajectoryHash,
+    pickedPersonId,
+    drawCount: 1 as const,
+    backend: "canvas2d" as const,
   });
 };
 const deepLink = parseExperienceLink(location.search, manifestationIndex);

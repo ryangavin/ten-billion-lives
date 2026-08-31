@@ -169,3 +169,55 @@ test("production journey composes semantic zoom, playback, observers, and Canvas
   await expect(page.getByTestId("render-context-losses")).toHaveText("1");
   expect(consoleErrors).toEqual([]);
 });
+
+test("production living-city quality tiers preserve semantics and interaction targets", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== "chromium",
+    "canonical benchmark profile",
+  );
+  await page.goto("/?renderer=canvas&quality=baseline");
+  await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
+  await page.getByRole("button", { name: "Enter Harbor Street" }).click();
+  await page.getByRole("button", { name: "Meet a resident" }).click();
+  const stateHash = await page.getByTestId("state-hash").textContent();
+  const tiers = await page.evaluate(() => {
+    const run = (
+      globalThis as typeof globalThis & {
+        __tenBillionLivingCityBenchmark?: (
+          width: number,
+          height: number,
+          frames: number,
+          quality: "fallback" | "baseline" | "showcase",
+        ) => {
+          visibleCount: number;
+          representedPeople: string;
+          semanticKey: string;
+          selectedPersonId: string | null;
+          stateHash: string;
+          manifestationHash: string;
+          eventHash: string;
+          selectedTrajectoryHash: string | null;
+          pickedPersonId: string | null;
+        };
+      }
+    ).__tenBillionLivingCityBenchmark;
+    if (run === undefined) throw new Error("living-city benchmark unavailable");
+    return ["fallback", "baseline", "showcase"].map((quality) =>
+      run(1_280, 720, 3, quality as "fallback" | "baseline" | "showcase"),
+    );
+  });
+  expect(tiers.map((tier) => tier.visibleCount)).toEqual([128, 256, 512]);
+  expect(new Set(tiers.map((tier) => tier.semanticKey)).size).toBe(3);
+  for (const tier of tiers) {
+    expect(tier.representedPeople).toBe("80219543");
+    expect(tier.selectedPersonId).toBe(tiers[0]?.selectedPersonId);
+    expect(tier.pickedPersonId).toBe(tier.selectedPersonId);
+    expect(tier.stateHash).toBe(tiers[0]?.stateHash);
+    expect(tier.manifestationHash).toBe(tiers[0]?.manifestationHash);
+    expect(tier.eventHash).toBe(tiers[0]?.eventHash);
+    expect(tier.selectedTrajectoryHash).toBe(tiers[0]?.selectedTrajectoryHash);
+  }
+  await expect(page.getByTestId("state-hash")).toHaveText(stateHash ?? "");
+});
