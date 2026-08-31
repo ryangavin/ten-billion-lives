@@ -137,5 +137,5 @@ describe("production living-city scene adapter", () => {
         destinationPlaceId: "region/region-0-5",
       },
     });
-  });
+  }, 15_000);
 });

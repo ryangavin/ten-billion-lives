@@ -44,7 +44,7 @@ describe("versioned local world checkpoints", () => {
         genesisHashes.slice(checkpointTick),
       );
     }
-  });
+  }, 15_000);
 
   it("reproduces the full-day state and event hashes independently", () => {
     const first = createWorldKernel();

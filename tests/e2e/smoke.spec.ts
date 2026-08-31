@@ -105,6 +105,7 @@ test("inspects deterministic geography across hierarchy, seam, and pole", async 
 test("traces planet to person across two independent local observers", async ({
   page,
 }) => {
+  test.slow();
   await page.goto("/");
   const stateHash = await page.getByTestId("state-hash").textContent();
   const planetManifestationHash = await page

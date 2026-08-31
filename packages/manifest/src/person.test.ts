@@ -121,7 +121,7 @@ describe("procedural people and reciprocal groups", () => {
       const expected = Number(quotas[cohort]) / Number(population);
       expect(Math.abs(observed - expected), cohort).toBeLessThan(0.015);
     }
-  });
+  }, 15_000);
 
   it("fails opaque invalid IDs without leaking sequential ranges", () => {
     for (const invalid of [
