@@ -58,6 +58,7 @@
     "evidence:living-city-integration": "pnpm build && node scripts/capture-living-city-integration.mjs",
     "evidence:visible-city-story": "pnpm build && node scripts/capture-visible-city-story.mjs",
     "evidence:fullscreen-city-ux": "pnpm build && node scripts/capture-fullscreen-city-ux.mjs",
+    "evidence:m4-handoff": "pnpm build && node scripts/capture-m4-handoff.mjs",
     "evidence:observatory:playwright": "node scripts/capture-playwright-summary.mjs docs/evidence/issue-21",
     "evidence:compatibility": "pnpm build && node scripts/capture-compatibility.mjs && prettier --write docs/evidence/issue-23/*.json docs/evidence/issue-23/*.yml",
     "evidence:compatibility:playwright": "node scripts/capture-playwright-summary.mjs docs/evidence/issue-23",
