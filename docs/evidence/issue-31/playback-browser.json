@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "evidenceVersion": "issue-31-playback-browser-v1",
+  "browser": "Chromium 151.0.7922.34",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "screenshot": {
+    "path": "docs/evidence/issue-31/playback-browser.png",
+    "sha256": "cb04b4fe156a5326f54f5a3e77f76c441eeb363f061b8ebcb535c59ab5f01aaa"
+  },
+  "requests": [
+    "/issue-31-playback",
+    "/apps/web/src/playback.ts",
+    "/packages/manifest/src/index.ts",
+    "/packages/manifest/src/placeholder.ts",
+    "/packages/manifest/src/person.ts",
+    "/packages/manifest/src/itinerary.ts",
+    "/packages/manifest/src/projection.ts",
+    "/packages/manifest/src/trajectory.ts",
+    "/packages/sim/src/index.ts",
+    "/packages/sim/src/snapshot.ts",
+    "/packages/sim/src/deterministic.ts",
+    "/packages/sim/src/world.ts",
+    "/packages/sim/src/fields.ts",
+    "/packages/sim/src/transport.ts",
+    "/packages/sim/src/checkpoint.ts"
+  ],
+  "consoleMessages": [],
+  "passed": true,
+  "module": "apps/web/src/playback.ts",
+  "cases": [
+    {
+      "name": "Playback equals direct seek",
+      "passed": true,
+      "facts": {
+        "played time": {
+          "tick": "9",
+          "phasePermillion": 400000
+        },
+        "direct-seek time": {
+          "tick": "9",
+          "phasePermillion": 400000
+        },
+        "explicit advance": "1 tick"
+      }
+    },
+    {
+      "name": "Pause and explicit resume",
+      "passed": true,
+      "facts": {
+        "paused at": {
+          "tick": "1",
+          "phasePermillion": 750000
+        },
+        "after 36 s paused": {
+          "tick": "1",
+          "phasePermillion": 750000
+        },
+        "resumed result": {
+          "tick": "1",
+          "phasePermillion": 800000
+        }
+      }
+    },
+    {
+      "name": "Hidden interval has no catch-up",
+      "passed": true,
+      "facts": {
+        "hidden at": {
+          "tick": "2",
+          "phasePermillion": 500000
+        },
+        "after 99.5 s hidden": {
+          "tick": "2",
+          "phasePermillion": 500000
+        },
+        "250 ms after visible": {
+          "tick": "2",
+          "phasePermillion": 750000
+        }
+      }
+    },
+    {
+      "name": "Explicit rewind target",
+      "passed": true,
+      "facts": {
+        "before rewind": {
+          "tick": "19",
+          "phasePermillion": 250000
+        },
+        "rewound checkpoint/time": {
+          "tick": "7",
+          "phasePermillion": 0
+        },
+        "ambient clock reads": "none"
+      }
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "seed": "trajectory-fixture/v1",
+  "settlementId": "place/brindle-bay",
+  "cityHash": "b4ecf238d36b9be8",
+  "places": [
+    { "id": "community/market", "entranceNodeId": "node/junction" },
+    { "id": "festival/lantern-tide", "entranceNodeId": "node/festival" },
+    { "id": "household/ada", "entranceNodeId": "node/home" },
+    { "id": "place/work", "entranceNodeId": "node/work" },
+    { "id": "transport/quay", "entranceNodeId": "node/junction" }
+  ],
+  "pedestrianNodes": [
+    {
+      "id": "node/detour",
+      "position": { "eastCm": 1000, "northCm": 1000, "upCm": 0 },
+      "adjacentEdgeIds": ["edge/alt-a", "edge/alt-b"],
+      "placeIds": []
+    },
+    {
+      "id": "node/festival",
+      "position": { "eastCm": 2000, "northCm": 1000, "upCm": 0 },
+      "adjacentEdgeIds": ["edge/festival"],
+      "placeIds": ["festival/lantern-tide"]
+    },
+    {
+      "id": "node/home",
+      "position": { "eastCm": 0, "northCm": 0, "upCm": 0 },
+      "adjacentEdgeIds": ["edge/direct-a"],
+      "placeIds": ["household/ada"]
+    },
+    {
+      "id": "node/junction",
+      "position": { "eastCm": 1000, "northCm": 0, "upCm": 0 },
+      "adjacentEdgeIds": ["edge/alt-a", "edge/direct-a", "edge/direct-b"],
+      "placeIds": ["community/market", "transport/quay"]
+    },
+    {
+      "id": "node/work",
+      "position": { "eastCm": 2000, "northCm": 0, "upCm": 0 },
+      "adjacentEdgeIds": ["edge/alt-b", "edge/direct-b", "edge/festival"],
+      "placeIds": ["place/work"]
+    }
+  ],
+  "pedestrianEdges": [
+    {
+      "id": "edge/alt-a",
+      "fromNodeId": "node/junction",
+      "toNodeId": "node/detour",
+      "path": [
+        { "eastCm": 1000, "northCm": 0, "upCm": 0 },
+        { "eastCm": 1000, "northCm": 1000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "edge/alt-b",
+      "fromNodeId": "node/detour",
+      "toNodeId": "node/work",
+      "path": [
+        { "eastCm": 1000, "northCm": 1000, "upCm": 0 },
+        { "eastCm": 2000, "northCm": 1000, "upCm": 0 },
+        { "eastCm": 2000, "northCm": 0, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "edge/direct-a",
+      "fromNodeId": "node/home",
+      "toNodeId": "node/junction",
+      "path": [
+        { "eastCm": 0, "northCm": 0, "upCm": 0 },
+        { "eastCm": 1000, "northCm": 0, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "edge/direct-b",
+      "fromNodeId": "node/junction",
+      "toNodeId": "node/work",
+      "path": [
+        { "eastCm": 1000, "northCm": 0, "upCm": 0 },
+        { "eastCm": 2000, "northCm": 0, "upCm": 0 }
+      ],
+      "closedInBranch": "closure"
+    },
+    {
+      "id": "edge/festival",
+      "fromNodeId": "node/work",
+      "toNodeId": "node/festival",
+      "path": [
+        { "eastCm": 2000, "northCm": 0, "upCm": 0 },
+        { "eastCm": 2000, "northCm": 1000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    }
+  ]
+}
