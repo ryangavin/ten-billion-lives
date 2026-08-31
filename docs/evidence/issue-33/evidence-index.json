@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "issue": 33,
+  "commit": "e916883a629ad0f9af8e9006501a5f1f25eedc93",
+  "profile": "apple-m1-max-32gb-chromium",
+  "generatedAt": "2026-08-31T06:11:20.318Z",
+  "capturedImplementationCommit": "e916883a629ad0f9af8e9006501a5f1f25eedc93",
+  "productionBackend": "canvas2d",
+  "fallbackBackend": "canvas2d",
+  "failures": [],
+  "skips": ["WebGPU adapter unavailable"],
+  "retries": [
+    {
+      "attempt": 1,
+      "scope": "evidence harness",
+      "failure": "The hour-boundary still raced an expected renderer replacement.",
+      "resolution": "Pause after observing the boundary, then capture the stable still; retain the uninterrupted transition in video."
+    },
+    {
+      "attempt": 2,
+      "scope": "evidence harness",
+      "failure": "The harness required the exact DOM label tick 8, which a costly 60x render may pass between samples.",
+      "resolution": "Assert the playback contract by observing any authoritative tick greater than 7."
+    },
+    {
+      "attempt": 3,
+      "scope": "evidence harness",
+      "failure": "The heap sample was taken after context loss and a 390x7965 full-page evidence screenshot.",
+      "resolution": "Sample application heap and backend before deliberate recovery and capture-tool work; assert recovery separately."
+    }
+  ],
+  "externalRequests": [],
+  "consoleErrors": [],
+  "artifacts": [
+    {
+      "path": "benchmarks/results/living-city-integration.json",
+      "sha256": "dbe5605d3f81e46a66ed84430de07c2eee4ec28573dc2dec7e0f3552453e3746"
+    },
+    {
+      "path": "docs/evidence/issue-33/production-city.png",
+      "sha256": "141f8930b21d445bbd3522939aa7125dd0ed2135ee0ec87f4ba0fe02213d086e"
+    },
+    {
+      "path": "docs/evidence/issue-33/production-neighborhood.png",
+      "sha256": "b1970c62aaa28cf7058edf80a736d2272c093b52bb7710c253cd7c039aa4162a"
+    },
+    {
+      "path": "docs/evidence/issue-33/production-street.png",
+      "sha256": "1132ff4286aa39edc2f73a8f90cd85a1f2ba42816f70afd174dd3d943dc6054e"
+    },
+    {
+      "path": "docs/evidence/issue-33/production-selected.png",
+      "sha256": "56649357fa33c23333938fe84902107fc3ed6a53d1ac8d0fa2e4637bade6ca1c"
+    },
+    {
+      "path": "docs/evidence/issue-33/production-walking-phase.png",
+      "sha256": "6e132e6ea91456213f911bb8673429c55478dcd58a81337385272dd322cbce20"
+    },
+    {
+      "path": "docs/evidence/issue-33/production-hour-boundary.png",
+      "sha256": "fa222f4eaad46568c2b5e615cc21507880828fdf93a332b2bb9e824f86028822"
+    },
+    {
+      "path": "docs/evidence/issue-33/production-journey.webm",
+      "sha256": "9840e72e60b2b63b3b2a72ccaf673af20654fb9c2641755118303c595da83351"
+    },
+    {
+      "path": "docs/evidence/issue-33/fallback-city.png",
+      "sha256": "e9214428d4ce626e06652f144308f6bf1cbb184f50f9d82deb465def7144e9d3"
+    },
+    {
+      "path": "docs/evidence/issue-33/fallback-neighborhood.png",
+      "sha256": "c7217702958a1794d6ab4b02f0973ca372ef8b76ffd551823918f8850cf829cc"
+    },
+    {
+      "path": "docs/evidence/issue-33/fallback-street.png",
+      "sha256": "42f01245fffb1aa3a40212991019d6aebfa67004395a1faf353c26b920cbb9ff"
+    },
+    {
+      "path": "docs/evidence/issue-33/fallback-selected.png",
+      "sha256": "69d87c3a6ee2858b6ad99da8f9d5a2b6d0a4020de7b4bea8e39d364624d7befd"
+    },
+    {
+      "path": "docs/evidence/issue-33/fallback-walking-phase.png",
+      "sha256": "4e75147510e8efc5cedc1515115395c1231858bdba5f43678043bacd375c3bef"
+    },
+    {
+      "path": "docs/evidence/issue-33/fallback-hour-boundary.png",
+      "sha256": "37484c17588c125285cfb7eaa854ac0b8b7d21428154a6115f66a6956b79ae4b"
+    },
+    {
+      "path": "docs/evidence/issue-33/fallback-journey.webm",
+      "sha256": "214988c7ce9d2c63f00aaa491a138215d0d35491548cea9bc840c2fd15dd449c"
+    },
+    {
+      "path": "docs/evidence/issue-33/fallback-narrow.png",
+      "sha256": "71d3928ed30bc38ba18024595c1f4baf2f7b661cc059d2ba42d4f261f9a90643"
+    }
+  ]
+}

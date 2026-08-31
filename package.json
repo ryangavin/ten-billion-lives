@@ -53,6 +53,7 @@
     "gate:m2:replay": "pnpm build && node scripts/capture-m2-replay.mjs",
     "gate:local": "node scripts/validate-local-mvp.mjs",
     "evidence:observatory": "pnpm build && node scripts/capture-observatory.mjs",
+    "evidence:living-city-integration": "pnpm build && node scripts/capture-living-city-integration.mjs",
     "evidence:observatory:playwright": "node scripts/capture-playwright-summary.mjs docs/evidence/issue-21",
     "evidence:compatibility": "pnpm build && node scripts/capture-compatibility.mjs && prettier --write docs/evidence/issue-23/*.json docs/evidence/issue-23/*.yml",
     "evidence:compatibility:playwright": "node scripts/capture-playwright-summary.mjs docs/evidence/issue-23",
