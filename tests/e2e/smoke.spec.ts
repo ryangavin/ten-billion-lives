@@ -257,6 +257,7 @@ test("selects, searches, and opens a validated person link in a fresh session", 
   expect(href).toContain("schema=1");
   expect(href).toContain("tick=10");
   expect(href).toContain("branch=baseline");
+  await page.close();
 
   const fresh = await context.newPage();
   await fresh.goto(href ?? "/");
@@ -267,6 +268,7 @@ test("selects, searches, and opens a validated person link in a fresh session", 
   await expect(fresh.getByTestId("manifestation-hash-a")).toHaveText(
     firstHash ?? "",
   );
+  await fresh.close();
 
   const invalid = await context.newPage();
   await invalid.goto(

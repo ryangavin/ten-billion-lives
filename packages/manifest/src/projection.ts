@@ -373,6 +373,21 @@ export class IllusionEngine {
     for (const personId of selectedPersonIds) {
       const existing = tokens.find((token) => token.personId === personId);
       if (existing !== undefined) {
+        if (existing.weight > 1n) {
+          const donor = tokens.find(
+            (token) =>
+              token !== existing &&
+              token.cellId === existing.cellId &&
+              token.cohort === existing.cohort &&
+              !token.pinned,
+          );
+          if (donor === undefined)
+            throw new Error(
+              "selected identity cannot be isolated in token budget",
+            );
+          donor.weight += existing.weight - 1n;
+          existing.weight = 1n;
+        }
         existing.pinned = true;
         continue;
       }

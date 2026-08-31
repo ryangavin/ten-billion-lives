@@ -82,6 +82,43 @@ describe("stable weighted manifestations and local events", () => {
     ]);
   });
 
+  it("isolates a selected identity that is already a sampled representative", () => {
+    const state = stateAt(19);
+    const unselected = engine.project({
+      state,
+      tick: 19n,
+      scopeCellIds: [cellId],
+      lod: "person",
+      selectedPersonIds: [],
+    });
+    const representative = unselected.tokens.find((token) => token.weight > 1n);
+    expect(representative).toBeDefined();
+    const selected = engine.project({
+      state,
+      tick: 19n,
+      scopeCellIds: [cellId],
+      lod: "person",
+      selectedPersonIds: [representative?.personId ?? ""],
+    });
+    expect(selected.tokens).toContainEqual(
+      expect.objectContaining({
+        personId: representative?.personId,
+        pinned: true,
+        weight: 1n,
+      }),
+    );
+    for (const cohort of ["young", "adult", "older"] as const)
+      expect(
+        selected.tokens
+          .filter((token) => token.cohort === cohort)
+          .reduce((total, token) => total + token.weight, 0n),
+      ).toBe(
+        unselected.tokens
+          .filter((token) => token.cohort === cohort)
+          .reduce((total, token) => total + token.weight, 0n),
+      );
+  });
+
   it("reconciles every planet-level cell/cohort stratum without remainder", () => {
     const state = stateAt(10);
     const projection = engine.project({
