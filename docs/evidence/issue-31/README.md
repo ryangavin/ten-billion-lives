@@ -33,9 +33,9 @@ Artifact SHA-256:
 | ---------------------------------------------------- | ------------------------------------------------------------------ |
 | `packages/manifest/fixtures/trajectory-city-v1.json` | `0b7c6112dee364362aceafd0464f10d48ead7e2625ae6c9a74856aea4cdfdfbd` |
 | `docs/evidence/issue-31/trajectory-vector.json`      | `68b4e3a1594fa04b6d4075c8f17ab050ad6af5a5d50077c0848e8369f6a25a89` |
-| `benchmarks/results/pedestrian-trajectories.json`    | `ffd941ee48ceba087dd85bc72085c2b74338a74ae42a470c7fc9751e2286d66d` |
+| `benchmarks/results/pedestrian-trajectories.json`    | `ee7212dec0d313bc3a8d791e7f54153be3fb75bed25f5ae48d345bb0e468a76d` |
 | `docs/evidence/issue-31/playback-browser.png`        | `cb04b4fe156a5326f54f5a3e77f76c441eeb363f061b8ebcb535c59ab5f01aaa` |
-| `docs/evidence/issue-31/playback-browser.json`       | `0bb8a50497e483f2b2c976f913313bf3ad4236261a0558f0f29e65254a98dea5` |
+| `docs/evidence/issue-31/playback-browser.json`       | `a3059320be11eb41caf828362074b7d5f7209b8f4dc3135c6bd2a5179106d285` |
 
 ## Isolated real-browser playback evidence
 
@@ -50,12 +50,12 @@ The capture made only loopback Vite module requests and recorded no console mess
 
 ## Focused throughput and retention
 
-The retained [`pedestrian-trajectories.json`](../../../benchmarks/results/pedestrian-trajectories.json) result was produced on the committed `apple-m1-max-32gb-node` profile with Node 24.18.0:
+The retained [`pedestrian-trajectories.json`](../../../benchmarks/results/pedestrian-trajectories.json) result was recaptured from root integration commit `ad2250b63af543902440dd818202ad162dd09f61` on the committed `apple-m1-max-32gb-node` profile with Node 24.18.0. The benchmark command writes this artifact before printing the same result:
 
 | Measurement                                          |    Result | Sanity budget |
 | ---------------------------------------------------- | --------: | ------------: |
-| trajectory queries/second p50                        | 10,801.34 |       ≥ 1,000 |
-| trajectory queries/second p95                        | 15,735.22 |      recorded |
+| trajectory queries/second p50                        | 15,077.20 |       ≥ 1,000 |
+| trajectory queries/second p95                        | 15,905.16 |      recorded |
 | heap retained after 20,000 unretained queries and GC |     0 MiB |       ≤ 8 MiB |
 | retained person rows                                 |         0 |             0 |
 | retained trajectory rows                             |         0 |             0 |
@@ -70,17 +70,17 @@ node --expose-gc scripts/benchmark-trajectories.mjs
 
 All closing checks used the repository-pinned Node 24.18.0 and pnpm 11.24.0.
 
-| Command                                                                                       | Result                                                                                                                   |
-| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm exec vitest run packages/manifest/src/trajectory.test.ts apps/web/src/playback.test.ts` | passed; 2 files / 19 tests                                                                                               |
-| affected ESLint and package type checks                                                       | passed                                                                                                                   |
-| two independent `node scripts/trajectory-vector.mjs` runs plus artifact comparison            | passed; byte-identical                                                                                                   |
-| `node --expose-gc scripts/benchmark-trajectories.mjs`                                         | passed; all focused sanity budgets                                                                                       |
-| `node scripts/capture-playback-evidence.mjs` (twice)                                          | passed in Chromium 151; four scenarios, loopback-only requests, no console messages, stable transcript/screenshot hashes |
-| `pnpm check`                                                                                  | passed; formatting, 14-file docs check, lint, strict types, contracts, 17 files / 95 tests, and production build         |
+| Command                                                                                       | Result                                                                                                                                      |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm exec vitest run packages/manifest/src/trajectory.test.ts apps/web/src/playback.test.ts` | passed; 2 files / 19 tests                                                                                                                  |
+| affected ESLint and package type checks                                                       | passed                                                                                                                                      |
+| two independent `node scripts/trajectory-vector.mjs` runs plus artifact comparison            | passed; byte-identical                                                                                                                      |
+| `node --expose-gc scripts/benchmark-trajectories.mjs`                                         | passed; all focused sanity budgets                                                                                                          |
+| `node scripts/capture-playback-evidence.mjs` (twice)                                          | passed in Chromium 151; four scenarios, loopback-only requests, no console messages, stable transcript/screenshot hashes                    |
+| `pnpm check`                                                                                  | passed on integrated #30/#31 main; formatting, 14-file docs check, lint, strict types, contracts, 18 files / 99 tests, and production build |
 
 ## Integration caveats
 
 - This isolated lane deliberately uses a structural `TrajectoryCityProjection` subset so it compiles without importing #30's branch. Its fields match #30's concrete `CityPlace`, `PedestrianNode`, and `PedestrianEdge` seam; the full generated-city integration and shared export reconciliation belong to #33.
 - The actual playback module has isolated Chromium evidence, but it is not wired into the existing production experience because #31 does not own application experience paths. Full-journey browser evidence with generated city geometry and observer UI therefore remains #33's integration responsibility.
-- The benchmark artifact records the pushed #29 lane base revision because evidence was generated before the issue commit existed; the handoff commit is recorded in the issue closing evidence by root.
+- Root integration added the missing benchmark-artifact write after observing that the documented command printed a fresh result without updating the retained JSON. The final command, artifact commit, measurements, and hash above now agree.

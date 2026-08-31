@@ -14,6 +14,7 @@
     "/issue-31-playback",
     "/apps/web/src/playback.ts",
     "/packages/manifest/src/index.ts",
+    "/packages/manifest/src/city.ts",
     "/packages/manifest/src/placeholder.ts",
     "/packages/manifest/src/person.ts",
     "/packages/manifest/src/itinerary.ts",

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "pedestrian-trajectories-v1",
-  "commit": "aec79e02d9372c661c0584a5b6637536ebd2601d",
+  "commit": "ad2250b63af543902440dd818202ad162dd09f61",
   "profile": {
     "profileId": "apple-m1-max-32gb-node",
     "node": "v24.18.0",
@@ -21,8 +21,8 @@
     "derivation": "pure query from explicit itinerary, city, branch, and VisualTime"
   },
   "metrics": {
-    "queriesPerSecondP50": 10801.336788994928,
-    "queriesPerSecondP95": 15735.22030095184,
+    "queriesPerSecondP50": 15077.204681065568,
+    "queriesPerSecondP95": 15905.16495769857,
     "retainedHeapMiBAfterTwentyThousandQueries": 0
   },
   "budgets": {

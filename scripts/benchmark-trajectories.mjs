@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { writeFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
 
 import { createServer } from "vite";
@@ -112,6 +113,10 @@ try {
     metrics,
     budgets: { ...budgets, passed: true },
   };
+  await writeFile(
+    "benchmarks/results/pedestrian-trajectories.json",
+    `${JSON.stringify(result, null, 2)}\n`,
+  );
   console.log(JSON.stringify(result, null, 2));
 } finally {
   await vite.close();
