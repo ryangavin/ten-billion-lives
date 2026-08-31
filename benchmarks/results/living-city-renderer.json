@@ -1,0 +1,368 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "literal-person-city-block-v1",
+  "commit": "26f74fca09b7ff6cce2fb4c3fe628589cb1719cf",
+  "profile": {
+    "committedName": "apple-m1-max-32gb-chromium",
+    "cpu": "Apple M1 Max",
+    "logicalCores": 10,
+    "totalMemoryGiB": 32,
+    "browserVersion": "151.0.7922.34",
+    "node": "v24.18.0",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "headless": true,
+    "warmupSamples": 10,
+    "frameSamples": 60,
+    "fixedTime": {
+      "tick": 17,
+      "phasePermillion": 250000
+    },
+    "semantic": {
+      "seed": "ten-billion-lives/baseline/v1",
+      "stateHash": "state/spike-t17",
+      "eventHash": "event/lantern-tide-arrival",
+      "manifestationHash": "manifestation/spike-harbor-block",
+      "cityHash": "city/spike-harbor-block-v1"
+    }
+  },
+  "historicalPointRendererComparison": {
+    "claimLimit": "Historical 250000 count is one-pixel/point work and is not a literal-person target.",
+    "visibleManifestations": 250000,
+    "canvasFrameP95Ms": 3.685000002384186,
+    "browserMemoryMiB": 42.629241943359375,
+    "source": "benchmarks/results/multi-lod-renderer.json"
+  },
+  "canvasDensity": [
+    {
+      "figureCount": 64,
+      "frameMs": {
+        "minimum": 0.19999998807907104,
+        "p50": 0.30000001192092896,
+        "p95": 0.40000003576278687,
+        "maximum": 0.5999999642372131
+      },
+      "cpuPrepareMs": {
+        "minimum": 0,
+        "p50": 0.10000002384185791,
+        "p95": 0.19999998807907104,
+        "maximum": 0.2999999523162842
+      },
+      "uploadMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0
+      },
+      "drawMs": {
+        "minimum": 0.09999996423721313,
+        "p50": 0.19999998807907104,
+        "p95": 0.30000001192092896,
+        "maximum": 0.3999999761581421
+      },
+      "drawCount": 1,
+      "bufferBytes": 0,
+      "pickMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0.10000002384185791
+      },
+      "heapMiB": {
+        "before": 2.1956071853637695,
+        "after": 2.1139116287231445,
+        "retainedGrowth": -0.081695556640625
+      }
+    },
+    {
+      "figureCount": 128,
+      "frameMs": {
+        "minimum": 0.3999999761581421,
+        "p50": 0.5,
+        "p95": 0.6000000238418579,
+        "maximum": 0.699999988079071
+      },
+      "cpuPrepareMs": {
+        "minimum": 0.09999996423721313,
+        "p50": 0.19999998807907104,
+        "p95": 0.30000001192092896,
+        "maximum": 0.3999999761581421
+      },
+      "uploadMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0
+      },
+      "drawMs": {
+        "minimum": 0.19999998807907104,
+        "p50": 0.30000001192092896,
+        "p95": 0.40000003576278687,
+        "maximum": 0.40000003576278687
+      },
+      "drawCount": 1,
+      "bufferBytes": 0,
+      "pickMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0.10000002384185791
+      },
+      "heapMiB": {
+        "before": 2.1139116287231445,
+        "after": 2.203793525695801,
+        "retainedGrowth": 0.08988189697265625
+      }
+    },
+    {
+      "figureCount": 256,
+      "frameMs": {
+        "minimum": 0.6000000238418579,
+        "p50": 0.7999999523162842,
+        "p95": 0.9000000357627869,
+        "maximum": 1.300000011920929
+      },
+      "cpuPrepareMs": {
+        "minimum": 0.19999998807907104,
+        "p50": 0.2999999523162842,
+        "p95": 0.40000003576278687,
+        "maximum": 0.5
+      },
+      "uploadMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0
+      },
+      "drawMs": {
+        "minimum": 0.30000001192092896,
+        "p50": 0.5,
+        "p95": 0.6000000238418579,
+        "maximum": 0.800000011920929
+      },
+      "drawCount": 1,
+      "bufferBytes": 0,
+      "pickMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0
+      },
+      "heapMiB": {
+        "before": 2.203793525695801,
+        "after": 2.35677433013916,
+        "retainedGrowth": 0.15298080444335938
+      }
+    },
+    {
+      "figureCount": 512,
+      "frameMs": {
+        "minimum": 1.199999988079071,
+        "p50": 1.4000000357627869,
+        "p95": 2.199999988079071,
+        "maximum": 2.399999976158142
+      },
+      "cpuPrepareMs": {
+        "minimum": 0.30000001192092896,
+        "p50": 0.5,
+        "p95": 1.199999988079071,
+        "maximum": 1.300000011920929
+      },
+      "uploadMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0
+      },
+      "drawMs": {
+        "minimum": 0.7000000476837158,
+        "p50": 0.8999999761581421,
+        "p95": 1,
+        "maximum": 1.100000023841858
+      },
+      "drawCount": 1,
+      "bufferBytes": 0,
+      "pickMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0
+      },
+      "heapMiB": {
+        "before": 2.356961250305176,
+        "after": 2.66372013092041,
+        "retainedGrowth": 0.3067588806152344
+      }
+    },
+    {
+      "figureCount": 1024,
+      "frameMs": {
+        "minimum": 2.5,
+        "p50": 2.800000011920929,
+        "p95": 3.899999976158142,
+        "maximum": 5.5
+      },
+      "cpuPrepareMs": {
+        "minimum": 0.699999988079071,
+        "p50": 0.9000000357627869,
+        "p95": 1.800000011920929,
+        "maximum": 2.100000023841858
+      },
+      "uploadMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0
+      },
+      "drawMs": {
+        "minimum": 1.5,
+        "p50": 1.699999988079071,
+        "p95": 2.5,
+        "maximum": 3.699999988079071
+      },
+      "drawCount": 1,
+      "bufferBytes": 0,
+      "pickMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0
+      },
+      "heapMiB": {
+        "before": 2.66372013092041,
+        "after": 3.277153968811035,
+        "retainedGrowth": 0.613433837890625
+      }
+    }
+  ],
+  "interaction": {
+    "pickSamples": 300,
+    "resizeMs": {
+      "minimum": 3.100000023841858,
+      "p50": 3.699999988079071,
+      "p95": 6.100000023841858,
+      "maximum": 6.100000023841858
+    },
+    "zoomTransitionMs": {
+      "minimum": 2.699999988079071,
+      "p50": 3.299999952316284,
+      "p95": 46.59999996423721,
+      "maximum": 46.59999996423721
+    }
+  },
+  "detectedBackend": {
+    "navigatorGpuPresent": true,
+    "backend": "canvas2d",
+    "frameMs": {
+      "minimum": 0.699999988079071,
+      "p50": 0.8999999761581421,
+      "p95": 1.4000000357627869,
+      "maximum": 1.800000011920929
+    },
+    "cpuPrepareMs": {
+      "minimum": 0.19999998807907104,
+      "p50": 0.30000001192092896,
+      "p95": 0.5,
+      "maximum": 0.6000000238418579
+    },
+    "uploadMs": {
+      "minimum": 0,
+      "p50": 0,
+      "p95": 0,
+      "maximum": 0
+    },
+    "drawMs": {
+      "minimum": 0.3999999761581421,
+      "p50": 0.5,
+      "p95": 0.699999988079071,
+      "maximum": 0.7000000476837158
+    },
+    "drawCount": 1,
+    "bufferBytes": 0,
+    "capabilityLimit": "Chromium exposed no complete usable WebGPU adapter/context in this headless run; Canvas evidence is authoritative and no WebGPU visual claim is made.",
+    "screenshot": null
+  },
+  "contextLifecycle": {
+    "before": {
+      "backend": "canvas2d",
+      "semanticKey": "living-city/state-spike/event-lantern/t17-p250000",
+      "selectedPersonId": "person/spike-000000",
+      "figureCount": 256,
+      "frameMs": 0.8999999761581421,
+      "cpuPrepareMs": 0.30000001192092896,
+      "uploadMs": 0,
+      "drawMs": 0.5,
+      "drawCount": 1,
+      "bufferBytes": 0,
+      "lifecycle": {
+        "backend": "canvas2d",
+        "semanticKey": "living-city/state-spike/event-lantern/t17-p250000",
+        "selectedPersonId": "person/spike-000000",
+        "generation": 32,
+        "contextLosses": 0
+      }
+    },
+    "after": {
+      "backend": "canvas2d",
+      "semanticKey": "living-city/state-spike/event-lantern/t17-p250000",
+      "selectedPersonId": "person/spike-000000",
+      "figureCount": 256,
+      "frameMs": 0.5999999642372131,
+      "cpuPrepareMs": 0,
+      "uploadMs": 0,
+      "drawMs": 0.5999999642372131,
+      "drawCount": 1,
+      "bufferBytes": 0,
+      "lifecycle": {
+        "backend": "canvas2d",
+        "semanticKey": "living-city/state-spike/event-lantern/t17-p250000",
+        "selectedPersonId": "person/spike-000000",
+        "generation": 33,
+        "contextLosses": 1
+      }
+    },
+    "semanticPreserved": true
+  },
+  "budgets": {
+    "decision": {
+      "fallbackLiteralFigures": 128,
+      "baselineLiteralFigures": 256,
+      "showcaseLiteralFigures": 512,
+      "measuredCeilingNotSelected": 1024,
+      "rationale": "Native captures retain head/body/two-leg recognition through 512 figures. The 1024 curve remains fast but adds substantial overlap without equal readable information, so it is evidence of headroom rather than the selected showcase tier."
+    },
+    "canvas": {
+      "fallbackFrameP95MsMax": 8,
+      "baselineFrameP95MsMax": 12,
+      "showcaseFrameP95MsMax": 16.666666666666668,
+      "browserHeapMiBMax": 64,
+      "retainedHeapGrowthMiBMax": 8,
+      "cpuPrepareP95MsMax": 4,
+      "drawP95MsMax": 4,
+      "drawCountMax": 1
+    },
+    "interaction": {
+      "pickP95MsMax": 1,
+      "resizeP95MsMax": 16.666666666666668,
+      "zoomTransitionP95MsMax": 60
+    },
+    "webgpu": {
+      "status": "not evaluated: no usable adapter/context on the committed headless profile",
+      "densityAndSemanticFloor": "same selected tiers and semantic keys as Canvas",
+      "numericUploadBudget": "not frozen from zero-valued Canvas fallback measurements"
+    },
+    "failures": [],
+    "passed": true
+  },
+  "artifacts": {
+    "canvasFixed": "docs/evidence/issue-32/canvas-fixed.png",
+    "canvasShowcase": "docs/evidence/issue-32/canvas-showcase-1024.png",
+    "canvasEvening": "docs/evidence/issue-32/canvas-evening.png",
+    "contextLoss": "docs/evidence/issue-32/context-loss-canvas.png",
+    "webgpuFixed": null,
+    "walkingLoop": "docs/evidence/issue-32/walking-loop.webm",
+    "curves": "docs/evidence/issue-32/density-curves.svg"
+  }
+}
