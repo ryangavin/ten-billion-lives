@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "city-projection-v1",
-  "commit": "f87f20a1f0f3c9ad6799f04c3b10cc712551268b",
+  "commit": "18613facabeb28785b393fdf193ab4dcaf49c4e0",
   "profile": "apple-m1-max-32gb-chromium",
   "runtime": {
     "node": "v24.18.0",
@@ -22,10 +22,10 @@
     "pedestrianEdges": 60
   },
   "metrics": {
-    "generationP50Ms": 60.32066699999973,
-    "generationP95Ms": 76.87054199999989,
-    "retainedBatchHeapMiB": 0.5909652709960938,
-    "retainedHeapMiBPerProjection": 0.03693532943725586,
+    "generationP50Ms": 57.78633300000001,
+    "generationP95Ms": 72.7996250000001,
+    "retainedBatchHeapMiB": 0.5394973754882812,
+    "retainedHeapMiBPerProjection": 0.03371858596801758,
     "serializedProjectionBytes": 42159
   },
   "budgets": {

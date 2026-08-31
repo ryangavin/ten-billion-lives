@@ -22,14 +22,14 @@ The committed baseline vector is [`city-golden-v1.json`](../../../packages/manif
 
 ## Committed-profile benchmark
 
-[`city-projection.json`](../../../benchmarks/results/city-projection.json) was captured from implementation commit `f87f20a1f0f3c9ad6799f04c3b10cc712551268b` with Node 24.18.0 on the committed `apple-m1-max-32gb-chromium` profile. It uses 3 warmups, 21 complete generation samples, and a retained batch of 16 distinct projections. A complete generation includes seeded fictional-world reconstruction, canonical semantic-place derivation, city geometry and graph construction, validation, hashing, and deep freezing.
+[`city-projection.json`](../../../benchmarks/results/city-projection.json) was recaptured from root integration commit `18613facabeb28785b393fdf193ab4dcaf49c4e0` with Node 24.18.0 on the committed `apple-m1-max-32gb-chromium` profile. It uses 3 warmups, 21 complete generation samples, and a retained batch of 16 distinct projections. A complete generation includes seeded fictional-world reconstruction, canonical semantic-place derivation, city geometry and graph construction, validation, hashing, and deep freezing.
 
 | Measurement                     | Result      | Budget   |
 | ------------------------------- | ----------- | -------- |
-| Complete generation p50         | 60.321 ms   | recorded |
-| Complete generation p95         | 76.871 ms   | ≤ 250 ms |
-| Retained heap, 16 projections   | 0.591 MiB   | ≤ 16 MiB |
-| Retained heap per projection    | 0.037 MiB   | ≤ 1 MiB  |
+| Complete generation p50         | 57.786 ms   | recorded |
+| Complete generation p95         | 72.800 ms   | ≤ 250 ms |
+| Retained heap, 16 projections   | 0.539 MiB   | ≤ 16 MiB |
+| Retained heap per projection    | 0.034 MiB   | ≤ 1 MiB  |
 | Canonical serialized projection | 42,159 byte | recorded |
 
 All focused budgets passed. No representation change, optimization, or dependency was introduced after profiling.
@@ -65,6 +65,6 @@ Artifact SHA-256 hashes:
 | Artifact               | SHA-256                                                            |
 | ---------------------- | ------------------------------------------------------------------ |
 | Golden city JSON       | `84c4ad7d3cb1709d294e6817db183d43bd5870414c6d1b9972276ac015deeadc` |
-| Benchmark JSON         | `12ed78202cf46bf3c79921e6247d103870cbd4a2a94e038a57c9b44741c8b68e` |
+| Benchmark JSON         | `ffb92a4aee2318f413883ed8cf6612e34f34d272f303e26758c32bac5c1ed755` |
 | Debug-map SVG          | `71f1aaebd2c30c8ebd7dbe0fb59f509e41afc08518a6837df347f1e43339d3cf` |
 | Chromium debug-map PNG | `2b9cffda37ca859758909f8d827b182d8e743ab459f34604b12448968a9a651b` |
