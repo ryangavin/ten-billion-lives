@@ -1,0 +1,41 @@
+{
+  "before": {
+    "backend": "canvas2d",
+    "semanticKey": "living-city/state-spike/event-lantern/t17-p250000",
+    "selectedPersonId": "person/spike-000000",
+    "figureCount": 256,
+    "frameMs": 0.8999999761581421,
+    "cpuPrepareMs": 0.30000001192092896,
+    "uploadMs": 0,
+    "drawMs": 0.5,
+    "drawCount": 1,
+    "bufferBytes": 0,
+    "lifecycle": {
+      "backend": "canvas2d",
+      "semanticKey": "living-city/state-spike/event-lantern/t17-p250000",
+      "selectedPersonId": "person/spike-000000",
+      "generation": 32,
+      "contextLosses": 0
+    }
+  },
+  "after": {
+    "backend": "canvas2d",
+    "semanticKey": "living-city/state-spike/event-lantern/t17-p250000",
+    "selectedPersonId": "person/spike-000000",
+    "figureCount": 256,
+    "frameMs": 0.5999999642372131,
+    "cpuPrepareMs": 0,
+    "uploadMs": 0,
+    "drawMs": 0.5999999642372131,
+    "drawCount": 1,
+    "bufferBytes": 0,
+    "lifecycle": {
+      "backend": "canvas2d",
+      "semanticKey": "living-city/state-spike/event-lantern/t17-p250000",
+      "selectedPersonId": "person/spike-000000",
+      "generation": 33,
+      "contextLosses": 1
+    }
+  },
+  "semanticPreserved": true
+}

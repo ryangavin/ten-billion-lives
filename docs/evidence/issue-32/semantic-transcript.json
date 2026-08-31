@@ -1,0 +1,7 @@
+{
+  "seed": "ten-billion-lives/baseline/v1",
+  "stateHash": "state/spike-t17",
+  "eventHash": "event/lantern-tide-arrival",
+  "manifestationHash": "manifestation/spike-harbor-block",
+  "cityHash": "city/spike-harbor-block-v1"
+}
