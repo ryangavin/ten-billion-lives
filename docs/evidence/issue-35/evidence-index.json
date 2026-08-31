@@ -1,0 +1,97 @@
+{
+  "issue": 35,
+  "commit": "a9630670ec20b29b9ef548a58502bf43ec8eadfb",
+  "capturedAt": "2026-08-31T09:38:10.960Z",
+  "browser": "Chromium 151.0.7922.34",
+  "observations": {
+    "desktop": {
+      "layout": {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "document": {
+          "scrollWidth": 1440,
+          "scrollHeight": 900
+        },
+        "renderer": {
+          "width": 1418,
+          "height": 776
+        },
+        "minimumVisibleButtonHeight": 34
+      },
+      "previewPersonId": "person_28abyzr_1ltvzmu",
+      "deepLink": "http://127.0.0.1:51765/?schema=1&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=16&person=person_28abyzr_1ltvzmu&branch=baseline&stage=person&location=L5%2F0%2F38",
+      "axe": {
+        "engine": {
+          "name": "axe-core",
+          "version": "4.13.0"
+        },
+        "passCount": 44,
+        "incompleteCount": 2,
+        "seriousOrCritical": []
+      },
+      "ariaSnapshot": "- main \"Ten Billion Lives\":\n  - paragraph: Local deterministic city\n  - heading \"Ten Billion Lives\" [level=1]\n  - paragraph:\n    - strong: 10,000,000,000\n    - text: represented lives\n  - text: Local foundation ready\n  - region \"Simulation time and discovery controls\":\n    - article:\n      - text: Simulated time\n      - strong: Paused · day 0 · 16:00\n      - text: Seek simulated hour\n      - slider \"Seek simulated hour\": \"16\"\n      - status: 16:00\n      - button \"Play local time\": Play\n      - button \"Advance one tick\": +1 hour\n      - button \"1 simulated minute per real second\": 1 min/s\n      - button \"5 simulated minutes per real second\": 5 min/s\n      - button \"15 simulated minutes per real second\": 15 min/s\n      - button \"60 simulated minutes per real second\": 60 min/s\n    - article:\n      - search \"Place and event discovery\":\n        - text: Find a place or event\n        - searchbox \"Find a place or event\"\n        - button \"Open\"\n        - status\n  - region \"Zuri Mere\":\n    - button \"Pick a visible resident; use arrow keys to preview and Enter to follow\":\n      - complementary \"Visible city story\":\n        - paragraph: Daylight · tick 16\n        - strong: Commuting flow\n        - paragraph: evening return · 0 graph edges\n        - text: → route ○ meeting ○ festival ● weighted figure\n      - text: canvas2d · fallback quality · 128 visible · weights 1–3209 1.07 ms ·\n      - code: 4a7fab74\n      - text: · losses 0\n    - navigation \"City view and signature moments\":\n      - button \"View planet\": World\n      - button \"View person\" [pressed]: Following\n      - button \"Zoom city\": city\n      - button \"Zoom neighborhood\": neighborhood\n      - button \"Zoom street\": street\n      - button \"Zoom person\" [pressed]: person\n      - button \"Visit Lantern Tide\": Lantern Tide\n      - button \"Orbit camera\": Orbit\n      - text: Moment\n      - combobox \"Signature moment\":\n        - option \"Tick 0 · midnight\"\n        - option \"Tick 7 · commute\"\n        - option \"Tick 10 · primary activity\"\n        - option \"Tick 16 · return commute\" [selected]\n        - option \"Tick 19 · festival hour\"\n        - option \"Tick 23 · sleep\"\n        - option \"Tick 24 · identity epoch\"\n      - button \"Explore closure branch\": Closure\n      - button \"View immutable baseline\" [pressed]: Baseline\n    - group:\n      - text: Person\n      - strong: Zuri Mere\n  - group:\n    - text: Person & evidence\n    - region \"Independent observer comparison\":\n      - article:\n        - paragraph: Observer A\n        - heading \"Zuri Mere\" [level=2]\n        - paragraph:\n          - text: Manifestation\n          - code: c0bef066edca4f9b\n          - text: Events\n          - code: cae22145db38f910\n          - text: Living city\n          - code: living-city/1eff45d44a7fab74\n        - term: Person ID\n        - definition: person_28abyzr_1ltvzmu\n        - term: Identity\n        - definition: Zuri Mere · age 74 · older age band\n        - term: Now\n        - definition: Tick 16 · transit\n        - term: Semantic location\n        - definition:\n          - code: route_ec1e5b3874ce5e4c\n          - text: · 500‰\n        - term: Home / role\n        - definition:\n          - text: Field 0-12 · elder ·\n          - code: household_0yojqkh54yww9_0g50hw0\n          - text: · 4 members\n        - term: Recurring place\n        - definition: Iris Circle · 128/128\n        - term: Relationships\n        - definition: 3 household · 1 recurring-contact · 2 recurring-group\n        - term: Co-located encounters\n        - definition:\n          - text: 3 known ·\n          - code: encounter_d9df6a71d4104adb\n        - term: Field reconciliation\n        - definition: transit · 3,783,309 in home-cell channel\n        - term: Route / destination\n        - definition: walking · 0 graph edges · evening return → household_0yojqkh54yww9_0g50hw0\n        - term: Local semantic events\n        - definition: meeting · route_ec1e5b3874ce5e4c · meeting · route_ec1e5b3874ce5e4c · arrival · route_ec1e5b3874ce5e4c · meeting · route_ec1e5b3874ce5e4c\n        - term: Appearance\n        - definition: tall · dark hair · bright layers\n        - term: Semantic trace\n        - definition:\n          - code: trace-c696e845\n      - article:\n        - paragraph: Observer B · independent instance\n        - heading \"Not initialized\" [level=2]\n        - paragraph: Independent local view not yet at person LOD.\n        - button \"Initialize observer B\"\n    - region \"Procedural identity, not a stored agent\":\n      - paragraph: Find and share a represented life\n      - heading \"Procedural identity, not a stored agent\" [level=2]\n      - paragraph: Each selected life is represented from compact fields—not an independently simulated mind. Facts are reconstructed from the same seed, snapshot, tick, and branch.\n      - search \"Procedural person search\":\n        - text: Procedural person ID\n        - searchbox \"Procedural person ID\": person_28abyzr_1ltvzmu\n        - button \"Inspect person\"\n        - alert\n      - link \"Open this person at tick 16\":\n        - /url: http://127.0.0.1:51765/?schema=1&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=16&person=person_28abyzr_1ltvzmu&branch=baseline&stage=person&location=L5%2F0%2F38\n      - button \"Copy local link\"\n      - status\n    - region \"Immutable baseline\":\n      - paragraph: Reversible local scenario\n      - heading \"Immutable baseline\" [level=2]\n      - paragraph: The branch changes one scheduled route at tick 7. It never mutates the baseline checkpoint.\n      - term: Baseline macro flow\n      - definition: 8,180,688 on signature edge\n      - term: Closure macro flow\n      - definition: 0 on closed edge\n      - term: Baseline traveler route\n      - definition: 1 edge\n      - term: Closure traveler route\n      - definition: 31 edges\n      - term: Population fields\n      - definition: Identical field state\n      - term: Branch event hash\n      - definition:\n        - code: 7c4ef63b6c041f3b\n    - region \"Replay and field controls\":\n      - button \"Rewind and replay\"\n      - paragraph: Not run\n      - button \"Reveal fields\"\n      - button \"Simulate renderer loss\"\n      - button \"Inspect debug world\"\n    - paragraph: Reality budget · reveal available\n    - heading \"10,000,000,000 represented lives\" [level=2]\n    - paragraph: Authoritative integers stay compact; visible people are weighted, disposable projections.\n    - term: Authority\n    - definition: 2,048 integer cells · 188,844 checkpoint bytes\n    - term: Stored people\n    - definition: 0 person rows\n    - term: Visible / represented\n    - definition: 128 literal figures · weights 1–3209 · 80,219,543 people → 25,000 projected tokens\n    - term: Derived projection\n    - definition: 1,800,384 bytes · epoch 0 / 24 ticks\n    - term: Tick / state hash\n    - definition:\n      - text: 16 · phase 0 ·\n      - code: 638dd6a02cb002c0\n    - term: Event hash\n    - definition:\n      - code: cae22145db38f910\n      - text: · 4 local events\n    - term: Frame / backend\n    - definition: 1.07 ms · Canvas forced · local URL forces the fallback visual tier\n    - term: Observer contract\n    - definition: resident-home-cell-cohort-v1; camera and GPU quality excluded from hashes\n    - text: World seed\n    - code: ten-billion-lives/baseline/v1\n    - text: · hash\n    - code: ed66e344fcd7e737\n    - text: · vectors\n    - code: 050e18e9f2d20dff\n    - text: Run\n    - code: pnpm check\n    - text: from the repository root if a diagnostic fails."
+    },
+    "mobile": {
+      "layout": {
+        "viewport": {
+          "width": 412,
+          "height": 839
+        },
+        "document": {
+          "scrollWidth": 412,
+          "scrollHeight": 839
+        },
+        "renderer": {
+          "width": 398,
+          "height": 725
+        },
+        "minimumVisibleButtonHeight": 44
+      }
+    },
+    "forcedColors200Percent": {
+      "layout": {
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "document": {
+          "scrollWidth": 1280,
+          "scrollHeight": 720
+        },
+        "renderer": {
+          "width": 1258,
+          "height": 577
+        },
+        "minimumVisibleButtonHeight": 38
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "path": "docs/evidence/issue-35/desktop-compact.png",
+      "sha256": "4959739c0855bd0c5242ec1bddd7c9986da4f0a8e1cdeca223352f7027b2dcdd"
+    },
+    {
+      "path": "docs/evidence/issue-35/desktop-evidence-drawer.png",
+      "sha256": "9759eb130c7d1e5adde3740cd24413cfe8be4242da41f9d45f181309cbfe292d"
+    },
+    {
+      "path": "docs/evidence/issue-35/keyboard-scrub-follow-exit.webm",
+      "sha256": "f1e980bcc48ad0c0898de5ad9c2f39a948ae27d4c847c0a690652a428deee76e"
+    },
+    {
+      "path": "docs/evidence/issue-35/mobile-touch.png",
+      "sha256": "9bf1ca173b2c326d53213bdae00279c376ec819ace28db2e50e7642660c28ff0"
+    },
+    {
+      "path": "docs/evidence/issue-35/mobile-touch.webm",
+      "sha256": "c13eb946a1ef44478a5b5719fa53affaba3dedbd24e68449a92a050ea1f87ae4"
+    },
+    {
+      "path": "docs/evidence/issue-35/forced-colors-200-percent.png",
+      "sha256": "408b891c34b15edb811ca74b4c0a38a06502e4c3c43a26b455a07f71ab2fe235"
+    }
+  ]
+}

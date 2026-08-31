@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "commit": "a9630670ec20b29b9ef548a58502bf43ec8eadfb",
+  "profile": "apple-m1-max-32gb-chromium",
+  "browser": "151.0.7922.34",
+  "captures": [
+    {
+      "name": "festival-peak",
+      "path": "docs/evidence/issue-34/festival-peak.png",
+      "phase": "festival-peak",
+      "title": "Lantern Tide peak",
+      "route": "festival at festival/lantern-confluence",
+      "event": "Exact selected event · festival · 1 exact participant ID · festival/lantern-confluence",
+      "eventIds": "event_687295e9a4db0733 event_eef2bf72809c7b05",
+      "stateHash": "1c05183487e6256f",
+      "manifestationHash": "73deea75ed6ac46d",
+      "eventHash": "5413d6b8a43f1b94",
+      "trajectoryHash": "living-city/fe80e4f7ca34a13c",
+      "frameMs": 0.98
+    },
+    {
+      "name": "festival-arrival",
+      "path": "docs/evidence/issue-34/festival-arrival.png",
+      "phase": "festival-arrival",
+      "title": "Lantern Tide arrival",
+      "route": "festival convergence · 16 graph edges",
+      "event": "Exact selected event · arrival · 1 exact participant ID · route_71276f89b954a592",
+      "eventIds": "event_af99be3fae598be7",
+      "stateHash": "4a8da3fe8ba19283",
+      "manifestationHash": "844136042675103b",
+      "eventHash": "3d74f9c6f4217d3a",
+      "trajectoryHash": "living-city/a666a27e7fe2c7ce",
+      "frameMs": 0.81
+    },
+    {
+      "name": "festival-departure",
+      "path": "docs/evidence/issue-34/festival-departure.png",
+      "phase": "festival-departure",
+      "title": "Lantern Tide departure",
+      "route": "festival return · 16 graph edges",
+      "event": "Exact selected event · arrival · 1 exact participant ID · route_7c62977ddc95ba18",
+      "eventIds": "event_922a15bd6e0841cc",
+      "stateHash": "04f7ca7cf8f2da07",
+      "manifestationHash": "f7b497ef27883437",
+      "eventHash": "87a19c0961e870ba",
+      "trajectoryHash": "living-city/08cc78aeea065d8d",
+      "frameMs": 0.72
+    },
+    {
+      "name": "meeting",
+      "path": "docs/evidence/issue-34/meeting.png",
+      "phase": "meeting",
+      "title": "Shared-place meeting",
+      "route": "work at place_wrk_0vq6m24oqsr42_1ckclj7",
+      "event": "Exact selected event · meeting · 2 exact participant IDs · place_wrk_0vq6m24oqsr42_1ckclj7",
+      "eventIds": "event_0c61eb32e3742760 event_11e22226e9b9c972 event_b77ec67f343e259e",
+      "stateHash": "b2007dbd631d0474",
+      "manifestationHash": "c530deb05668e874",
+      "eventHash": "f18c6cb468f4b975",
+      "trajectoryHash": "living-city/3fbd896c71824ee9",
+      "frameMs": 0.99
+    },
+    {
+      "name": "closure-detour",
+      "path": "docs/evidence/issue-34/closure-detour.png",
+      "phase": "closure-detour",
+      "title": "Closure detour",
+      "route": "closure detour · 31 graph edges",
+      "event": "Exact selected event · arrival · 1 exact participant ID · route_820b702e3c551da4",
+      "eventIds": "event_327131523401000e",
+      "stateHash": "74cb0f747914e5c1",
+      "manifestationHash": "fe6f72e4362ed4db",
+      "eventHash": "1e16e91d275330e3",
+      "trajectoryHash": "living-city/f6b672376dd7d953",
+      "frameMs": 0.96
+    },
+    {
+      "name": "baseline-route",
+      "path": "docs/evidence/issue-34/baseline-route.png",
+      "phase": "commute",
+      "title": "Commuting flow",
+      "route": "daily commute · 1 graph edge",
+      "event": "Exact selected event · arrival · 1 exact participant ID · route_68e56ff9b14a452a",
+      "eventIds": "event_46ed373824504475",
+      "stateHash": "0ba03b0fdba4f981",
+      "manifestationHash": "fe6f72e4362ed4db",
+      "eventHash": "e26cb7be161ea892",
+      "trajectoryHash": "living-city/ff93404428b5c38a",
+      "frameMs": 1.11
+    },
+    {
+      "name": "morning-commute",
+      "path": "docs/evidence/issue-34/morning-commute.png",
+      "phase": "commute",
+      "title": "Commuting flow",
+      "route": "daily commute · 0 graph edges",
+      "event": "Exact selected event · arrival · 1 exact participant ID · route_f31d684815e07af7",
+      "eventIds": "event_3371662c7b8a4a6a event_451d56a1086ef5a8",
+      "stateHash": "0ba03b0fdba4f981",
+      "manifestationHash": "6696d5a512117e9c",
+      "eventHash": "18c679fa20850dac",
+      "trajectoryHash": "living-city/ce8177a5153f8c0e",
+      "frameMs": 0.88
+    },
+    {
+      "name": "evening-commute",
+      "path": "docs/evidence/issue-34/evening-commute.png",
+      "phase": "commute",
+      "title": "Commuting flow",
+      "route": "evening return · 0 graph edges",
+      "event": "Exact selected event · meeting · 2 exact participant IDs · route_e0a2bfbaaa3f7614",
+      "eventIds": "event_6a0624047a21eb4a event_ccc6a5098fdf5839 event_febc3222fb0962f2",
+      "stateHash": "638dd6a02cb002c0",
+      "manifestationHash": "f6f1dea1c0873ce1",
+      "eventHash": "ffaf141f3915aad2",
+      "trajectoryHash": "living-city/3b115ac880e8bc52",
+      "frameMs": 1.06
+    }
+  ],
+  "observerEquality": {
+    "events": true,
+    "routesAndTrajectories": true
+  },
+  "closureConservation": true,
+  "metrics": {
+    "maximumFrameMs": 1.11,
+    "retainedHeapMiB": 26.3214111328125,
+    "maximumTransitionMs": 4005.2077500000014
+  },
+  "budgets": {
+    "frameMsMax": 16.67,
+    "retainedHeapMiBMax": 128,
+    "passed": true
+  },
+  "audits": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "externalRequests": []
+  },
+  "artifacts": [
+    {
+      "path": "docs/evidence/issue-34/festival-peak.png",
+      "sha256": "80ffc503d2843c5dbb801492f4f73c34bcab8f46e80fff80553262d00363cfb5"
+    },
+    {
+      "path": "docs/evidence/issue-34/festival-arrival.png",
+      "sha256": "2a37ccd87fcc07da77579d5869c22f27f540851ad4669602a08a4a689b1fa690"
+    },
+    {
+      "path": "docs/evidence/issue-34/festival-departure.png",
+      "sha256": "ed48fe51f4df34717afc562a8e2599ff906a513932b6fe83b2c0bdd81c873f7e"
+    },
+    {
+      "path": "docs/evidence/issue-34/meeting.png",
+      "sha256": "be2ca659fa4a5f8c674aeef0dc49d617e48ab103dbd090819e42a9b6210ec834"
+    },
+    {
+      "path": "docs/evidence/issue-34/closure-detour.png",
+      "sha256": "47086d91deca856c27ff25dd2e7948b5812fab1f2cea60db29ab8633a3c63234"
+    },
+    {
+      "path": "docs/evidence/issue-34/baseline-route.png",
+      "sha256": "d72ebea4be8f765c2ecb639ccbb3645b7bc94689c25f646fda4a51a7bb0297dd"
+    },
+    {
+      "path": "docs/evidence/issue-34/morning-commute.png",
+      "sha256": "745f8c852ef235b6944133af9bedafe263f107b641b8f3a99508545cd6fc1879"
+    },
+    {
+      "path": "docs/evidence/issue-34/evening-commute.png",
+      "sha256": "2b62f690e7038990cc0cef3aff4a3168d484035e70ea19069d111ee7d1197058"
+    },
+    {
+      "path": "docs/evidence/issue-34/visible-city-story.webm",
+      "sha256": "816751e1534bd21cd191712fbd140fed33c44b21fa784a1899425ce05d0da1bc"
+    }
+  ]
+}
