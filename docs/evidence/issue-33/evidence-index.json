@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "issue": 33,
-  "commit": "0f63a873e62caa64dcae4a885f718bd70566e501",
+  "commit": "72670b7fd85b191c65bb8511a038471f436c6727",
   "profile": "apple-m1-max-32gb-chromium",
-  "generatedAt": "2026-08-31T07:14:58.627Z",
-  "capturedImplementationCommit": "0f63a873e62caa64dcae4a885f718bd70566e501",
+  "generatedAt": "2026-08-31T07:28:48.786Z",
+  "capturedImplementationCommit": "72670b7fd85b191c65bb8511a038471f436c6727",
   "productionBackend": "canvas2d",
   "fallbackBackend": "canvas2d",
   "failures": [],
@@ -45,6 +45,12 @@
       "scope": "evidence harness",
       "failure": "A clipped renderer could be partly outside the viewport, and the full-page narrow screenshot contaminated the fallback recording.",
       "resolution": "Scroll the renderer fully into view before clipping and run the narrow audit in an independent non-recording browser context."
+    },
+    {
+      "attempt": 7,
+      "scope": "evidence harness",
+      "failure": "Full-duration review still found one gray compositor frame because renderer still screenshots shared the fallback recording context.",
+      "resolution": "Record each journey without screenshots, then capture every renderer still in independent non-recording browser contexts."
     }
   ],
   "externalRequests": [],
@@ -174,67 +180,67 @@
   "artifacts": [
     {
       "path": "benchmarks/results/living-city-integration.json",
-      "sha256": "7de767e4662fffe1b4ef0b1922d0d4bd108e717e982e6cd94a502a5e44f697f3"
+      "sha256": "4ba9f34fcbe3e79fec06031830e825c37bd3d4cc9576bd5e984bbb27526aade7"
     },
     {
       "path": "docs/evidence/issue-33/production-city.png",
-      "sha256": "bc8e3ccfeda0f7dbe26b1cbf6dfa0a5c52bad0eb285aec0d0d8b7a60a3bfb736"
+      "sha256": "1027af0a1d4ec772cf3753a8fd0ef9b3fb073da4a60bb05b02f2dec7747ec666"
     },
     {
       "path": "docs/evidence/issue-33/production-neighborhood.png",
-      "sha256": "8a9a53d7c53184b111b003d459118333f60f734781ad82e91decbb0c6536247a"
+      "sha256": "423436044e4213b46f13ece00fc8bd971c8aa44a0d158da973917c0fe98e8b64"
     },
     {
       "path": "docs/evidence/issue-33/production-street.png",
-      "sha256": "0e70f7fb1a812d6ad4a7773c1fdc871843d7d8e87d48c39c16271a3293503ffe"
+      "sha256": "290b2ec2d75d61393407dea0d6318b874296960d86d65a667124471e25433b8d"
     },
     {
       "path": "docs/evidence/issue-33/production-selected.png",
-      "sha256": "9a8a8734fa5b859d40d4beb36a24f766bd287465e594da6f7267f4ef1c04d2cd"
+      "sha256": "f37e3bf12a585122270c5c38ccfe03d4d66d5b451154d6f317471786d0c9ddc2"
     },
     {
       "path": "docs/evidence/issue-33/production-walking-phase.png",
-      "sha256": "97a9c16063c3798907cdb6d6c5b2b355b4ab7d71924b61c82d049956bb02b1ad"
+      "sha256": "58d8ac7c77205ab33dce812e02747765c5206521335445981573018d7ce49b40"
     },
     {
       "path": "docs/evidence/issue-33/production-hour-boundary.png",
-      "sha256": "bfbed1e462d2710b655c5371d83113fd38c029881b4c60da34e1f1f589a46c75"
+      "sha256": "efa486b8b8173edae48a507caf976ca1b857400535f2262b8abcee7ae6ea9939"
     },
     {
       "path": "docs/evidence/issue-33/production-journey.webm",
-      "sha256": "67088a3ec001147e0d8c619dc283b300269108a03da4662e4943a141d9866a6f"
+      "sha256": "a342ddee2e652f1a9c915f4b60e5bbb77f7a2ebe6c7a490d75bb2a44abbdd24d"
     },
     {
       "path": "docs/evidence/issue-33/fallback-city.png",
-      "sha256": "df6588444f35ba0390d36cd3a74170b41d903379e844b2f0fb3958bd74b023ae"
+      "sha256": "256bb723dbc935eaeebe70a001bde201a4165ad81c1568ee1a21a3ca34c422e8"
     },
     {
       "path": "docs/evidence/issue-33/fallback-neighborhood.png",
-      "sha256": "b05d148455bc34e4a35ab9a021dbf7012e3c5efcc94188dd04056cf6824efabf"
+      "sha256": "25eb6568578be2360523ff5f3ec545fceadf7783f44be47610336477fe46f71f"
     },
     {
       "path": "docs/evidence/issue-33/fallback-street.png",
-      "sha256": "3e74596dda395908709b79e589a76b11aeeeaa9679cc9b50c572cfa17342eb4d"
+      "sha256": "c57266b78b91cf80e3b6782821a50a5de32088eba7d0f3777f96662b68593639"
     },
     {
       "path": "docs/evidence/issue-33/fallback-selected.png",
-      "sha256": "6b0a7f471ac322678ad879e9ae7df18395b78c0fd03bd0760f5b218e23c9d2d7"
+      "sha256": "733494035f99cfa725de14b35e7e23f5e0ba48fbd1d5a87bce8925d498126eaa"
     },
     {
       "path": "docs/evidence/issue-33/fallback-walking-phase.png",
-      "sha256": "426862d674d8cda9cce4a8fccdd2fe8060510adab34a8d27e7a5475131d49a19"
+      "sha256": "302970bb009a0a5cc5a1a2eb9d6b77a8b6e1a9f59ae7116cd4c2739e582f89b7"
     },
     {
       "path": "docs/evidence/issue-33/fallback-hour-boundary.png",
-      "sha256": "bc22479028e54437ff59c1ee82e778923841a4bb227461cb42d32d684bde52d3"
+      "sha256": "b4701a04e387131cf5401f856e7eab1c27f127c4e841c97e3a92870be44123f3"
     },
     {
       "path": "docs/evidence/issue-33/fallback-journey.webm",
-      "sha256": "3ec574eea75ffedf28f729e3a85abc32057897a685d502927026c4ab42bd278e"
+      "sha256": "f65c25d993a724c4f50c96da4f3ac8f39f8c793a1d2eb20d78e929aafd60fd45"
     },
     {
       "path": "docs/evidence/issue-33/fallback-narrow.png",
-      "sha256": "9270ad0feacf1078ad326ea57f301e90731ea96dda8e75907d617656dacd8c68"
+      "sha256": "a23ec847867e290a3398706d1f11d2af168de6c927cecfd5e81cea64b26ca389"
     }
   ]
 }

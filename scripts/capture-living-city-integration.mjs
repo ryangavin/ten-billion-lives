@@ -88,6 +88,98 @@ async function captureNarrow(browser, previewUrl) {
   return { consoleErrors, pageErrors, externalRequests };
 }
 
+async function captureStills(browser, previewUrl, options) {
+  const context = await browser.newContext({ viewport: options.viewport });
+  const page = await context.newPage();
+  const consoleErrors = [];
+  const pageErrors = [];
+  const externalRequests = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+  page.on("request", (request) => {
+    const url = new URL(request.url());
+    if (url.origin !== previewUrl) externalRequests.push(request.url());
+  });
+  await page.goto(`${previewUrl}/${options.query}`, {
+    waitUntil: "networkidle",
+  });
+  await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
+  await page.locator('[data-render-stack][data-city-level="city"]').waitFor();
+  await page.waitForFunction(
+    () =>
+      globalThis.document.querySelector('[data-testid="render-backend"]')
+        ?.textContent !== "probing",
+  );
+  await screenshotRenderer(
+    page,
+    `${evidenceDirectory}/${options.name}-city.png`,
+  );
+  await page.getByRole("button", { name: "Zoom neighborhood" }).click();
+  await page
+    .locator('[data-render-stack][data-city-level="neighborhood"]')
+    .waitFor();
+  await screenshotRenderer(
+    page,
+    `${evidenceDirectory}/${options.name}-neighborhood.png`,
+  );
+  await page.getByRole("button", { name: "Zoom street" }).click();
+  await page.locator('[data-render-stack][data-city-level="street"]').waitFor();
+  await screenshotRenderer(
+    page,
+    `${evidenceDirectory}/${options.name}-street.png`,
+  );
+  await canvasPickSelected(page);
+  await page.getByTestId("observer-a-person-id").waitFor();
+  await screenshotRenderer(
+    page,
+    `${evidenceDirectory}/${options.name}-selected.png`,
+  );
+  await page.getByRole("button", { name: "Tick 7 · commute" }).click();
+  await page
+    .getByRole("button", {
+      name: "60 simulated minutes per real second",
+      exact: true,
+    })
+    .click();
+  await page.getByRole("button", { name: "Play local time" }).click();
+  await page.waitForFunction(
+    () =>
+      globalThis.document
+        .querySelector('[data-testid="living-city-time"]')
+        ?.textContent?.includes("0.0000%") === false,
+    undefined,
+    { timeout: 20_000 },
+  );
+  await page.getByRole("button", { name: "Pause local time" }).click();
+  await screenshotRenderer(
+    page,
+    `${evidenceDirectory}/${options.name}-walking-phase.png`,
+  );
+  await page.getByRole("button", { name: "Play local time" }).click();
+  await page.waitForFunction(
+    () =>
+      Number(
+        globalThis.document.querySelector('[data-testid="person-tick"]')
+          ?.textContent,
+      ) > 7,
+    undefined,
+    { timeout: 30_000 },
+  );
+  await page.getByRole("button", { name: "Pause local time" }).click();
+  await screenshotRenderer(
+    page,
+    `${evidenceDirectory}/${options.name}-hour-boundary.png`,
+  );
+  assert.deepEqual(consoleErrors, []);
+  assert.deepEqual(pageErrors, []);
+  assert.deepEqual(externalRequests, []);
+  await page.close();
+  await context.close();
+  return { consoleErrors, pageErrors, externalRequests };
+}
+
 async function canvasPickSelected(page) {
   const renderer = page.getByTestId("journey-renderer");
   const x = Number(await renderer.getAttribute("data-selected-screen-x"));
@@ -157,10 +249,6 @@ async function recordJourney(browser, previewUrl, options) {
   );
   const backend = await page.getByTestId("render-backend").textContent();
   const quality = await page.getByTestId("render-quality").textContent();
-  await screenshotRenderer(
-    page,
-    `${evidenceDirectory}/${options.name}-city.png`,
-  );
   const cityManifestationHash = await page
     .getByTestId("manifestation-hash-a")
     .textContent();
@@ -178,11 +266,6 @@ async function recordJourney(browser, previewUrl, options) {
     await page.getByTestId("manifestation-hash-a").textContent(),
     cityManifestationHash,
   );
-  await screenshotRenderer(
-    page,
-    `${evidenceDirectory}/${options.name}-neighborhood.png`,
-  );
-
   timings.streetMs = await measure(async () => {
     await page.getByRole("button", { name: "Zoom street" }).click();
     await page
@@ -193,11 +276,6 @@ async function recordJourney(browser, previewUrl, options) {
     await page.getByTestId("manifestation-hash-a").textContent(),
     cityManifestationHash,
   );
-  await screenshotRenderer(
-    page,
-    `${evidenceDirectory}/${options.name}-street.png`,
-  );
-
   timings.pickMs = await measure(async () => {
     await canvasPickSelected(page);
     await page.getByTestId("observer-a-person-id").waitFor();
@@ -206,11 +284,6 @@ async function recordJourney(browser, previewUrl, options) {
     await page.getByTestId("observer-a-person-id").textContent(),
     selectedPersonId,
   );
-  await screenshotRenderer(
-    page,
-    `${evidenceDirectory}/${options.name}-selected.png`,
-  );
-
   timings.observerBMs = await measure(async () => {
     await page.getByRole("button", { name: "Initialize observer B" }).click();
     await page.getByTestId("living-city-hash-b").waitFor();
@@ -262,10 +335,6 @@ async function recordJourney(browser, previewUrl, options) {
     { timeout: 20_000 },
   );
   await page.getByRole("button", { name: "Pause local time" }).click();
-  await screenshotRenderer(
-    page,
-    `${evidenceDirectory}/${options.name}-walking-phase.png`,
-  );
   await page.getByRole("button", { name: "Play local time" }).click();
   await page.waitForFunction(
     () =>
@@ -277,10 +346,6 @@ async function recordJourney(browser, previewUrl, options) {
     { timeout: 30_000 },
   );
   await page.getByRole("button", { name: "Pause local time" }).click();
-  await screenshotRenderer(
-    page,
-    `${evidenceDirectory}/${options.name}-hour-boundary.png`,
-  );
   assert.equal(
     await page.getByTestId("observer-match").textContent(),
     "Semantic match · trajectory match",
@@ -389,6 +454,18 @@ try {
     query: "?renderer=canvas&quality=fallback",
     viewport: { width: 960, height: 720 },
   });
+  const stills = {
+    production: await captureStills(browser, preview.url, {
+      name: "production",
+      query: "?quality=baseline",
+      viewport: { width: 1280, height: 800 },
+    }),
+    fallback: await captureStills(browser, preview.url, {
+      name: "fallback",
+      query: "?renderer=canvas&quality=fallback",
+      viewport: { width: 960, height: 720 },
+    }),
+  };
   const narrow = await captureNarrow(browser, preview.url);
   const failures = [];
   for (const journey of [production, fallback]) {
@@ -397,6 +474,12 @@ try {
     if (journey.pageErrors.length > 0) failures.push(`${journey.name} page`);
     if (journey.externalRequests.length > 0)
       failures.push(`${journey.name} external requests`);
+  }
+  for (const [name, audit] of Object.entries(stills)) {
+    if (audit.consoleErrors.length > 0) failures.push(`${name} still console`);
+    if (audit.pageErrors.length > 0) failures.push(`${name} still page`);
+    if (audit.externalRequests.length > 0)
+      failures.push(`${name} still external requests`);
   }
   const metrics = {
     coldCityMs: production.timings.cityMs,
@@ -448,6 +531,7 @@ try {
     browser: browserVersion,
     production,
     fallback,
+    stills,
     narrow,
     metrics,
     budgets: { ...budgets, passed: true },
