@@ -5,7 +5,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 const outputDirectory = process.argv[2] ?? "docs/evidence/issue-16";
 const result = spawnSync(
   "pnpm",
-  ["exec", "playwright", "test", "--reporter=json"],
+  ["exec", "playwright", "test", "--reporter=json", "--workers=1"],
   {
     cwd: process.cwd(),
     encoding: "utf8",
@@ -94,7 +94,7 @@ assert.deepEqual(failed, []);
 
 const summary = {
   schemaVersion: 1,
-  command: "pnpm exec playwright test --reporter=json",
+  command: "pnpm exec playwright test --reporter=json --workers=1",
   productionWebServer:
     report.config?.webServer?.command ??
     "pnpm build && pnpm preview --host 127.0.0.1 --port 4173",
