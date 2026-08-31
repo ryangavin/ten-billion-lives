@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "city-projection-v1",
+  "commit": "f87f20a1f0f3c9ad6799f04c3b10cc712551268b",
+  "profile": "apple-m1-max-32gb-chromium",
+  "runtime": {
+    "node": "v24.18.0",
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "seed": "ten-billion-lives/baseline/v1",
+  "settlementId": "place/brindle-bay",
+  "cityHash": "bc0c9ac7fa5ed058",
+  "workload": {
+    "warmupCount": 3,
+    "generationSampleCount": 21,
+    "retainedProjectionCount": 16,
+    "roads": 4,
+    "buildings": 7,
+    "places": 7,
+    "pedestrianNodes": 36,
+    "pedestrianEdges": 60
+  },
+  "metrics": {
+    "generationP50Ms": 60.32066699999973,
+    "generationP95Ms": 76.87054199999989,
+    "retainedBatchHeapMiB": 0.5909652709960938,
+    "retainedHeapMiBPerProjection": 0.03693532943725586,
+    "serializedProjectionBytes": 42159
+  },
+  "budgets": {
+    "generationP95MsMax": 250,
+    "retainedBatchHeapMiBMax": 16,
+    "retainedHeapMiBPerProjectionMax": 1,
+    "passed": true
+  }
+}
