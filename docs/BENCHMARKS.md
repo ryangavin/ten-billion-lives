@@ -73,6 +73,8 @@ All tiers preserve the selected person, state, manifestation, event, trajectory,
 
 The release soak ran for 1,800,025.18 ms (30.00 minutes) against the production Canvas build. It exercised 35 playback, camera, semantic zoom, branch, selection, seek, context-loss, and background/resume actions. Maximum frame p95 was 1.32 ms; post-collection heap peaked at 35.91 MiB and grew 13.88 MiB; the final/initial frame-p95 ratio was 0.89. Both observers and the exact population matched every minute, with zero console errors, page errors, or external requests. See [`living-city-soak.json`](../benchmarks/results/living-city-soak.json), the [trace](evidence/issue-36/soak-trace.json), and the [graph](evidence/issue-36/soak-graph.svg).
 
+The final #37 audit at `a742dd5` remeasured the unchanged runtime after the handoff/test-only commits. Fallback/baseline/showcase frame p95 was `0.57/0.84/1.52 ms`, startup was `1.09–1.15 s`, pick p95 was at most `0.005 ms`, and tier heap maxima were `16.61/17.90/21.90 MiB`. The integrated planet-to-person journey completed in `7.74 s` within its profiled `10 s` budget. The [final comparison](evidence/issue-37/performance-comparison.json) retains both the pre-M4 and M4 numbers and explains the workload distinction.
+
 ## Interpretation
 
 These results demonstrate that the committed local journey fits the named profile and budgets. They do not claim that WebGPU is universally available or that rendering ten billion individual records occurs. The planet tracer still uses its bounded token tiers; the production living city uses 128, 256, or 512 weighted figures while keeping person, state, manifestation, event, itinerary, and represented-population semantics identical.

@@ -2,7 +2,7 @@
 
 One compact planetary field. Exactly ten billion represented lives. Zoom from a fictional planet to Brindle Bay, Harbor Street, and one reproducible person; then initialize a second local observer and see the same identity, itinerary, relationships, and events without a ten-billion-row table.
 
-Ten Billion Lives is a validated local-first browser MVP. Its authoritative simulation uses conserved integer population, activity, place, and mobility fields. Pure seeded queries reconstruct stable local people from that shared state, while WebGPU or Canvas draws a disposable view. Everything runs on one machine with no runtime API, account, server protocol, or remote data source. The final clean-checkout audit is retained in [the issue #27 evidence index](docs/evidence/issue-27/INDEX.md).
+Ten Billion Lives is a validated local-first browser MVP. Its authoritative simulation uses conserved integer population, activity, place, and mobility fields. Pure seeded queries reconstruct stable local people from that shared state, while WebGPU or Canvas draws a disposable view. Everything runs on one machine with no runtime API, account, server protocol, or remote data source. The final living-city clean-checkout audit is retained in [the issue #37 evidence index](docs/evidence/issue-37/INDEX.md).
 
 ![The local observatory at planet scale](docs/evidence/issue-25/landing-desktop.png)
 
@@ -51,7 +51,7 @@ pnpm qa:replay
 pnpm qa:benchmarks
 ```
 
-`pnpm check` includes formatting, spelling, local documentation links/snippets, lint, strict types, 76 deterministic unit/contract tests, and the production build. The independent #25 gate passed 24 applicable browser cases with zero unexpected or flaky outcomes. All current performance budgets passed; the retained 30-minute soak stayed within its frame and memory budgets. See [testing and evidence](docs/TESTING.md) and [benchmark methodology](docs/BENCHMARKS.md).
+`pnpm check` includes formatting, spelling, local documentation links/snippets, lint, strict types, 110 deterministic unit/contract tests, and the production build. The final #37 gate passed 31 applicable Chromium, WebKit, and mobile cases with 14 intentional project-specific skips and zero unexpected, flaky, or retried outcomes. All current performance budgets passed; the retained 30-minute soak stayed within its frame and memory budgets. See [testing and evidence](docs/TESTING.md) and [benchmark methodology](docs/BENCHMARKS.md).
 
 ## Architecture at a glance
 
@@ -69,7 +69,7 @@ seed + commands → integer world fields → snapshot/state/event hashes
 - This is a fictional, one-day analytical demonstration, not a demographic model, historical simulation, consciousness model, or scientific validation of emergence.
 - Visible figures are weighted deterministic manifestations; visual density changes with local capability while semantics do not.
 - Chromium 151 and WebKit 26.5 are validated locally. Firefox was unavailable on the validation machine and is not claimed as tested.
-- WebGPU is optional. Canvas preserves the complete journey with fewer visible tokens.
+- WebGPU is optional. Canvas preserves the complete journey and the 128/256/512-figure quality tiers.
 - Person links are local reconstruction references, not remote shared sessions.
 
 The complete [claims, non-claims, and limitations](docs/LIMITATIONS.md) are part of the product contract, not fine print.

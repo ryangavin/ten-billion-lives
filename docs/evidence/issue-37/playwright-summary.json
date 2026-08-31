@@ -1,0 +1,439 @@
+{
+  "schemaVersion": 1,
+  "command": "pnpm exec playwright test --reporter=json --workers=1",
+  "productionWebServer": "pnpm build && pnpm preview --host 127.0.0.1 --port 4173",
+  "startTime": "2026-08-31T15:00:08.636Z",
+  "wallDurationMs": 418675.572,
+  "expected": 31,
+  "unexpected": 0,
+  "flaky": 0,
+  "skipped": 14,
+  "projects": {
+    "chromium": {
+      "passed": 18,
+      "skipped": 1,
+      "total": 19,
+      "durationMs": 204880
+    },
+    "mobile-chromium": {
+      "passed": 1,
+      "skipped": 6,
+      "total": 7,
+      "durationMs": 11346
+    },
+    "webkit": {
+      "passed": 12,
+      "skipped": 7,
+      "total": 19,
+      "durationMs": 193096
+    }
+  },
+  "cases": [
+    {
+      "title": "compatibility.spec.ts › restores keyboard focus and honors reduced motion",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 8117,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › previews visible residents without hash drift, follows, scrubs, and exits",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 10881,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › has no serious or critical automated accessibility findings",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 11233,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › supports the complete touch journey, local share, and follow exit",
+      "project": "chromium",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 76,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › preserves semantics through context loss, tab resume, and orientation",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 11781,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › remains legible with forced colors and 200 percent text",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 6234,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › keeps the production browser boundary local and restrictive",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 7859,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › restores keyboard focus and honors reduced motion",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 9648,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › previews visible residents without hash drift, follows, scrubs, and exits",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 12407,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › has no serious or critical automated accessibility findings",
+      "project": "webkit",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 239,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › supports the complete touch journey, local share, and follow exit",
+      "project": "webkit",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 229,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › preserves semantics through context loss, tab resume, and orientation",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 14498,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › remains legible with forced colors and 200 percent text",
+      "project": "webkit",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 240,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › keeps the production browser boundary local and restrictive",
+      "project": "webkit",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 229,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › restores keyboard focus and honors reduced motion",
+      "project": "mobile-chromium",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 211,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › previews visible residents without hash drift, follows, scrubs, and exits",
+      "project": "mobile-chromium",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 88,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › has no serious or critical automated accessibility findings",
+      "project": "mobile-chromium",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 88,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › supports the complete touch journey, local share, and follow exit",
+      "project": "mobile-chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 10671,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › preserves semantics through context loss, tab resume, and orientation",
+      "project": "mobile-chromium",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 107,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › remains legible with forced colors and 200 percent text",
+      "project": "mobile-chromium",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 96,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "compatibility.spec.ts › keeps the production browser boundary local and restrictive",
+      "project": "mobile-chromium",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 85,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "living-city-integration.spec.ts › production journey composes semantic zoom, playback, observers, and Canvas recovery",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 25379,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "living-city-integration.spec.ts › production living-city quality tiers preserve semantics and interaction targets",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 15399,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "living-city-integration.spec.ts › production journey composes semantic zoom, playback, observers, and Canvas recovery",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 26234,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "living-city-integration.spec.ts › production living-city quality tiers preserve semantics and interaction targets",
+      "project": "webkit",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 240,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "living-city-spike.spec.ts › fixed-time literal people keep stable picking through Canvas lifecycle",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 247,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "living-city-spike.spec.ts › uses WebGPU only when the browser exposes a complete usable context",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 139,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "living-city-spike.spec.ts › fixed-time literal people keep stable picking through Canvas lifecycle",
+      "project": "webkit",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 228,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "living-city-spike.spec.ts › uses WebGPU only when the browser exposes a complete usable context",
+      "project": "webkit",
+      "expectedStatus": "skipped",
+      "actualStatus": "skipped",
+      "durationMs": 230,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › production build exposes the deterministic local smoke surface",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 1337,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › inspects deterministic geography across hierarchy, seam, and pole",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 2221,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › traces planet to person across two independent local observers",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 27953,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › selects, searches, and opens a validated person link in a fresh session",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 16498,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › follows festival meetings and departure, then compares the local closure branch",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 23441,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › guides a first visit through time, discovery, truthful diagnostics, and location links",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 11182,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › keeps the forced Canvas fallback navigable through loss, resize, and reduced motion",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 5601,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › preserves person and event semantics across local visual quality tiers",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 19302,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › production build exposes the deterministic local smoke surface",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 2349,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › inspects deterministic geography across hierarchy, seam, and pole",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 3678,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › traces planet to person across two independent local observers",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 32453,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › selects, searches, and opens a validated person link in a fresh session",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 21671,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › follows festival meetings and departure, then compares the local closure branch",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 25907,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › guides a first visit through time, discovery, truthful diagnostics, and location links",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 13836,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › keeps the forced Canvas fallback navigable through loss, resize, and reduced motion",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 7060,
+      "retries": 0,
+      "ok": true
+    },
+    {
+      "title": "smoke.spec.ts › preserves person and event semantics across local visual quality tiers",
+      "project": "webkit",
+      "expectedStatus": "passed",
+      "actualStatus": "passed",
+      "durationMs": 21720,
+      "retries": 0,
+      "ok": true
+    }
+  ],
+  "passed": true
+}

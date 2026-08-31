@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "issue": 37,
+  "profile": "apple-m1-max-32gb-chromium",
+  "capturedImplementationCommit": "a742dd59446d945a443cc7824161bf66e92e3839",
+  "preM4": {
+    "source": "../issue-27/benchmark-summary.json",
+    "commit": "ba703e4e91f2acf4aac931d431d2eb43b6ba8de8",
+    "bundleRawKiB": 98.58,
+    "bundleGzipKiB": 31.48,
+    "genericFallbackFrameP95Ms": 3.7350000143051147,
+    "rendererBrowserMemoryMiB": 42.629241943359375,
+    "planetToPersonMs": 1645.5467089999997,
+    "followTickP95Ms": 235.50941699999976,
+    "secondObserverMs": 92.76204199999984,
+    "deepLinkLoadMs": 917.2272079999998,
+    "experienceBrowserHeapMiB": 82.3974609375,
+    "soak": {
+      "durationMs": 1800068.88,
+      "frameP95Ms": 1.87,
+      "maximumHeapMiB": 105.35,
+      "retainedHeapGrowthMiB": 49.35
+    }
+  },
+  "m4": {
+    "sources": [
+      "../../../benchmarks/results/living-city-hardening.json",
+      "../../../benchmarks/results/person-experience.json",
+      "../../../benchmarks/results/living-city-soak.json"
+    ],
+    "bundleRawKiB": 170.81,
+    "bundleGzipKiB": 51.21,
+    "tiers": [
+      {
+        "quality": "fallback",
+        "figures": 128,
+        "startupMs": 1094.174458,
+        "frameP95Ms": 0.5700000524520874,
+        "pickP95Ms": 0.004999995231628418,
+        "maximumHeapMiB": 16.60856533050537
+      },
+      {
+        "quality": "baseline",
+        "figures": 256,
+        "startupMs": 1086.4993339999983,
+        "frameP95Ms": 0.8350000381469727,
+        "pickP95Ms": 0,
+        "maximumHeapMiB": 17.901487350463867
+      },
+      {
+        "quality": "showcase",
+        "figures": 512,
+        "startupMs": 1149.9921250000007,
+        "frameP95Ms": 1.5199999809265137,
+        "pickP95Ms": 0,
+        "maximumHeapMiB": 21.903362274169922
+      }
+    ],
+    "experience": {
+      "planetToPersonMs": 7740.565042,
+      "followTickP95Ms": 2582.5912499999995,
+      "secondObserverMs": 2715.776499999998,
+      "deepLinkLoadMs": 3836.6258339999986,
+      "browserHeapMiB": 31.566619873046875
+    },
+    "soak": {
+      "capturedImplementationCommit": "743ec52aff991bf55b2764549dbab48a11fc9da7",
+      "durationMs": 1800025.18,
+      "maximumFrameP95Ms": 1.3199999928474426,
+      "maximumHeapMiB": 35.90743064880371,
+      "retainedHeapGrowthMiB": 13.875697135925293,
+      "lastToFirstFrameP95Ratio": 0.89387755697839,
+      "contextLossRecoveries": 3,
+      "backgroundResumes": 2,
+      "applicableToFinalCommit": true,
+      "applicabilityBasis": "The diff from the soak commit to the final capture commit contains only benchmark/evidence/docs files, package metadata for the capture command, the capture script, and a test timeout annotation; no runtime source changed."
+    }
+  },
+  "interpretation": {
+    "sameProfile": true,
+    "workloadsAreNotIdentical": true,
+    "note": "M4 measures the integrated living-city scene, while the pre-M4 frame result measured the generic token renderer. Experience latency increased with the complete production scene but remains inside the profiled M4 budgets; frame time and retained memory remain comfortably green.",
+    "allCurrentBudgetsPassed": true
+  }
+}

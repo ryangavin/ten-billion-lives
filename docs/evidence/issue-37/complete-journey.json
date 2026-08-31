@@ -1,0 +1,265 @@
+{
+  "schemaVersion": 1,
+  "issue": 37,
+  "commit": "a742dd59446d945a443cc7824161bf66e92e3839",
+  "browser": "151.0.7922.34",
+  "journey": [
+    "planet",
+    "Brindle Bay",
+    "continuous playback",
+    "neighborhood",
+    "street",
+    "pick and follow resident",
+    "commute",
+    "meeting",
+    "Lantern Tide arrival, peak, and departure",
+    "closure",
+    "observer B",
+    "rewind and replay",
+    "field and reality budget"
+  ],
+  "selectedPersonId": "person_27yi09s_1obkbba",
+  "observerEquality": true,
+  "cameraSemanticIndependence": {
+    "before": {
+      "state": "74cb0f747914e5c1",
+      "manifestation": "fe6f72e4362ed4db",
+      "event": "1e16e91d275330e3",
+      "city": "living-city/680810ee21e3080b"
+    },
+    "after": {
+      "state": "74cb0f747914e5c1",
+      "manifestation": "fe6f72e4362ed4db",
+      "event": "1e16e91d275330e3",
+      "city": "living-city/680810ee21e3080b"
+    },
+    "equal": true
+  },
+  "replayEquality": {
+    "seekKey": "living-city/680810ee21e3080b",
+    "replayKey": "living-city/680810ee21e3080b",
+    "equal": true
+  },
+  "exactPopulation": "10000000000",
+  "storedPersonRows": 0,
+  "selectedVisibleWeight": 1,
+  "states": [
+    {
+      "name": "01-planet",
+      "title": null,
+      "phase": null,
+      "personTick": "10",
+      "stateHash": "b2007dbd631d0474",
+      "manifestationHash": "dac9fd526f82c8f0",
+      "eventHash": "b0bd84480511f52f",
+      "cityHash": null
+    },
+    {
+      "name": "02-city",
+      "title": "Shared-place meeting",
+      "phase": "meeting",
+      "personTick": "10",
+      "stateHash": "b2007dbd631d0474",
+      "manifestationHash": "b7d8ef2246775f8b",
+      "eventHash": "b0bd84480511f52f",
+      "cityHash": "living-city/14ede8ec79522978"
+    },
+    {
+      "name": "03-neighborhood",
+      "title": "Shared-place meeting",
+      "phase": "meeting",
+      "personTick": "13",
+      "stateHash": "be7c2321aa470749",
+      "manifestationHash": "586bf64c11e14faa",
+      "eventHash": "fe20790a6bbdab08",
+      "cityHash": "living-city/271046147f7e8a9c"
+    },
+    {
+      "name": "04-street",
+      "title": "Shared-place meeting",
+      "phase": "meeting",
+      "personTick": "13",
+      "stateHash": "be7c2321aa470749",
+      "manifestationHash": "586bf64c11e14faa",
+      "eventHash": "fe20790a6bbdab08",
+      "cityHash": "living-city/b6c2e8d908f09184"
+    },
+    {
+      "name": "05-follow-person",
+      "title": "Shared-place meeting",
+      "phase": "meeting",
+      "personTick": "13",
+      "stateHash": "be7c2321aa470749",
+      "manifestationHash": "586bf64c11e14faa",
+      "eventHash": "fe20790a6bbdab08",
+      "cityHash": "living-city/e9a9291b2dec1eb4"
+    },
+    {
+      "name": "06-commute",
+      "title": "Commuting flow",
+      "phase": "commute",
+      "personTick": "7",
+      "stateHash": "0ba03b0fdba4f981",
+      "manifestationHash": "6696d5a512117e9c",
+      "eventHash": "18c679fa20850dac",
+      "cityHash": "living-city/fe9008bc3a7b22c5"
+    },
+    {
+      "name": "07-meeting",
+      "title": "Shared-place meeting",
+      "phase": "meeting",
+      "personTick": "10",
+      "stateHash": "b2007dbd631d0474",
+      "manifestationHash": "b7d8ef2246775f8b",
+      "eventHash": "b0bd84480511f52f",
+      "cityHash": "living-city/af5bd0c804b3caf1"
+    },
+    {
+      "name": "08-festival-arrival",
+      "title": "Lantern Tide arrival",
+      "phase": "festival-arrival",
+      "personTick": "17",
+      "stateHash": "4a8da3fe8ba19283",
+      "manifestationHash": "844136042675103b",
+      "eventHash": "3d74f9c6f4217d3a",
+      "cityHash": "living-city/41c3215291659314"
+    },
+    {
+      "name": "09-festival-peak",
+      "title": "Lantern Tide peak",
+      "phase": "festival-peak",
+      "personTick": "19",
+      "stateHash": "1c05183487e6256f",
+      "manifestationHash": "73deea75ed6ac46d",
+      "eventHash": "5413d6b8a43f1b94",
+      "cityHash": "living-city/308e8ae7227b46e6"
+    },
+    {
+      "name": "10-festival-departure",
+      "title": "Lantern Tide departure",
+      "phase": "festival-departure",
+      "personTick": "21",
+      "stateHash": "04f7ca7cf8f2da07",
+      "manifestationHash": "f7b497ef27883437",
+      "eventHash": "87a19c0961e870ba",
+      "cityHash": "living-city/d8238084a41690aa"
+    },
+    {
+      "name": "11-closure",
+      "title": "Closure detour",
+      "phase": "closure-detour",
+      "personTick": "7",
+      "stateHash": "74cb0f747914e5c1",
+      "manifestationHash": "fe6f72e4362ed4db",
+      "eventHash": "1e16e91d275330e3",
+      "cityHash": "living-city/680810ee21e3080b"
+    }
+  ],
+  "layouts": {
+    "desktop": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "document": {
+        "width": 1440,
+        "height": 900
+      },
+      "renderer": {
+        "width": 1418,
+        "height": 776
+      }
+    },
+    "narrow": {
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "document": {
+        "width": 412,
+        "height": 839
+      },
+      "renderer": {
+        "width": 398,
+        "height": 725
+      }
+    }
+  },
+  "accessibility": {
+    "engine": {
+      "name": "axe-core",
+      "version": "4.13.0"
+    },
+    "seriousOrCritical": []
+  },
+  "audits": {
+    "desktop": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "externalRequests": []
+    },
+    "narrow": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "externalRequests": []
+    }
+  },
+  "artifacts": [
+    {
+      "path": "docs/evidence/issue-37/01-planet.png",
+      "sha256": "475b8ee60db7a6c24f2254e705ad6789f396fdcf891f297c4bbfed4e7453c7d9"
+    },
+    {
+      "path": "docs/evidence/issue-37/02-city.png",
+      "sha256": "aeb07ede7409b267056018c0ac43c094c4c3480a30371300b61104501739412a"
+    },
+    {
+      "path": "docs/evidence/issue-37/03-neighborhood.png",
+      "sha256": "60478bbeb754b12563f9c0a848c0d8b655b1cfc55bcdf7a2ee7add561623ef6b"
+    },
+    {
+      "path": "docs/evidence/issue-37/04-street.png",
+      "sha256": "3087e9128b566d26f497dcc149a6e6125b4f7dd98fe2628343a40ab4eb4d6842"
+    },
+    {
+      "path": "docs/evidence/issue-37/05-follow-person.png",
+      "sha256": "8268b774c6f98e39d7735a4f79c21eaa792a057d05eb2c4c4c10b5dcd22eb27b"
+    },
+    {
+      "path": "docs/evidence/issue-37/06-commute.png",
+      "sha256": "a9690e12b7d1e2a4ce2a165044ebbbc9a777c9f1a174a4c6af4c69485fd21532"
+    },
+    {
+      "path": "docs/evidence/issue-37/07-meeting.png",
+      "sha256": "f2afdca7cb3ae8045371c43b08b15dbb9687bb6023032342ca03ace66ce55ff2"
+    },
+    {
+      "path": "docs/evidence/issue-37/08-festival-arrival.png",
+      "sha256": "eea0ca0d486c1bd7c21f8aaf31011b87cd4228c2550fe3158230a44e5d234d74"
+    },
+    {
+      "path": "docs/evidence/issue-37/09-festival-peak.png",
+      "sha256": "4d8906d136544de49c6b46804dea92940a889736c23eeabd288228837f45c8ea"
+    },
+    {
+      "path": "docs/evidence/issue-37/10-festival-departure.png",
+      "sha256": "999f351954784f4c5d935119e065d247fa3bdfe959ee4bef8fddcee7c041cc29"
+    },
+    {
+      "path": "docs/evidence/issue-37/11-closure.png",
+      "sha256": "0e8e6e8fc25b66f7f4fa4e852e74591eea9de8a27c3f71a09eaf342376e11062"
+    },
+    {
+      "path": "docs/evidence/issue-37/12-desktop-complete.png",
+      "sha256": "8a4adde4495aca3e805e447b2c00e6117006f85676e3907d74ab7846474d4ea9"
+    },
+    {
+      "path": "docs/evidence/issue-37/complete-journey.webm",
+      "sha256": "6a16669f3d8790e9ac9dec7b336584c7e4caa7587f7d758b58a2b419910f1a6d"
+    },
+    {
+      "path": "docs/evidence/issue-37/13-narrow-independent.png",
+      "sha256": "7325386f2f040ae9493c133b23b2fda178d9b1f92b7d636c55414a240122f10b"
+    }
+  ]
+}
