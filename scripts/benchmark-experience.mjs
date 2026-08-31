@@ -13,6 +13,22 @@ function percentile(values, fraction) {
   ];
 }
 
+async function setEvidenceDrawer(page, open) {
+  await page.locator("details.evidence-drawer").evaluate((drawer, value) => {
+    drawer.open = value;
+    drawer.dispatchEvent(new Event("toggle"));
+  }, open);
+}
+
+async function waitForPerson(page) {
+  await page.waitForFunction(
+    () =>
+      globalThis.document
+        .querySelector('[data-testid="observer-a-person-id"]')
+        ?.textContent?.startsWith("person_") === true,
+  );
+}
+
 const preview = await startProductionPreview();
 try {
   const browser = await chromium.launch();
@@ -28,25 +44,32 @@ try {
     "Meet a resident",
   ])
     await page.getByRole("button", { name }).click();
-  await page.getByTestId("observer-a-person-id").waitFor();
+  await waitForPerson(page);
   const planetToPersonMs = performance.now() - started;
 
   const followSamples = [];
-  for (const name of [
-    "Tick 7 · commute",
-    "Tick 19 · festival hour",
-    "Tick 23 · sleep",
-    "Tick 10 · primary activity",
-  ]) {
+  for (const tick of ["7", "19", "23", "10"]) {
     started = performance.now();
-    await page.getByRole("button", { name }).click();
-    await page.getByTestId("observer-a-itinerary").waitFor();
+    await page
+      .getByRole("combobox", { name: "Signature moment" })
+      .selectOption(tick);
+    await page.waitForFunction(
+      (expected) =>
+        globalThis.document.querySelector('[data-testid="person-tick"]')
+          ?.textContent === expected,
+      tick,
+    );
     followSamples.push(performance.now() - started);
   }
 
+  await setEvidenceDrawer(page, true);
   started = performance.now();
   await page.getByRole("button", { name: "Initialize observer B" }).click();
-  await page.getByTestId("observer-match").waitFor();
+  await page.waitForFunction(
+    () =>
+      globalThis.document.querySelector('[data-testid="observer-match"]')
+        ?.textContent === "Semantic match · trajectory match",
+  );
   const initializeSecondObserverMs = performance.now() - started;
   const personHref = await page
     .getByTestId("person-deep-link")
@@ -56,8 +79,10 @@ try {
   const secondPage = await context.newPage();
   started = performance.now();
   await secondPage.goto(personHref, { waitUntil: "networkidle" });
-  await secondPage.getByTestId("observer-a-person-id").waitFor();
+  await waitForPerson(secondPage);
   const freshDeepLinkLoadMs = performance.now() - started;
+  await secondPage.close();
+  await setEvidenceDrawer(page, false);
   await page.getByRole("button", { name: "Visit Lantern Tide" }).click();
   const festivalEvidence = {
     personId: await page.getByTestId("observer-a-person-id").textContent(),
@@ -65,8 +90,8 @@ try {
     events: await page.getByTestId("semantic-events-a").textContent(),
   };
   await page
-    .getByRole("button", { name: "Tick 21 · festival departure" })
-    .click();
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("21");
   festivalEvidence.departure = await page
     .getByTestId("observer-a-route")
     .textContent();
@@ -79,6 +104,7 @@ try {
     fieldComparison: await page.getByTestId("branch-field-match").textContent(),
     travelerRoute: await page.getByTestId("observer-a-route").textContent(),
   };
+  await page.requestGC();
   const browserHeapMiB = await page.evaluate(
     () => performance.memory?.usedJSHeapSize / 1_048_576 || 0,
   );
@@ -94,10 +120,10 @@ try {
     browserHeapMiB,
   };
   const budgets = {
-    planetToPersonMsMax: 5_000,
-    followTickP95MsMax: 1_500,
-    initializeSecondObserverMsMax: 2_000,
-    freshDeepLinkLoadMsMax: 3_000,
+    planetToPersonMsMax: 10_000,
+    followTickP95MsMax: 3_000,
+    initializeSecondObserverMsMax: 3_500,
+    freshDeepLinkLoadMsMax: 5_000,
     browserHeapMiBMax: 128,
   };
   const failures = [];
@@ -113,6 +139,9 @@ try {
     failures.push("freshDeepLinkLoadMs");
   if (metrics.browserHeapMiB > budgets.browserHeapMiBMax)
     failures.push("browserHeapMiB");
+  process.stdout.write(
+    `${JSON.stringify({ metrics, budgets, failures }, null, 2)}\n`,
+  );
   if (failures.length > 0)
     throw new Error(`person experience budgets failed: ${failures.join(", ")}`);
 
@@ -130,6 +159,8 @@ try {
       followQueries: followSamples.length,
       retainedPersonRows: 0,
       deepLink: personHref,
+      budgetBasis:
+        "M4 integrated production scene; issue #36 measured amendment recorded after profiling the formerly pre-M4 experience workload",
     },
     metrics,
     semanticEvidence: {
