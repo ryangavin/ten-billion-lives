@@ -107,7 +107,9 @@ test("preserves semantics through context loss, tab resume, and orientation", as
   await page.setViewportSize({ width: 600, height: 900 });
   await expect(page.getByTestId("render-backend")).toHaveText("canvas2d");
   await expect(page.getByTestId("render-context-losses")).toHaveText("1");
-  await expect(page.getByTestId("observer-match")).toHaveText("Semantic match");
+  await expect(page.getByTestId("observer-match")).toHaveText(
+    "Semantic match · trajectory match",
+  );
   const after = await page.evaluate(() => ({
     state: globalThis.document.querySelector("[data-testid=state-hash]")
       ?.textContent,

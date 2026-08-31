@@ -131,22 +131,22 @@ test("traces planet to person across two independent local observers", async ({
     page.getByRole("heading", { name: "Brindle Bay" }),
   ).toBeVisible();
   await expectAdaptiveVisible(page, {
-    fallback: 25_000,
-    baseline: 125_000,
-    showcase: 125_000,
+    fallback: 64,
+    baseline: 64,
+    showcase: 64,
   });
   await page.getByRole("button", { name: "Enter Harbor Street" }).click();
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Street");
   await expectAdaptiveVisible(page, {
-    fallback: 25_000,
-    baseline: 250_000,
-    showcase: 1_000_000,
+    fallback: 128,
+    baseline: 256,
+    showcase: 512,
   });
   await page.getByRole("button", { name: "Meet a resident" }).click();
   await expectAdaptiveVisible(page, {
-    fallback: 25_000,
-    baseline: 50_000,
-    showcase: 50_000,
+    fallback: 128,
+    baseline: 256,
+    showcase: 512,
   });
   await expect(page.getByTestId("journey-renderer")).toHaveAttribute(
     "data-selection-id",
@@ -171,7 +171,9 @@ test("traces planet to person across two independent local observers", async ({
   await expect(page.getByTestId("observer-b-person-id")).toHaveText(
     "person_27yi09s_1obkbba",
   );
-  await expect(page.getByTestId("observer-match")).toHaveText("Semantic match");
+  await expect(page.getByTestId("observer-match")).toHaveText(
+    "Semantic match · trajectory match",
+  );
   await expect(page.getByTestId("manifestation-hash-b")).toHaveText(
     personManifestationHash ?? "",
   );
@@ -195,7 +197,9 @@ test("traces planet to person across two independent local observers", async ({
   await expect(page.getByTestId("observer-b-person-id")).toHaveText(
     "person_27yi09s_1obkbba",
   );
-  await expect(page.getByTestId("observer-match")).toHaveText("Semantic match");
+  await expect(page.getByTestId("observer-match")).toHaveText(
+    "Semantic match · trajectory match",
+  );
 
   await page.getByRole("button", { name: "Tick 7 · commute" }).click();
   await expect(page.getByTestId("observer-a-itinerary")).toHaveText(
@@ -204,7 +208,9 @@ test("traces planet to person across two independent local observers", async ({
   await expect(page.getByTestId("observer-b-itinerary")).toHaveText(
     "Tick 7 · transit",
   );
-  await expect(page.getByTestId("observer-match")).toHaveText("Semantic match");
+  await expect(page.getByTestId("observer-match")).toHaveText(
+    "Semantic match · trajectory match",
+  );
   await page.getByRole("button", { name: "Tick 19 · festival hour" }).click();
   await expect(page.getByTestId("observer-a-itinerary")).toHaveText(
     "Tick 19 · leisure",
@@ -346,7 +352,9 @@ test("guides a first visit through time, discovery, truthful diagnostics, and lo
   );
   await expect(page.getByTestId("time-status")).toContainText("Paused");
   await page.getByRole("button", { name: "Play local time" }).click();
-  await expect(page.getByTestId("time-status")).toContainText("Playing · 1×");
+  await expect(page.getByTestId("time-status")).toContainText(
+    "Playing · 1 simulated minute per real second",
+  );
   await page.getByRole("button", { name: "Pause local time" }).click();
   await page.getByRole("button", { name: "Advance one tick" }).click();
   await expect(page.getByTestId("person-tick")).toHaveText("11");
@@ -428,7 +436,7 @@ test("keeps the forced Canvas fallback navigable through loss, resize, and reduc
   await expect(page.getByTestId("journey-renderer")).toBeVisible();
   await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
   await page.getByRole("button", { name: "Enter Harbor Street" }).click();
-  await expect(page.getByTestId("render-visible")).toHaveText("250,000");
+  await expect(page.getByTestId("render-visible")).toHaveText("256");
   await expect(page.getByTestId("render-backend")).toHaveText("canvas2d");
 });
 
@@ -448,7 +456,7 @@ test("preserves person and event semantics across local visual quality tiers", a
     await page.getByRole("button", { name: "Meet a resident" }).click();
     await page.getByRole("button", { name: "Initialize observer B" }).click();
     await expect(page.getByTestId("observer-match")).toHaveText(
-      "Semantic match",
+      "Semantic match · trajectory match",
     );
     observations.push({
       quality,
@@ -463,8 +471,8 @@ test("preserves person and event semantics across local visual quality tiers", a
     });
     await page.close();
   }
-  expect(observations[0]?.streetVisible).toBe("25,000");
-  expect(observations[1]?.streetVisible).toBe("250,000");
+  expect(observations[0]?.streetVisible).toBe("128");
+  expect(observations[1]?.streetVisible).toBe("256");
   expect({
     ...observations[0],
     quality: undefined,

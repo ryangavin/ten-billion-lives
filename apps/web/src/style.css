@@ -598,6 +598,48 @@ footer code {
   font-weight: 700;
 }
 
+.living-city-summary {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid rgba(140, 227, 185, 0.2);
+  border-radius: 12px;
+  background: rgba(5, 22, 17, 0.56);
+}
+
+.living-city-summary p {
+  min-width: 0;
+  margin: 0;
+  color: #a9c3b7;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.living-city-summary strong {
+  color: #e0f5ea;
+}
+
+.semantic-zoom {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.semantic-zoom button {
+  padding: 8px 11px;
+  font-size: 0.74rem;
+}
+
+.semantic-zoom button[aria-pressed="true"] {
+  color: #071a13;
+  background: #fff0a8;
+  border-color: #fff0a8;
+}
+
 .tracer-actions,
 .trace-controls {
   display: flex;

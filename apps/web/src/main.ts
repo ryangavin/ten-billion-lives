@@ -1,7 +1,9 @@
 import "./style.css";
 
 import {
+  createCityProjection,
   createIllusionEngine,
+  createVisualTime,
   manifestPlaceholder,
   type AnalyticalItineraryIndex,
   type IllusionEngine,
@@ -37,16 +39,32 @@ import {
 } from "@ten-billion-lives/sim";
 import {
   BrowserJourneyRenderer,
+  LivingCityBrowserRenderer,
   adaptRenderQuality,
+  createLivingCitySummary,
   createRenderScene,
   createTracerProjection,
   drawCanvasScene,
   selectInitialRenderQuality,
   type BrowserRendererStatus,
+  type LivingCityRenderInput,
+  type LivingCityRenderMetrics,
+  type LivingCityScene,
   type RenderQuality,
   type RenderScene,
 } from "@ten-billion-lives/render";
 
+import {
+  PLAYBACK_RATE_OPTIONS,
+  createPlaybackState,
+  reducePlayback,
+  type PlaybackRate,
+  type PlaybackState,
+} from "./playback";
+import {
+  createProductionLivingCityScene,
+  type LivingCityLevel,
+} from "./living-city";
 import { createSmokeModel } from "./smoke";
 import {
   CLOSURE_PERSON_ID,
@@ -70,6 +88,11 @@ const nextLabels = [
 ];
 const snapshotA = createPlaceholderSnapshot();
 const world = generateWorld(BASELINE_WORLD_SEED);
+const brindleBayCity = createCityProjection({
+  schema: 1,
+  seed: BASELINE_WORLD_SEED,
+  settlementId: "place/brindle-bay",
+});
 const illusionEngine = createIllusionEngine(world);
 const itineraryIndex = illusionEngine.itinerary;
 const manifestationIndex = itineraryIndex.manifestation;
@@ -122,19 +145,30 @@ let selectedDayTick = 7;
 let selectedPersonTick = 10;
 let checkpointResult = "Not restored";
 let discoveryStatus = "";
-let clockPlaying = false;
-let clockRate: 1 | 6 | 24 = 1;
+let playbackState: PlaybackState = createPlaybackState(
+  createVisualTime(BigInt(selectedPersonTick), 0),
+  { reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches },
+);
+let clockRate: PlaybackRate = 1;
 let clockTimer: ReturnType<typeof setInterval> | null = null;
 let replayVerified = false;
 let journeyRenderer: BrowserJourneyRenderer | null = null;
+let livingCityRenderer: LivingCityBrowserRenderer | null = null;
+let livingCityScene: LivingCityScene | null = null;
 let journeyResizeObserver: ResizeObserver | null = null;
 let journeyRenderGeneration = 0;
 const renderSceneCache = new Map<string, RenderScene>();
+const livingCitySceneCache = new Map<string, LivingCityScene>();
 const projectionCache = new WeakMap<
   IllusionEngine,
   Map<string, IllusionProjection>
 >();
+const itineraryQueryCache = new WeakMap<
+  AnalyticalItineraryIndex,
+  (personId: string, tick: bigint) => PersonItineraryPoint
+>();
 const maximumCachedRenderScenes = 8;
+const maximumCachedLivingCityScenes = 12;
 const maximumCachedProjections = 32;
 const localBenchmarkCanvas = document.createElement("canvas");
 const localBenchmarkScenes = new Map<string, RenderScene>();
@@ -162,9 +196,39 @@ let renderQualityReason =
     ? initialRenderQuality.reason
     : `local URL forces the ${forcedRenderQuality} visual tier`;
 let sustainedFrameTimesMs: number[] = [];
+let livingCityLevel: LivingCityLevel = "city";
 
 function stageKey(stage: (typeof stages)[number]): ExperienceStage {
   return stage.toLowerCase() as ExperienceStage;
+}
+
+function monotonicClockMicroseconds(): number {
+  return Math.floor(performance.now() * 1_000);
+}
+
+function isClockPlaying(): boolean {
+  return playbackState.status === "playing";
+}
+
+function effectiveLivingCityQuality(): RenderQuality {
+  return isClockPlaying() ? "fallback" : renderQuality;
+}
+
+function synchronizeSelectedTick(): void {
+  const tick = Number(playbackState.visualTime.tick);
+  if (!Number.isSafeInteger(tick) || tick > EXPERIENCE_MAX_TICK)
+    throw new RangeError("playback exceeded the supported local tick range");
+  selectedPersonTick = tick;
+  selectedDayTick = selectedPersonTick % FIELD_TICKS_PER_DAY;
+}
+
+function seekPlayback(tick: number, rewind = false): void {
+  playbackState = reducePlayback(playbackState, {
+    type: rewind ? "rewind" : "seek",
+    visualTime: createVisualTime(BigInt(tick), 0),
+    clockMicroseconds: monotonicClockMicroseconds(),
+  });
+  synchronizeSelectedTick();
 }
 
 function activeFocusSelector(root: HTMLElement): string | null {
@@ -223,44 +287,42 @@ function kernelStateAt(tick: number, branch = activeBranch) {
   return state;
 }
 
+function itineraryQueryFor(source: AnalyticalItineraryIndex) {
+  const cached = itineraryQueryCache.get(source);
+  if (cached !== undefined) return cached;
+  const query = (personId: string, tick: bigint) =>
+    source.queryPerson(
+      personId,
+      tick,
+      kernelStateAt(Number(tick), activeBranch),
+    );
+  itineraryQueryCache.set(source, query);
+  return query;
+}
+
 function projectionFor(
   engine: IllusionEngine,
   stage: (typeof stages)[number],
 ): IllusionProjection {
   const manifestationCellId =
     engine.manifestation.person(selectedPersonId).cellId;
-  const regionId = world.cells.find(
-    (cell) => cell.id === manifestationCellId,
-  )?.regionId;
-  if (regionId === undefined)
-    throw new Error("Baseline manifestation region is unavailable");
   const state = kernelStateAt(selectedPersonTick);
   const cache = projectionCache.get(engine) ?? new Map();
   projectionCache.set(engine, cache);
-  const key = `${stage}/${state.kernelHash}/${selectedPersonId}`;
+  const projectionLevel = stage === "Planet" ? "planet" : "living-city";
+  const key = `${projectionLevel}/${state.kernelHash}/${selectedPersonId}`;
   const cached = cache.get(key);
   if (cached !== undefined) return cached;
   const scopeCellIds =
     stage === "Planet"
       ? world.cells.map((cell) => cell.id)
-      : stage === "Settlement"
-        ? world.cells
-            .filter((cell) => cell.regionId === regionId)
-            .map((cell) => cell.id)
-        : [manifestationCellId];
+      : [manifestationCellId];
   const projection = engine.project(
     {
       state,
       tick: BigInt(selectedPersonTick),
       scopeCellIds,
-      lod:
-        stage === "Planet"
-          ? "planet"
-          : stage === "Settlement"
-            ? "region"
-            : stage === "Street"
-              ? "street"
-              : "person",
+      lod: stage === "Planet" ? "planet" : "street",
       selectedPersonIds: [selectedPersonId],
     },
     {
@@ -324,9 +386,100 @@ function renderSceneFor(
   return scene;
 }
 
+function livingCitySceneFor(
+  projection: IllusionProjection,
+  source: AnalyticalItineraryIndex = itineraryIndex,
+  observer = "observer-a",
+): LivingCityScene {
+  const time = playbackState.poseTime;
+  const key = [
+    observer,
+    activeBranch,
+    projection.manifestationHash,
+    projection.eventHash,
+    selectedPersonId,
+    livingCityLevel,
+    effectiveLivingCityQuality(),
+    time.tick.toString(),
+    time.phasePermillion.toString(),
+  ].join("/");
+  const cached = livingCitySceneCache.get(key);
+  if (cached !== undefined) return cached;
+  const scene = createProductionLivingCityScene({
+    projection,
+    city: brindleBayCity,
+    branch: activeBranch,
+    time,
+    selectedPersonId,
+    level: livingCityLevel,
+    quality: effectiveLivingCityQuality(),
+    itineraryAt: itineraryQueryFor(source),
+  });
+  setBoundedCache(
+    livingCitySceneCache,
+    key,
+    scene,
+    maximumCachedLivingCityScenes,
+  );
+  return scene;
+}
+
+function livingCityCamera(
+  scene: LivingCityScene,
+): LivingCityRenderInput["presentation"]["camera"] {
+  const selected = scene.figures.find(
+    (figure) => figure.personId === scene.selectedPersonId,
+  );
+  const cityCenterEast =
+    (scene.city.bounds.min.eastCm + scene.city.bounds.max.eastCm) / 2;
+  const cityCenterNorth =
+    (scene.city.bounds.min.northCm + scene.city.bounds.max.northCm) / 2;
+  const followsSelection =
+    livingCityLevel === "street" || livingCityLevel === "person";
+  const baseEast =
+    followsSelection && selected !== undefined
+      ? selected.pose.position.eastCm
+      : cityCenterEast;
+  const baseNorth =
+    followsSelection && selected !== undefined
+      ? selected.pose.position.northCm
+      : cityCenterNorth;
+  const orbitRadians = (cameraDegrees * Math.PI) / 180;
+  const orbitRadiusCm = livingCityLevel === "city" ? 0 : 1_800;
+  const pixelsPerMeter = {
+    city: 0.42,
+    neighborhood: 0.72,
+    street: 1.25,
+    person: 2.4,
+  }[livingCityLevel];
+  return Object.freeze({
+    centerEastCm: Math.round(baseEast + Math.cos(orbitRadians) * orbitRadiusCm),
+    centerNorthCm: Math.round(
+      baseNorth + Math.sin(orbitRadians) * orbitRadiusCm,
+    ),
+    pixelsPerMeter,
+  });
+}
+
+function livingCityInput(
+  scene: LivingCityScene,
+  width = 768,
+  height = 480,
+): LivingCityRenderInput {
+  return Object.freeze({
+    scene,
+    presentation: Object.freeze({
+      camera: livingCityCamera(scene),
+      viewport: Object.freeze({ width, height }),
+      quality: effectiveLivingCityQuality(),
+      reducedMotion: playbackState.reducedMotion,
+    }),
+  });
+}
+
 function updateRenderDiagnostics(
   root: HTMLElement,
-  status: BrowserRendererStatus,
+  status: BrowserRendererStatus | LivingCityRenderMetrics,
 ): void {
   const backend = root.querySelector<HTMLElement>(
     "[data-testid=render-backend]",
@@ -358,7 +511,7 @@ function updateRenderDiagnostics(
 
 function applyAdaptiveRenderQuality(
   root: HTMLElement,
-  status: BrowserRendererStatus,
+  status: BrowserRendererStatus | LivingCityRenderMetrics,
 ): boolean {
   updateRenderDiagnostics(root, status);
   if (forcedRenderQuality !== null) return false;
@@ -380,6 +533,8 @@ async function mountJourneyRenderer(
   scene: RenderScene,
 ): Promise<void> {
   journeyResizeObserver?.disconnect();
+  livingCityRenderer?.destroy();
+  livingCityRenderer = null;
   journeyRenderer?.destroy();
   const generation = ++journeyRenderGeneration;
   const fallbackCanvas = root.querySelector<HTMLCanvasElement>(
@@ -413,6 +568,116 @@ async function mountJourneyRenderer(
     if (resized !== null) applyAdaptiveRenderQuality(root, resized);
   });
   journeyResizeObserver.observe(stack);
+}
+
+async function mountLivingCityRenderer(
+  root: HTMLElement,
+  scene: LivingCityScene,
+): Promise<void> {
+  journeyResizeObserver?.disconnect();
+  journeyRenderer?.destroy();
+  journeyRenderer = null;
+  livingCityRenderer?.destroy();
+  const generation = ++journeyRenderGeneration;
+  const fallbackCanvas = root.querySelector<HTMLCanvasElement>(
+    "[data-render-surface=canvas2d]",
+  );
+  const gpuCanvas = root.querySelector<HTMLCanvasElement>(
+    "[data-render-surface=webgpu]",
+  );
+  const stack = root.querySelector<HTMLElement>("[data-render-stack]");
+  if (fallbackCanvas === null || gpuCanvas === null || stack === null) return;
+  const quality = root.querySelector<HTMLElement>(
+    "[data-testid=render-quality]",
+  );
+  if (quality !== null) quality.textContent = effectiveLivingCityQuality();
+  const renderer = new LivingCityBrowserRenderer(
+    { fallbackCanvas, gpuCanvas },
+    forceCanvasRenderer,
+  );
+  livingCityRenderer = renderer;
+  livingCityScene = scene;
+  const dimensions = () => {
+    const width = Math.max(320, Math.round(stack.clientWidth));
+    return Object.freeze({
+      width,
+      height: Math.max(240, Math.round(width * 0.625)),
+    });
+  };
+  const initialDimensions = dimensions();
+  renderer.resize(initialDimensions.width, initialDimensions.height);
+  const status = await renderer.initialize(
+    livingCityInput(scene, initialDimensions.width, initialDimensions.height),
+  );
+  if (generation !== journeyRenderGeneration || !stack.isConnected) {
+    renderer.destroy();
+    return;
+  }
+  if (applyAdaptiveRenderQuality(root, status)) return;
+  journeyResizeObserver = new ResizeObserver(() => {
+    const size = dimensions();
+    const resized = renderer.resize(size.width, size.height);
+    if (resized !== null) applyAdaptiveRenderQuality(root, resized);
+  });
+  journeyResizeObserver.observe(stack);
+}
+
+function playbackStatusText(): string {
+  const localHour = selectedPersonTick % FIELD_TICKS_PER_DAY;
+  const localDay = Math.floor(selectedPersonTick / FIELD_TICKS_PER_DAY);
+  const minute = Math.floor(
+    (playbackState.visualTime.phasePermillion * 60) / 1_000_000,
+  );
+  const status = isClockPlaying()
+    ? `Playing · ${clockRate} simulated ${clockRate === 1 ? "minute" : "minutes"} per real second`
+    : "Paused";
+  return `${status} · day ${localDay} · ${localHour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+}
+
+function updatePlaybackPresentation(root: HTMLElement): boolean {
+  const timeStatus = root.querySelector<HTMLElement>(
+    "[data-testid=time-status]",
+  );
+  if (timeStatus !== null) timeStatus.textContent = playbackStatusText();
+  const phase = root.querySelector<HTMLElement>("[data-testid=budget-phase]");
+  if (phase !== null)
+    phase.textContent = playbackState.visualTime.phasePermillion.toString();
+  const stage = stages[stageIndex] ?? "Planet";
+  if (stage === "Planet" || livingCityRenderer === null) return true;
+  const quality = root.querySelector<HTMLElement>(
+    "[data-testid=render-quality]",
+  );
+  if (quality !== null) quality.textContent = effectiveLivingCityQuality();
+  const projectionA = projectionFor(illusionEngine, stage);
+  const sceneA = livingCitySceneFor(projectionA);
+  const canvas = root.querySelector<HTMLCanvasElement>(
+    "[data-render-surface]:not([hidden])",
+  );
+  if (canvas === null) return false;
+  livingCityScene = sceneA;
+  const metrics = livingCityRenderer.render(
+    livingCityInput(sceneA, canvas.width, canvas.height),
+  );
+  const stack = root.querySelector<HTMLElement>("[data-render-stack]");
+  stack?.setAttribute("data-projection-key", sceneA.semanticKey);
+  const time = root.querySelector<HTMLElement>(
+    "[data-testid=living-city-time]",
+  );
+  if (time !== null)
+    time.textContent = createLivingCitySummary(sceneA).timeLabel;
+  const hashA = root.querySelector<HTMLElement>(
+    "[data-testid=living-city-hash-a]",
+  );
+  if (hashA !== null) hashA.textContent = sceneA.semanticKey;
+  if (observerBEngine !== null) {
+    const match = root.querySelector<HTMLElement>(
+      "[data-testid=observer-match]",
+    );
+    if (match !== null)
+      match.textContent = "Observer B fixed · pause for exact phase comparison";
+  }
+  if (applyAdaptiveRenderQuality(root, metrics)) return true;
+  return true;
 }
 
 function debugCellId(level: number, row: number, column: number): string {
@@ -569,14 +834,20 @@ function refreshSelectedPeople(): void {
 }
 
 function stopClock(): void {
-  clockPlaying = false;
-  if (clockTimer !== null) clearInterval(clockTimer);
+  if (clockTimer !== null) clearTimeout(clockTimer);
   clockTimer = null;
+  if (playbackState.status === "playing") {
+    playbackState = reducePlayback(playbackState, {
+      type: "pause",
+      clockMicroseconds: monotonicClockMicroseconds(),
+    });
+    synchronizeSelectedTick();
+  }
 }
 
 function advanceLocalTime(root: HTMLElement, ticks: number): void {
-  selectedPersonTick = (selectedPersonTick + ticks) % (EXPERIENCE_MAX_TICK + 1);
-  selectedDayTick = selectedPersonTick % FIELD_TICKS_PER_DAY;
+  const nextTick = (selectedPersonTick + ticks) % (EXPERIENCE_MAX_TICK + 1);
+  seekPlayback(nextTick);
   replayVerified = false;
   replayResult = "Not run";
   refreshSelectedPeople();
@@ -584,9 +855,31 @@ function advanceLocalTime(root: HTMLElement, ticks: number): void {
 }
 
 function startClock(root: HTMLElement): void {
-  if (clockTimer !== null) clearInterval(clockTimer);
-  clockPlaying = true;
-  clockTimer = setInterval(() => advanceLocalTime(root, clockRate), 1_000);
+  if (clockTimer !== null) clearTimeout(clockTimer);
+  playbackState = reducePlayback(playbackState, {
+    type: "play",
+    rate: clockRate,
+    clockMicroseconds: monotonicClockMicroseconds(),
+  });
+  const sample = () => {
+    clockTimer = null;
+    const previousTick = selectedPersonTick;
+    playbackState = reducePlayback(playbackState, {
+      type: "sample",
+      clockMicroseconds: monotonicClockMicroseconds(),
+    });
+    synchronizeSelectedTick();
+    if (playbackState.status === "error") {
+      clockTimer = null;
+    }
+    if (selectedPersonTick !== previousTick) {
+      refreshSelectedPeople();
+      render(root);
+    } else if (!updatePlaybackPresentation(root)) render(root);
+    if (playbackState.status === "playing")
+      clockTimer = setTimeout(sample, playbackState.reducedMotion ? 250 : 100);
+  };
+  clockTimer = setTimeout(sample, playbackState.reducedMotion ? 250 : 100);
 }
 
 function discover(root: HTMLElement, requested: string): void {
@@ -594,9 +887,11 @@ function discover(root: HTMLElement, requested: string): void {
   stopClock();
   if (query === "brindle bay" || query === "settlement") {
     stageIndex = 1;
+    livingCityLevel = "city";
     discoveryStatus = "Opened Brindle Bay settlement.";
   } else if (query === "harbor street" || query === "street") {
     stageIndex = 2;
+    livingCityLevel = "street";
     discoveryStatus = "Opened Harbor Street.";
   } else if (
     query === "lantern tide" ||
@@ -619,9 +914,10 @@ function selectExperience(
 ): void {
   manifestationIndex.person(personId);
   selectedPersonId = personId;
-  selectedPersonTick = tick;
+  seekPlayback(tick);
   activeBranch = branch;
   stageIndex = stages.length - 1;
+  livingCityLevel = "person";
   personA = queryPerson(snapshotA);
   if (observerBEngine !== null)
     personB = queryPerson(
@@ -721,8 +1017,7 @@ function render(root: HTMLElement): void {
   const nextLabel = nextLabels[stageIndex];
   const currentKernel = kernelStateAt(selectedPersonTick);
   const authorityBytes = serializeWorldKernel(currentKernel).length;
-  const localHour = selectedPersonTick % FIELD_TICKS_PER_DAY;
-  const localDay = Math.floor(selectedPersonTick / FIELD_TICKS_PER_DAY);
+  const clockPlaying = isClockPlaying();
   const experienceMode =
     activeBranch === "closure"
       ? "Local closure branch"
@@ -746,12 +1041,63 @@ function render(root: HTMLElement): void {
     stateHash: currentKernel.kernelHash,
     ...(personA ? { traceHash: personA.traceHash } : {}),
   });
-  const renderScene = renderSceneFor(
-    stage,
-    semanticProjectionA.manifestationHash,
-    selectedPersonId,
-    renderQuality,
+  const renderScene =
+    stage === "Planet"
+      ? renderSceneFor(
+          stage,
+          semanticProjectionA.manifestationHash,
+          selectedPersonId,
+          renderQuality,
+        )
+      : null;
+  const cityScene =
+    stage === "Planet" ? null : livingCitySceneFor(semanticProjectionA);
+  const observerBCityScene =
+    stage === "Planet" ||
+    semanticProjectionB === null ||
+    observerBEngine === null
+      ? null
+      : livingCitySceneFor(
+          semanticProjectionB,
+          observerBEngine.itinerary,
+          "observer-b",
+        );
+  const livingCityObserverMatch =
+    cityScene !== null &&
+    observerBCityScene !== null &&
+    cityScene.semanticKey === observerBCityScene.semanticKey &&
+    cityScene.figures.every(
+      (figure, index) =>
+        observerBCityScene.figures[index]?.personId === figure.personId &&
+        observerBCityScene.figures[index]?.pose.trajectoryHash ===
+          figure.pose.trajectoryHash,
+    );
+  const citySummary =
+    cityScene === null ? null : createLivingCitySummary(cityScene);
+  const visibleCount =
+    cityScene?.figures.length ?? renderScene?.draw.visibleCount ?? 0;
+  const visibleWeights = cityScene?.figures.map(
+    (figure) => figure.representedWeight,
   );
+  const minimumVisibleWeight =
+    visibleWeights === undefined || visibleWeights.length === 0
+      ? (renderScene?.debug.minimumTokenWeight ?? 0n)
+      : visibleWeights.reduce((minimum, weight) =>
+          weight < minimum ? weight : minimum,
+        );
+  const maximumVisibleWeight =
+    visibleWeights === undefined || visibleWeights.length === 0
+      ? (renderScene?.debug.maximumTokenWeight ?? 0n)
+      : visibleWeights.reduce((maximum, weight) =>
+          weight > maximum ? weight : maximum,
+        );
+  const renderSelectionId =
+    cityScene?.selectedPersonId ?? renderScene?.selectionId ?? selectedPersonId;
+  const renderSemanticKey =
+    cityScene?.semanticKey ?? semanticProjectionA.manifestationHash;
+  const transitionDurationMs =
+    renderScene?.transition.durationMs ??
+    (playbackState.reducedMotion ? 0 : 240);
   const personLink = buildExperienceLink(location.href, {
     schema: EXPERIENCE_LINK_SCHEMA,
     seed: BASELINE_WORLD_SEED,
@@ -783,15 +1129,15 @@ function render(root: HTMLElement): void {
 
   root.innerHTML = `<main class="observatory" aria-labelledby="app-title">
     <header class="tracer-header"><div><p class="eyebrow"><span aria-hidden="true"></span> Local deterministic observatory</p><h1 id="app-title">Ten Billion Lives</h1><p class="first-run-claim" data-testid="first-run-claim">One fictional planet, exactly <strong>${world.totalPopulation.toLocaleString("en-US")} represented lives</strong>, and no table of people. Zoom in to reconstruct one coherent life from compact fields.</p></div><div class="header-status"><div class="status" data-testid="smoke-status"><span aria-hidden="true"></span>${smoke.status}</div><p data-testid="render-support" role="status">Checking WebGPU; Canvas fallback is ready</p></div></header>
-    <section class="command-deck" aria-label="Local observatory controls"><article class="time-console"><div><p class="kicker">Local world time</p><h2 data-testid="time-status">${clockPlaying ? `Playing · ${clockRate}×` : "Paused"} · day ${localDay} · ${localHour.toString().padStart(2, "0")}:00</h2><p>Analytical time queries change semantic tick; camera motion never does.</p></div><div class="time-actions"><button type="button" data-action="clock-toggle">${clockPlaying ? "Pause local time" : "Play local time"}</button><button type="button" class="secondary" data-action="clock-step">Advance one tick</button>${([1, 6, 24] as const).map((rate) => `<button type="button" class="secondary" data-clock-rate="${rate}" aria-label="Set speed ${rate}×" aria-pressed="${clockRate === rate}">${rate}×</button>`).join("")}</div></article><article class="discovery-console"><div><p class="kicker">Find a place or event</p><h2>Go somewhere meaningful</h2><p>Search the small canonical guide; no remote index or network request is used.</p></div><form role="search" aria-label="Place and event discovery" data-discovery-search><label for="discovery-search">Find a place or event</label><div class="search-row"><input id="discovery-search" type="search" name="discovery" autocomplete="off"><button type="submit">Open</button></div><p class="discovery-status" data-testid="discovery-status" role="status">${discoveryStatus}</p></form><div class="discovery-shortcuts" aria-label="Suggested destinations"><button type="button" class="secondary" data-discover="Brindle Bay">Brindle Bay</button><button type="button" class="secondary" data-discover="Harbor Street">Harbor Street</button><button type="button" class="secondary" data-discover="Lantern Tide">Lantern Tide festival</button></div></article></section>
+    <section class="command-deck" aria-label="Local observatory controls"><article class="time-console"><div><p class="kicker">Local world time</p><h2 data-testid="time-status">${playbackStatusText()}</h2><p>Explicit presentation phase moves walkers continuously; camera and clock samples never enter world authority.</p></div><div class="time-actions"><button type="button" data-action="clock-toggle">${clockPlaying ? "Pause local time" : "Play local time"}</button><button type="button" class="secondary" data-action="clock-step">Advance one tick</button>${PLAYBACK_RATE_OPTIONS.map(({ rate, label }) => `<button type="button" class="secondary" data-clock-rate="${rate}" aria-label="${label}" aria-pressed="${rate === "Paused" ? !clockPlaying : clockPlaying && clockRate === rate}">${label}</button>`).join("")}</div>${playbackState.error === null ? "" : `<p class="form-error" role="alert">${playbackState.error}</p>`}</article><article class="discovery-console"><div><p class="kicker">Find a place or event</p><h2>Go somewhere meaningful</h2><p>Search the small canonical guide; no remote index or network request is used.</p></div><form role="search" aria-label="Place and event discovery" data-discovery-search><label for="discovery-search">Find a place or event</label><div class="search-row"><input id="discovery-search" type="search" name="discovery" autocomplete="off"><button type="submit">Open</button></div><p class="discovery-status" data-testid="discovery-status" role="status">${discoveryStatus}</p></form><div class="discovery-shortcuts" aria-label="Suggested destinations"><button type="button" class="secondary" data-discover="Brindle Bay">Brindle Bay</button><button type="button" class="secondary" data-discover="Harbor Street">Harbor Street</button><button type="button" class="secondary" data-discover="Lantern Tide">Lantern Tide festival</button></div></article></section>
     <section class="tracer-world" aria-labelledby="journey-title">
-      <div class="journey-renderer ${tracerProjection.cssStage}" style="--camera-shift: ${cameraShift.toFixed(2)}px" data-render-stack data-projection-key="${semanticProjectionA.manifestationHash}" data-selection-id="${renderScene.selectionId}" data-camera-degrees="${cameraDegrees}" data-transition-ms="${renderScene.transition.durationMs}" data-testid="journey-renderer" ${stage === "Street" ? 'role="button" tabindex="0" aria-label="Inspect highlighted resident"' : ""}><canvas width="768" height="480" data-render-surface="canvas2d" aria-label="${stage} Canvas fallback visualization"></canvas><canvas width="768" height="480" data-render-surface="webgpu" aria-label="${stage} WebGPU visualization" hidden></canvas><div class="render-hud"><span><b data-testid="render-backend">probing</b> · <b data-testid="render-quality">${renderQuality}</b> quality · <b data-testid="render-visible">${renderScene.draw.visibleCount.toLocaleString("en-US")}</b> visible · weights ${renderScene.debug.minimumTokenWeight}–${renderScene.debug.maximumTokenWeight}</span><span><b data-testid="render-frame-time">pending</b> · ${(renderScene.buffer.byteLength / 1_048_576).toFixed(2)} MiB · <code>${renderScene.debug.bufferHash.slice(0, 8)}</code> · losses <b data-testid="render-context-losses">0</b></span></div></div>
+      <div class="journey-renderer ${tracerProjection.cssStage}" style="--camera-shift: ${stage === "Planet" ? cameraShift.toFixed(2) : "0"}px" data-render-stack data-projection-key="${renderSemanticKey}" data-selection-id="${renderSelectionId}" data-camera-degrees="${cameraDegrees}" data-transition-ms="${transitionDurationMs}" data-city-level="${livingCityLevel}" data-testid="journey-renderer" ${stage === "Street" || stage === "Person" ? 'role="button" tabindex="0" aria-label="Pick or inspect a visible resident"' : ""}><canvas width="768" height="480" data-render-surface="canvas2d" aria-label="${stage === "Planet" ? stage : `${canonicalSettlementName} ${livingCityLevel}`} Canvas fallback visualization"></canvas><canvas width="768" height="480" data-render-surface="webgpu" aria-label="${stage === "Planet" ? stage : `${canonicalSettlementName} ${livingCityLevel}`} WebGPU visualization" hidden></canvas><div class="render-hud"><span><b data-testid="render-backend">probing</b> · <b data-testid="render-quality">${renderQuality}</b> quality · <b data-testid="render-visible">${visibleCount.toLocaleString("en-US")}</b> visible · weights ${minimumVisibleWeight}–${maximumVisibleWeight}</span><span><b data-testid="render-frame-time">pending</b> · <code>${renderSemanticKey.slice(-8)}</code> · losses <b data-testid="render-context-losses">0</b></span></div></div>
       <div class="journey-copy"><p class="kicker">Observer A · <span data-testid="observer-a-stage">${stage}</span></p><p class="journey-progress" data-testid="journey-progress">${stage} · step ${stageIndex + 1} of ${stages.length}</p><h2 id="journey-title" tabindex="-1">${stage === "Planet" ? "Seeded fictional planet" : stage === "Settlement" ? canonicalSettlementName : stage === "Street" ? canonicalStreetName : (personA?.name ?? "Resident")}</h2><p>${stage === "Planet" ? "Start at the whole field; each closer view is a deterministic query, not another simulation." : stage === "Settlement" ? "One conserved region becomes legible without changing the world beneath it." : stage === "Street" ? "Weighted manifestations resolve locally; choose the highlighted resident to continue." : "This identity, household, itinerary, and events are reconstructed on demand."}</p><p>Camera ${cameraDegrees}° · tick <span data-testid="person-tick">${selectedPersonTick}</span> · <code data-testid="state-hash">${currentKernel.kernelHash}</code></p>
-      <p class="branch-label">Viewing <strong data-testid="experience-mode">${experienceMode}</strong></p><div class="tracer-actions">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}<button type="button" data-action="festival">Visit Lantern Tide</button><button type="button" class="secondary" data-action="camera">Orbit camera</button>${personA ? stages.map((candidate, index) => `<button type="button" class="secondary" data-stage-index="${index}" aria-pressed="${stage === candidate}">View ${candidate.toLowerCase()}</button>`).join("") : ""}</div></div>
+      <p class="branch-label">Viewing <strong data-testid="experience-mode">${experienceMode}</strong></p>${citySummary === null ? "" : `<section class="living-city-summary" aria-label="Living city text alternative" data-testid="living-city-summary"><p><strong data-testid="living-city-time">${citySummary.timeLabel}</strong> · ${citySummary.movementSummary}</p><p>${citySummary.selectionSummary ?? "No resident selected."}</p><p>${citySummary.populationSummary}</p></section><div class="semantic-zoom" aria-label="Semantic city zoom">${(["city", "neighborhood", "street", "person"] as const).map((level) => `<button type="button" class="secondary" data-city-level="${level}" aria-pressed="${livingCityLevel === level}">Zoom ${level}</button>`).join("")}</div>`}<div class="tracer-actions">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}<button type="button" data-action="festival">Visit Lantern Tide</button><button type="button" class="secondary" data-action="camera">Orbit camera</button>${personA ? stages.map((candidate, index) => `<button type="button" class="secondary" data-stage-index="${index}" aria-pressed="${stage === candidate}">View ${candidate.toLowerCase()}</button>`).join("") : ""}</div></div>
     </section>
     <section class="observer-grid" aria-label="Independent observer comparison">
-      <article><p class="kicker">Observer A</p><h2>${personA?.name ?? "Journey in progress"}</h2><p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-a">${semanticProjectionA.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-a">${semanticProjectionA.eventHash}</code></p>${personCard(personA, "a", semanticProjectionA)}</article>
-      <article><p class="kicker">Observer B · independent instance</p><h2>${personB?.name ?? "Not initialized"}</h2>${semanticProjectionB ? `<p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-b">${semanticProjectionB.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-b">${semanticProjectionB.eventHash}</code></p>` : ""}${personCard(personB, "b", semanticProjectionB)}${personA && !personB ? '<button type="button" data-action="observer-b">Initialize observer B</button>' : ""}${semanticMatch ? '<p class="match" data-testid="observer-match">Semantic match</p>' : ""}</article>
+      <article><p class="kicker">Observer A</p><h2>${personA?.name ?? "Journey in progress"}</h2><p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-a">${semanticProjectionA.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-a">${semanticProjectionA.eventHash}</code>${cityScene === null ? "" : `<br>Living city <code data-testid="living-city-hash-a">${cityScene.semanticKey}</code>`}</p>${personCard(personA, "a", semanticProjectionA)}</article>
+      <article><p class="kicker">Observer B · independent instance</p><h2>${personB?.name ?? "Not initialized"}</h2>${semanticProjectionB ? `<p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-b">${semanticProjectionB.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-b">${semanticProjectionB.eventHash}</code>${observerBCityScene === null ? "" : `<br>Living city <code data-testid="living-city-hash-b">${observerBCityScene.semanticKey}</code>`}</p>` : ""}${personCard(personB, "b", semanticProjectionB)}${personA && !personB ? '<button type="button" data-action="observer-b">Initialize observer B</button>' : ""}${semanticMatch ? `<p class="match" data-testid="observer-match">Semantic match${cityScene === null ? "" : livingCityObserverMatch ? " · trajectory match" : " · trajectory mismatch"}</p>` : ""}</article>
     </section>
     <section class="person-tools" aria-labelledby="person-tools-title"><div><p class="kicker">Find and share a represented life</p><h2 id="person-tools-title">Procedural identity, not a stored agent</h2><p id="experience-claim" data-testid="experience-claim">Each selected life is represented from compact fields—not an independently simulated mind. Facts are reconstructed from the same seed, snapshot, tick, and branch.</p></div><form role="search" aria-label="Procedural person search" data-person-search><label for="person-search">Procedural person ID</label><div class="search-row"><input id="person-search" name="person" type="search" value="${selectedPersonId}" aria-describedby="person-search-error"><button type="submit">Inspect person</button></div><p id="person-search-error" class="form-error" role="alert">${personSearchError}</p></form>${personA ? `<div class="share-row"><a data-testid="person-deep-link" href="${personLink}">Open this person at tick ${selectedPersonTick}</a><button type="button" class="secondary" data-action="copy-link">Copy local link</button><span role="status">${shareStatus}</span></div>` : ""}</section>
     ${
@@ -806,7 +1152,7 @@ function render(root: HTMLElement): void {
     }
     ${branchComparisonPanel()}
     <section class="trace-controls" aria-label="Replay and field controls"><button type="button" data-action="replay" ${personA ? "" : "disabled"}>Rewind and replay</button><p data-testid="replay-result">${replayResult}</p><button type="button" class="secondary" data-action="fields">Reveal fields</button><button type="button" class="secondary" data-action="render-loss">Simulate renderer loss</button><button type="button" class="secondary" data-action="debug" aria-expanded="${debugVisible}">${debugVisible ? "Hide debug world" : "Inspect debug world"}</button></section>
-    <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Reality budget · ${fieldsRevealed ? "field revealed" : "reveal available"}</p><h2><span data-testid="represented-population">${world.totalPopulation.toLocaleString("en-US")}</span> represented lives</h2><p>Authoritative integers stay compact; visible people are weighted, disposable projections.</p></div><dl><div><dt>Authority</dt><dd data-testid="authority-bytes">${world.cells.length.toLocaleString("en-US")} integer cells · ${authorityBytes.toLocaleString("en-US")} checkpoint bytes</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Visible / represented</dt><dd data-testid="budget-visible">${renderScene.draw.visibleCount.toLocaleString("en-US")} tokens · weights ${renderScene.debug.minimumTokenWeight}–${renderScene.debug.maximumTokenWeight} · <span data-testid="projection-represented">${semanticProjectionA.realityBudget.representedPeople.toLocaleString("en-US")}</span> people → <span data-testid="projection-tokens">${semanticProjectionA.realityBudget.materializedTokens.toLocaleString("en-US")}</span> projected tokens</dd></div><div><dt>Derived projection</dt><dd>${semanticProjectionA.realityBudget.estimatedBytes.toLocaleString("en-US")} bytes · epoch ${semanticProjectionA.identityEpoch} / ${semanticProjectionA.realityBudget.continuityHorizonTicks} ticks</dd></div><div><dt>Tick / state hash</dt><dd><span data-testid="budget-tick">${selectedPersonTick}</span> · <code data-testid="budget-state-hash">${currentKernel.kernelHash}</code></dd></div><div><dt>Event hash</dt><dd><code data-testid="budget-event-hash">${semanticProjectionA.eventHash}</code> · ${semanticProjectionA.events.length} local events</dd></div><div><dt>Frame / backend</dt><dd><span data-testid="budget-frame-time">pending</span> · ${forceCanvasRenderer ? "Canvas forced" : "automatic backend"} · ${renderQualityReason}</dd></div><div><dt>Observer contract</dt><dd>${semanticProjectionA.realityBudget.samplingContract}; camera and GPU quality excluded from hashes</dd></div></dl></section>
+    <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Reality budget · ${fieldsRevealed ? "field revealed" : "reveal available"}</p><h2><span data-testid="represented-population">${world.totalPopulation.toLocaleString("en-US")}</span> represented lives</h2><p>Authoritative integers stay compact; visible people are weighted, disposable projections.</p></div><dl><div><dt>Authority</dt><dd data-testid="authority-bytes">${world.cells.length.toLocaleString("en-US")} integer cells · ${authorityBytes.toLocaleString("en-US")} checkpoint bytes</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Visible / represented</dt><dd data-testid="budget-visible">${visibleCount.toLocaleString("en-US")} literal figures · weights ${minimumVisibleWeight}–${maximumVisibleWeight} · <span data-testid="projection-represented">${semanticProjectionA.realityBudget.representedPeople.toLocaleString("en-US")}</span> people → <span data-testid="projection-tokens">${semanticProjectionA.realityBudget.materializedTokens.toLocaleString("en-US")}</span> projected tokens</dd></div><div><dt>Derived projection</dt><dd>${semanticProjectionA.realityBudget.estimatedBytes.toLocaleString("en-US")} bytes · epoch ${semanticProjectionA.identityEpoch} / ${semanticProjectionA.realityBudget.continuityHorizonTicks} ticks</dd></div><div><dt>Tick / state hash</dt><dd><span data-testid="budget-tick">${selectedPersonTick}</span> · phase ${playbackState.visualTime.phasePermillion} · <code data-testid="budget-state-hash">${currentKernel.kernelHash}</code></dd></div><div><dt>Event hash</dt><dd><code data-testid="budget-event-hash">${semanticProjectionA.eventHash}</code> · ${semanticProjectionA.events.length} local events</dd></div><div><dt>Frame / backend</dt><dd><span data-testid="budget-frame-time">pending</span> · ${forceCanvasRenderer ? "Canvas forced" : "automatic backend"} · ${renderQualityReason}</dd></div><div><dt>Observer contract</dt><dd>${semanticProjectionA.realityBudget.samplingContract}; camera and GPU quality excluded from hashes</dd></div></dl></section>
     ${debugVisible ? `<section class="debug-world" aria-labelledby="debug-title"><div class="debug-heading"><div><p class="kicker">Seeded semantic atlas</p><h2 id="debug-title">Debug globe · L${debugLevel}</h2><p>Fictional geography; orange edges are the wrapped seam. Cell population brightens land.</p></div><div class="debug-controls" aria-label="Debug world level"><button type="button" class="secondary" data-debug-level="2" aria-pressed="${debugLevel === 2}">L2 regions</button><button type="button" class="secondary" data-debug-level="3" aria-pressed="${debugLevel === 3}">L3</button><button type="button" class="secondary" data-debug-level="5" aria-pressed="${debugLevel === 5}">L5 cells</button></div></div><canvas width="768" height="384" data-testid="debug-globe" aria-label="Fictional world cell map" aria-describedby="debug-cell-details">A deterministic map of fictional geography and population.</canvas><div class="debug-inspector" id="debug-cell-details"><div><dt>Selected cell</dt><dd data-testid="debug-cell-id">${selectedCell.id}</dd></div><div><dt>Hierarchy</dt><dd>${selectedParent} → ${selectedCell.id}</dd></div><div><dt>Geography</dt><dd>${selectedCell.biome} · ${selectedCell.elevationMeters.toLocaleString("en-US")} m</dd></div><div><dt>Population</dt><dd>${selectedCell.population.toLocaleString("en-US")}</dd></div><div><dt>Region</dt><dd>${selectedCell.regionId}</dd></div></div><div class="debug-probes"><button type="button" data-debug-cell="L5/12/0">Inspect seam</button><button type="button" data-debug-cell="L5/0/3">Inspect north pole</button></div><article class="field-debug" aria-labelledby="field-debug-title"><div class="field-debug-heading"><div><p class="kicker">Conservative field simulation</p><h2 id="field-debug-title">Tick <span data-testid="field-tick">${fieldState.tick}</span> · <code data-testid="field-hash">${fieldState.stateHash}</code></h2></div><div class="debug-controls"><button type="button" data-action="field-step">Single-step</button><button type="button" class="secondary" data-action="field-day">Advance one day</button></div></div><dl class="field-channels"><div><dt>Resident cohorts</dt><dd>${selectedFieldCell.cohorts.young.toLocaleString("en-US")} young · ${selectedFieldCell.cohorts.adult.toLocaleString("en-US")} adult · ${selectedFieldCell.cohorts.older.toLocaleString("en-US")} older</dd></div><div><dt>Activity channels</dt><dd>sleep ${selectedFieldCell.activities.sleep.toLocaleString("en-US")} · home ${selectedFieldCell.activities.home.toLocaleString("en-US")} · work ${selectedFieldCell.activities.work.toLocaleString("en-US")} · transit ${selectedFieldCell.activities.transit.toLocaleString("en-US")} · community ${selectedFieldCell.activities.community.toLocaleString("en-US")}</dd></div><div><dt>Capacity / amenity</dt><dd>${selectedFieldCell.capacityPermille}‰ / ${selectedFieldCell.amenityPermille}‰ · demand ${selectedFieldCell.flowDemand.toLocaleString("en-US")}</dd></div><div><dt>Sparse active regions</dt><dd>${fieldState.activeCellIds.length}</dd></div><div><dt>Flux ledger</dt><dd>${fieldState.lastFluxes.length.toLocaleString("en-US")} transfers; ${selectedFluxes.length} touch this cell${selectedFluxes[0] ? ` · #${selectedFluxes[0].processingOrder} ${selectedFluxes[0].sourceCellId} → ${selectedFluxes[0].destinationCellId} (${selectedFluxes[0].count.toLocaleString("en-US")})` : ""}</dd></div><div><dt>Invariant failures</dt><dd class="${fieldInvariant.valid ? "valid" : "invalid"}" data-testid="field-invariants">${fieldInvariant.valid ? "None — exact conservation" : fieldInvariant.issues.join("; ")}</dd></div></dl></article>${transportDebugPanel()}</section>` : ""}
     <footer><span>World seed <code>${world.seed}</code> · hash <code data-testid="world-hash">${world.worldHash}</code> · vectors <code data-testid="deterministic-vector-hash">${deterministicVectorHash()}</code></span><span>Run <code>pnpm check</code> from the repository root if a diagnostic fails.</span></footer>
   </main>`;
@@ -821,17 +1167,44 @@ function render(root: HTMLElement): void {
   root.querySelector('[data-action="next"]')?.addEventListener("click", () => {
     stopClock();
     stageIndex = Math.min(stageIndex + 1, stages.length - 1);
-    if (stages[stageIndex] === "Person") personA = queryPerson(snapshotA);
+    const nextStage = stages[stageIndex];
+    livingCityLevel =
+      nextStage === "Settlement"
+        ? "city"
+        : nextStage === "Street"
+          ? "street"
+          : nextStage === "Person"
+            ? "person"
+            : livingCityLevel;
+    if (nextStage === "Person") personA = queryPerson(snapshotA);
     render(root);
   });
   const journeySurface = root.querySelector<HTMLElement>(
     "[data-testid=journey-renderer][role=button]",
   );
-  const inspectHighlighted = (): void => {
-    selectExperience(selectedPersonId, selectedPersonTick, activeBranch);
+  const inspectHighlighted = (event?: MouseEvent): void => {
+    let personId = selectedPersonId;
+    if (event !== undefined && livingCityRenderer !== null) {
+      const canvas = root.querySelector<HTMLCanvasElement>(
+        "[data-render-surface]:not([hidden])",
+      );
+      if (canvas !== null) {
+        const bounds = canvas.getBoundingClientRect();
+        const pick = livingCityRenderer.pick(
+          ((event.clientX - bounds.left) / bounds.width) * canvas.width,
+          ((event.clientY - bounds.top) / bounds.height) * canvas.height,
+          livingCityScene?.semanticKey ?? "",
+        );
+        if (pick !== null) personId = pick.personId;
+      }
+    }
+    stopClock();
+    selectExperience(personId, selectedPersonTick, activeBranch);
     render(root);
   };
-  journeySurface?.addEventListener("click", inspectHighlighted);
+  journeySurface?.addEventListener("click", (event) =>
+    inspectHighlighted(event),
+  );
   journeySurface?.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
@@ -864,7 +1237,7 @@ function render(root: HTMLElement): void {
   root
     .querySelector('[data-action="clock-toggle"]')
     ?.addEventListener("click", () => {
-      if (clockPlaying) stopClock();
+      if (isClockPlaying()) stopClock();
       else startClock(root);
       render(root);
     });
@@ -878,10 +1251,47 @@ function render(root: HTMLElement): void {
     "[data-clock-rate]",
   )) {
     control.addEventListener("click", () => {
-      const requested = Number(control.dataset["clockRate"]);
-      if (requested !== 1 && requested !== 6 && requested !== 24) return;
+      const value = control.dataset["clockRate"];
+      if (value === "Paused") {
+        stopClock();
+        render(root);
+        return;
+      }
+      const requested = Number(value);
+      if (
+        requested !== 1 &&
+        requested !== 5 &&
+        requested !== 15 &&
+        requested !== 60
+      )
+        return;
       clockRate = requested;
-      if (clockPlaying) startClock(root);
+      if (isClockPlaying()) startClock(root);
+      render(root);
+    });
+  }
+  for (const control of root.querySelectorAll<HTMLButtonElement>(
+    "button[data-city-level]",
+  )) {
+    control.addEventListener("click", () => {
+      const requested = control.dataset["cityLevel"];
+      if (
+        requested !== "city" &&
+        requested !== "neighborhood" &&
+        requested !== "street" &&
+        requested !== "person"
+      )
+        return;
+      stopClock();
+      livingCityLevel = requested;
+      stageIndex =
+        requested === "city" || requested === "neighborhood"
+          ? 1
+          : requested === "street"
+            ? 2
+            : 3;
+      if (requested === "person" && personA === null)
+        personA = queryPerson(snapshotA);
       render(root);
     });
   }
@@ -958,6 +1368,9 @@ function render(root: HTMLElement): void {
     .querySelector('[data-action="replay"]')
     ?.addEventListener("click", () => {
       stopClock();
+      const replayTick = selectedPersonTick;
+      seekPlayback(0, true);
+      seekPlayback(replayTick);
       personA = queryPerson(replayPlaceholder(snapshotA, 0));
       replayResult = `${personA.traceHash} restored`;
       replayVerified = true;
@@ -976,7 +1389,9 @@ function render(root: HTMLElement): void {
   root
     .querySelector('[data-action="render-loss"]')
     ?.addEventListener("click", () => {
-      const status = journeyRenderer?.simulateContextLoss();
+      const status =
+        livingCityRenderer?.simulateContextLoss() ??
+        journeyRenderer?.simulateContextLoss();
       if (status !== null && status !== undefined)
         updateRenderDiagnostics(root, status);
     });
@@ -1014,7 +1429,11 @@ function render(root: HTMLElement): void {
         requested < stages.length
       )
         stageIndex = requested;
-      if (stages[stageIndex] === "Person" && personA === null)
+      const requestedStage = stages[stageIndex];
+      if (requestedStage === "Settlement") livingCityLevel = "city";
+      else if (requestedStage === "Street") livingCityLevel = "street";
+      else if (requestedStage === "Person") livingCityLevel = "person";
+      if (requestedStage === "Person" && personA === null)
         personA = queryPerson(snapshotA);
       render(root);
     });
@@ -1050,7 +1469,7 @@ function render(root: HTMLElement): void {
   )) {
     control.addEventListener("click", () => {
       stopClock();
-      selectedPersonTick = Number(control.dataset["personTick"]);
+      seekPlayback(Number(control.dataset["personTick"]));
       personA = queryPerson(snapshotA);
       if (observerBEngine !== null)
         personB = queryPerson(
@@ -1083,7 +1502,8 @@ function render(root: HTMLElement): void {
       render(root);
     });
   }
-  void mountJourneyRenderer(root, renderScene);
+  if (renderScene !== null) void mountJourneyRenderer(root, renderScene);
+  else if (cityScene !== null) void mountLivingCityRenderer(root, cityScene);
 }
 
 const root = document.querySelector<HTMLElement>("#app");
@@ -1148,6 +1568,9 @@ if (!deepLink.ok) {
       if (requestedStage < 0) throw new Error("Unknown local journey stage");
       stageIndex = requestedStage;
       const stage = stages[stageIndex] ?? "Planet";
+      if (stage === "Settlement") livingCityLevel = "city";
+      else if (stage === "Street") livingCityLevel = "street";
+      else if (stage === "Person") livingCityLevel = "person";
       if (deepLink.value.locationId !== stageLocationId(stage))
         throw new Error(
           "Local link location does not match this baseline view",
@@ -1155,6 +1578,29 @@ if (!deepLink.ok) {
       if (stage !== "Person") personA = null;
     }
     render(root);
+    document.addEventListener("visibilitychange", () => {
+      const previousTick = selectedPersonTick;
+      const clockMicroseconds = monotonicClockMicroseconds();
+      if (document.hidden) {
+        if (clockTimer !== null) clearTimeout(clockTimer);
+        clockTimer = null;
+        playbackState = reducePlayback(playbackState, {
+          type: "hidden",
+          clockMicroseconds,
+        });
+      } else {
+        playbackState = reducePlayback(playbackState, {
+          type: "visible",
+          clockMicroseconds,
+        });
+        if (playbackState.status === "playing") startClock(root);
+      }
+      synchronizeSelectedTick();
+      if (selectedPersonTick !== previousTick) {
+        refreshSelectedPeople();
+        render(root);
+      } else if (!updatePlaybackPresentation(root)) render(root);
+    });
   } catch (error: unknown) {
     const reason =
       error instanceof Error ? error.message : "Unknown startup error";

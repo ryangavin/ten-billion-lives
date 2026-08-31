@@ -109,6 +109,11 @@ interface RouteSample {
 }
 
 const MAX_U64 = 0xffff_ffff_ffff_ffffn;
+const validatedFrozenCities = new WeakSet<object>();
+const frozenCityRouteCaches = new WeakMap<
+  object,
+  Map<string, readonly RouteStep[]>
+>();
 
 export function createVisualTime(
   tick: bigint,
@@ -206,6 +211,7 @@ function edgeLength(edge: TrajectoryPedestrianEdge): number {
 }
 
 function validateCity(city: TrajectoryCityProjection): void {
+  if (validatedFrozenCities.has(city)) return;
   if (
     city.schema !== 1 ||
     city.seed.length === 0 ||
@@ -287,6 +293,27 @@ function validateCity(city: TrajectoryCityProjection): void {
       );
     edgeLength(edge);
   }
+  if (
+    Object.isFrozen(city) &&
+    Object.isFrozen(city.places) &&
+    Object.isFrozen(city.pedestrianNodes) &&
+    Object.isFrozen(city.pedestrianEdges) &&
+    city.places.every(Object.isFrozen) &&
+    city.pedestrianNodes.every(
+      (node) =>
+        Object.isFrozen(node) &&
+        Object.isFrozen(node.position) &&
+        Object.isFrozen(node.adjacentEdgeIds) &&
+        Object.isFrozen(node.placeIds),
+    ) &&
+    city.pedestrianEdges.every(
+      (edge) =>
+        Object.isFrozen(edge) &&
+        Object.isFrozen(edge.path) &&
+        edge.path.every(Object.isFrozen),
+    )
+  )
+    validatedFrozenCities.add(city);
 }
 
 function validateItinerary(query: PedestrianTrajectoryQuery): void {
@@ -347,15 +374,35 @@ function placeNode(
   return node;
 }
 
+function samePlaceNode(
+  city: TrajectoryCityProjection,
+  leftPlaceId: string,
+  rightPlaceId: string,
+): boolean {
+  return placeNode(city, leftPlaceId).id === placeNode(city, rightPlaceId).id;
+}
+
 function openRoute(
   city: TrajectoryCityProjection,
   branch: "baseline" | "closure",
   originPlaceId: string,
   destinationPlaceId: string,
 ): readonly RouteStep[] {
+  const routeKey = `${branch}\0${originPlaceId}\0${destinationPlaceId}`;
+  const routeCache = frozenCityRouteCaches.get(city);
+  const cached = routeCache?.get(routeKey);
+  if (cached !== undefined) return cached;
   const origin = placeNode(city, originPlaceId);
   const destination = placeNode(city, destinationPlaceId);
-  if (origin.id === destination.id) return Object.freeze([]);
+  if (origin.id === destination.id) {
+    const empty = Object.freeze([]);
+    if (validatedFrozenCities.has(city)) {
+      const cache = routeCache ?? new Map<string, readonly RouteStep[]>();
+      cache.set(routeKey, empty);
+      frozenCityRouteCaches.set(city, cache);
+    }
+    return empty;
+  }
   const outgoing = new Map<string, RouteStep[]>();
   for (const edge of city.pedestrianEdges) {
     if (edge.closedInBranch === branch) continue;
@@ -431,7 +478,13 @@ function openRoute(
     steps.push(entry.step);
     cursor = entry.nodeId;
   }
-  return Object.freeze(steps.reverse());
+  const route = Object.freeze(steps.reverse());
+  if (validatedFrozenCities.has(city)) {
+    const cache = routeCache ?? new Map<string, readonly RouteStep[]>();
+    cache.set(routeKey, route);
+    frozenCityRouteCaches.set(city, cache);
+  }
+  return route;
 }
 
 function routePoints(steps: readonly RouteStep[]): readonly Readonly<{
@@ -736,8 +789,16 @@ export function queryPedestrianPose(
     let destination: string;
     let progress: number;
     if (
-      currentAnchor.originPlaceId === nextAnchor.originPlaceId &&
-      currentAnchor.destinationPlaceId === nextAnchor.destinationPlaceId
+      samePlaceNode(
+        query.city,
+        currentAnchor.originPlaceId,
+        nextAnchor.originPlaceId,
+      ) &&
+      samePlaceNode(
+        query.city,
+        currentAnchor.destinationPlaceId,
+        nextAnchor.destinationPlaceId,
+      )
     ) {
       origin = currentAnchor.originPlaceId;
       destination = currentAnchor.destinationPlaceId;

@@ -103,6 +103,8 @@ interface PedestrianPose {
 
 At an itinerary boundary, the final route point approached at tick `t`, phase `999999` and the exact point at tick `t + 1`, phase `0` differ by at most the single fixed-point interpolation remainder defined by #31. Dwelling uses the destination entrance with a stable zero stride. Missing places, unreachable routes, invalid itineraries, and branch/topology mismatches fail closed with an actionable typed error; no straight-line or random fallback may silently change semantics.
 
+Issue #33 reconciles one integration detail exposed by the existing itinerary index: a transit point may name a regional route destination while the following stationary point names the more specific household, workplace, school, or service arrival. The app constructs a deterministic per-trajectory routing view that preserves both original semantic IDs and maps them to the same frozen pedestrian entrance. Trajectory-anchor compatibility may use that shared entrance identity, while itinerary and trajectory hashes still cover the distinct original IDs. A crowd-wide alias is forbidden because the same regional destination can lead different people to different local arrivals.
+
 ## Presentation-time and playback rules
 
 The kernel remains 24 authoritative hourly ticks for the repeating day. Presentation time is an explicit `(tick, phasePermillion)` query input and never a new kernel tick, command, snapshot field, event, or state transition. The app owns a pure playback reducer whose only clock input is an injected nonnegative monotonic integer microsecond sample.

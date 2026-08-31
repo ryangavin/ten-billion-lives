@@ -134,6 +134,62 @@ function onOpenTopology(
 }
 
 describe("pure pedestrian trajectories", () => {
+  it("does not cache validation for a shallow-frozen mutable city", () => {
+    const mutablePlaces = city.places.map((place) => ({ ...place }));
+    const shallowCity = Object.freeze({ ...city, places: mutablePlaces });
+    expect(() => query(0n, 0, { city: shallowCity })).not.toThrow();
+    const first = mutablePlaces[0];
+    if (first === undefined) throw new Error("fixture place is missing");
+    first.entranceNodeId = "node/missing";
+    expect(() => query(0n, 0, { city: shallowCity })).toThrow(
+      PedestrianTrajectoryError,
+    );
+  });
+
+  it("keeps route and arrival aliases continuous when they share one entrance", () => {
+    const work = city.places.find((place) => place.id === "place/work");
+    if (work === undefined) throw new Error("fixture work place is missing");
+    const aliasCity = Object.freeze({
+      ...city,
+      places: Object.freeze(
+        [
+          ...city.places,
+          Object.freeze({
+            id: "region/work",
+            entranceNodeId: work.entranceNodeId,
+          }),
+        ].sort((left, right) => left.id.localeCompare(right.id)),
+      ),
+      cityHash: `${city.cityHash}/arrival-alias`,
+    });
+    const aliasRoute = Object.freeze({
+      ...outward,
+      destinationId: "region/work",
+    });
+    const aliasItinerary = Object.freeze([
+      itineraryPoint(0n, "home", "household/ada"),
+      itineraryPoint(1n, "transit", "transport/outward", aliasRoute),
+      itineraryPoint(2n, "work", "place/work"),
+    ]);
+    const before = query(1n, 999_999, {
+      itinerary: aliasItinerary,
+      city: aliasCity,
+    });
+    const arrival = query(2n, 0, {
+      itinerary: aliasItinerary,
+      city: aliasCity,
+    });
+
+    expect(before.destinationPlaceId).toBe("region/work");
+    expect(arrival.destinationPlaceId).toBe("place/work");
+    expect(
+      Math.abs(before.position.eastCm - arrival.position.eastCm),
+    ).toBeLessThanOrEqual(1);
+    expect(
+      Math.abs(before.position.northCm - arrival.position.northCm),
+    ).toBeLessThanOrEqual(1);
+  });
+
   it("matches the canonical golden transcript and reproduces independently", () => {
     const times = [
       createVisualTime(0n, 0),

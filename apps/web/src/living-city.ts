@@ -42,6 +42,16 @@ const levelLimits: Readonly<Record<LivingCityLevel, number>> = Object.freeze({
 const fnvOffset = 0xcbf29ce484222325n;
 const fnvPrime = 0x100000001b3n;
 const u64Mask = 0xffffffffffffffffn;
+const maximumCachedTrajectoryCities = 4_096;
+const maximumCachedItineraryWindows = 8_192;
+const trajectoryCityCaches = new WeakMap<
+  CityProjection,
+  Map<string, TrajectoryCityProjection>
+>();
+const itineraryWindowCaches = new WeakMap<
+  ProductionLivingCityQuery["itineraryAt"],
+  Map<string, readonly PersonItineraryPoint[]>
+>();
 
 function stableHash(value: string): bigint {
   let hash = fnvOffset;
@@ -150,8 +160,21 @@ function trajectoryCity(
   city: CityProjection,
   itineraries: readonly (readonly PersonItineraryPoint[])[],
 ): TrajectoryCityProjection {
+  const itineraryKey = itineraries
+    .flatMap((itinerary) =>
+      itinerary.map(
+        (point) =>
+          `${point.activity}:${point.location.semanticId}:${point.route?.destinationId ?? ""}`,
+      ),
+    )
+    .join("\0");
+  const cache = trajectoryCityCaches.get(city) ?? new Map();
+  trajectoryCityCaches.set(city, cache);
+  const cached = cache.get(itineraryKey);
+  if (cached !== undefined) return cached;
   const requested = new Map<string, CityPlaceKind>();
   const conflicts = new Map<string, Set<string>>();
+  const aliases = new Map<string, string>();
   const derived = new Map(
     city.places.map((place) => [
       place.id,
@@ -184,8 +207,19 @@ function trajectoryCity(
           .slice(0, index)
           .reverse()
           .find((candidate) => candidate.activity !== "transit");
-        if (origin !== undefined)
+        const arrival = itinerary
+          .slice(index + 1)
+          .find((candidate) => candidate.activity !== "transit");
+        if (origin !== undefined) {
           conflict(origin.location.semanticId, point.route.destinationId);
+          if (arrival !== undefined)
+            conflict(origin.location.semanticId, arrival.location.semanticId);
+        }
+        if (
+          arrival !== undefined &&
+          point.route.destinationId !== arrival.location.semanticId
+        )
+          aliases.set(point.route.destinationId, arrival.location.semanticId);
       }
       const next = itinerary[index + 1];
       if (
@@ -197,9 +231,9 @@ function trajectoryCity(
     }
   }
   const allNodeIds = city.pedestrianNodes.map(({ id }) => id);
-  for (const [semanticId, kind] of [...requested].sort(([left], [right]) =>
-    compareText(left, right),
-  )) {
+  for (const [semanticId, kind] of [...requested]
+    .filter(([semanticId]) => !aliases.has(semanticId))
+    .sort(([left], [right]) => compareText(left, right))) {
     const forbidden = new Set(
       [...(conflicts.get(semanticId) ?? [])].flatMap((neighbor) => {
         const place = derived.get(neighbor);
@@ -225,13 +259,34 @@ function trajectoryCity(
       );
     derived.set(semanticId, Object.freeze({ id: semanticId, entranceNodeId }));
   }
+  for (const [semanticId, targetId] of [...aliases].sort(([left], [right]) =>
+    compareText(left, right),
+  )) {
+    const target = derived.get(targetId);
+    if (target === undefined)
+      throw new RangeError(
+        `city cannot resolve semantic destination alias ${semanticId} to ${targetId}`,
+      );
+    const existing = derived.get(semanticId);
+    if (
+      existing !== undefined &&
+      existing.entranceNodeId !== target.entranceNodeId
+    )
+      throw new RangeError(
+        `city semantic alias ${semanticId} conflicts with ${targetId}`,
+      );
+    derived.set(
+      semanticId,
+      Object.freeze({ id: semanticId, entranceNodeId: target.entranceNodeId }),
+    );
+  }
   const places = Object.freeze(
     [...derived.values()].sort((left, right) => compareText(left.id, right.id)),
   );
   const mappingHash = hashText(
     places.map((place) => `${place.id}\0${place.entranceNodeId}`).join("\0"),
   );
-  return Object.freeze({
+  const projection = Object.freeze({
     schema: city.schema,
     seed: city.seed,
     settlementId: city.settlementId,
@@ -240,6 +295,12 @@ function trajectoryCity(
     pedestrianEdges: city.pedestrianEdges,
     cityHash: `${city.cityHash}/${mappingHash}`,
   });
+  if (cache.size >= maximumCachedTrajectoryCities) {
+    const oldest = cache.keys().next().value;
+    if (oldest !== undefined) cache.delete(oldest);
+  }
+  cache.set(itineraryKey, projection);
+  return projection;
 }
 
 export function createProductionLivingCityScene(
@@ -250,25 +311,63 @@ export function createProductionLivingCityScene(
       "city projection tick must match explicit visual time",
     );
   const sampled = sampleTokens(query);
-  const itineraries = sampled.map((token) =>
-    itineraryWindow(token.personId, query.time.tick, query.itineraryAt),
-  );
-  const routedCity = trajectoryCity(query.city, itineraries);
+  const itineraryCache: Map<string, readonly PersonItineraryPoint[]> =
+    itineraryWindowCaches.get(query.itineraryAt) ??
+    new Map<string, readonly PersonItineraryPoint[]>();
+  itineraryWindowCaches.set(query.itineraryAt, itineraryCache);
+  const itineraries = sampled.map((token) => {
+    const key = [
+      query.branch,
+      query.projection.realityBudget.stateHash,
+      query.projection.eventHash,
+      token.personId,
+      query.time.tick.toString(),
+    ].join("/");
+    const cached = itineraryCache.get(key);
+    if (cached !== undefined) return cached;
+    const itinerary = itineraryWindow(
+      token.personId,
+      query.time.tick,
+      query.itineraryAt,
+    );
+    if (itineraryCache.size >= maximumCachedItineraryWindows) {
+      const oldest = itineraryCache.keys().next().value;
+      if (oldest !== undefined) itineraryCache.delete(oldest);
+    }
+    itineraryCache.set(key, itinerary);
+    return itinerary;
+  });
   const figures: readonly LivingCityFigure[] = Object.freeze(
     sampled.map((token, index) => {
       const itinerary = itineraries[index];
       if (itinerary === undefined)
         throw new RangeError(`missing itinerary for ${token.personId}`);
-      const pose = queryPedestrianPose({
-        schema: 1,
-        branch: query.branch,
-        stateHash: query.projection.realityBudget.stateHash,
-        eventHash: query.projection.eventHash,
-        personId: token.personId,
-        itinerary,
-        city: routedCity,
-        time: query.time,
-      });
+      const routedCity = trajectoryCity(query.city, [itinerary]);
+      let pose;
+      try {
+        pose = queryPedestrianPose({
+          schema: 1,
+          branch: query.branch,
+          stateHash: query.projection.realityBudget.stateHash,
+          eventHash: query.projection.eventHash,
+          personId: token.personId,
+          itinerary,
+          city: routedCity,
+          time: query.time,
+        });
+      } catch (error) {
+        throw new Error(
+          `living-city trajectory failed for ${token.personId} (${itinerary
+            .map(
+              (point) =>
+                `${point.tick}:${point.location.semanticId}->${point.route?.destinationId ?? "stationary"}`,
+            )
+            .join(
+              ", ",
+            )}): ${error instanceof Error ? error.message : "unknown trajectory error"}`,
+          { cause: error },
+        );
+      }
       return Object.freeze({
         personId: token.personId,
         representedWeight: token.weight,
@@ -297,7 +396,7 @@ export function createProductionLivingCityScene(
       query.projection.realityBudget.stateHash,
       query.projection.eventHash,
       query.projection.manifestationHash,
-      routedCity.cityHash,
+      query.city.cityHash,
       query.time.tick.toString(),
       query.time.phasePermillion.toString(),
       figureSignature,

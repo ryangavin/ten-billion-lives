@@ -109,5 +109,33 @@ describe("production living-city scene adapter", () => {
       ),
     ).toBe(true);
     expect(independent).toEqual(cityScene);
+
+    const aliasedPersonId = "person_05iqcey_0p7mu3t";
+    const aliasedState = stateAt(9n);
+    const aliasedProjection = observerA.project({
+      state: aliasedState,
+      tick: 9n,
+      scopeCellIds: [cellId],
+      lod: "person",
+      selectedPersonIds: [selectedPersonId],
+    });
+    const aliasedScene = createProductionLivingCityScene({
+      ...query,
+      projection: aliasedProjection,
+      time: createVisualTime(9n, 999_999),
+      level: "person",
+      quality: "baseline",
+      itineraryAt: itineraryAt(observerA),
+    });
+    expect(
+      aliasedScene.figures.find(
+        (figure) => figure.personId === aliasedPersonId,
+      ),
+    ).toMatchObject({
+      pose: {
+        mode: "walking",
+        destinationPlaceId: "region/region-0-5",
+      },
+    });
   });
 });
