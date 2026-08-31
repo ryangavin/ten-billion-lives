@@ -41,6 +41,14 @@ The MVP does not claim:
 - Automated accessibility reported no serious or critical Axe findings in the canonical Chromium audit, but automation is not a substitute for evaluation with every assistive-technology/browser combination.
 - Performance numbers describe the committed M1 Max profile; they are not promises for arbitrary hardware.
 
+## Living-city target limitations
+
+- The [living-city contract](LIVING_CITY.md) is the M4 target, not evidence that the target renderer is already implemented or that final visual quality has passed.
+- Brindle Bay geometry is a compact seeded fictional projection. It is not real geography, a remote map, a navigation product, or an urban-planning model.
+- Walking between hourly ticks uses an explicit presentation phase and pure route interpolation. It does not add authoritative minute ticks, persist continuous agent state, or claim physically realistic pedestrian behavior.
+- Distant figures remain weighted manifestations. Recognizable silhouettes do not imply one visible figure per represented person, and a selected weight-one identity remains a reconstructed semantic query rather than a stored agent.
+- Literal-figure density, frame, memory, upload, draw, picking, resize, and transition budgets remain uncommitted until issue #32 measures the bounded renderer spike on the named profile.
+
 ## Persistence and compatibility limitations
 
 - Only local format version 1 is supported. Unknown, newer, malformed, or hash-invalid snapshots fail closed.

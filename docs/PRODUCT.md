@@ -50,6 +50,12 @@ The explicit intervention temporarily closes one canonical intercity edge at tic
 - A manifested person must retain the same stable identifier, household, home, work/school/leisure role, symmetric relationships, analytical itinerary, location/activity at a tick, qualifying encounters, and event membership for the same seed, snapshot, branch, and tick.
 - A person need not remain rendered outside the local view. Re-querying the same semantic context must recreate them exactly.
 
+## Living-city extension
+
+M4 keeps this product journey and replaces the small diagnostic city view with a visually dominant 2.5D Brindle Bay. The frozen [living-city contract](LIVING_CITY.md) adds a coherent fictional street network, recognizable walking figures, presentation-only sub-tick motion, semantic zoom, picking and following, explicit playback labels, and a structured textual alternative. It does not change the exact population claim, authoritative 24 hourly ticks, intervention semantics, observer model, or field reveal.
+
+The product target remains falsifiable: the city must visibly explain ordinary commutes, shared-place meetings, Lantern Tide, and the closure detour while a direct seek and playback at the same explicit tick and phase yield equal trajectories. Numeric density and performance budgets are deliberately not claimed here; issue #32 must measure the literal-person renderer before those budgets are frozen.
+
 ## Terminology
 
 - **Represented person:** one exact unit of conserved population addressable through a field cell and stable local ordinal; not a permanently stored agent record.

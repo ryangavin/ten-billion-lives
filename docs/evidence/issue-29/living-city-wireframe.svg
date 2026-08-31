@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title description">
+  <title id="title">Brindle Bay living-city desktop target wireframe</title>
+  <desc id="description">A dominant tilted waterfront city map with roads, sidewalks, crossings, buildings, public spaces, many recognizable walkers, a selected person, time controls, and a compact observer panel.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#12243a" />
+      <stop offset="1" stop-color="#243a4c" />
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2e6680" />
+      <stop offset="1" stop-color="#163e5a" />
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#07111d" flood-opacity="0.42" />
+    </filter>
+    <g id="person">
+      <circle cx="0" cy="-11" r="5" fill="#f5c98b" stroke="#152031" stroke-width="2" />
+      <path d="M 0 -5 L 0 11 M 0 1 L -7 7 M 0 1 L 7 6 M 0 11 L -6 21 M 0 11 L 7 20" fill="none" stroke="#f7e4bd" stroke-width="5" stroke-linecap="round" />
+      <path d="M 0 -4 L 0 10" stroke="#e06855" stroke-width="7" stroke-linecap="round" />
+    </g>
+    <g id="personBlue">
+      <circle cx="0" cy="-11" r="5" fill="#d8a46f" stroke="#152031" stroke-width="2" />
+      <path d="M 0 -5 L 0 11 M 0 1 L -7 7 M 0 1 L 7 6 M 0 11 L -6 21 M 0 11 L 7 20" fill="none" stroke="#f7e4bd" stroke-width="5" stroke-linecap="round" />
+      <path d="M 0 -4 L 0 10" stroke="#4ca6c8" stroke-width="7" stroke-linecap="round" />
+    </g>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)" />
+  <rect x="28" y="24" width="1544" height="852" rx="28" fill="#0c1724" stroke="#54728c" stroke-width="2" />
+
+  <g aria-label="Header">
+    <text x="62" y="69" fill="#f4f0df" font-family="system-ui, sans-serif" font-size="29" font-weight="700">TEN BILLION LIVES</text>
+    <text x="62" y="99" fill="#9fc3d1" font-family="system-ui, sans-serif" font-size="17">Brindle Bay · baseline · 07:30 + phase 500000</text>
+    <rect x="1148" y="46" width="380" height="48" rx="24" fill="#152a3a" stroke="#79bfae" />
+    <text x="1175" y="77" fill="#e8f5ee" font-family="system-ui, sans-serif" font-size="17" font-weight="650">10,000,000,000 represented lives</text>
+  </g>
+
+  <g aria-label="Dominant living city map" filter="url(#shadow)">
+    <path d="M 67 178 L 920 120 L 1262 292 L 1168 733 L 304 798 L 67 623 Z" fill="#315a4a" stroke="#6d9a80" stroke-width="3" />
+    <path d="M 905 119 L 1262 292 L 1168 733 L 958 749 L 1035 583 L 1014 425 Z" fill="url(#water)" />
+    <path d="M 1002 232 C 1045 330 1030 416 1057 500 C 1080 572 1032 650 976 744" fill="none" stroke="#9ad0c0" stroke-width="18" opacity="0.72" />
+
+    <g aria-label="Roads" fill="none" stroke-linecap="round">
+      <path d="M 168 662 L 384 585 L 615 512 L 853 440 L 1032 365" stroke="#202b34" stroke-width="62" />
+      <path d="M 257 744 L 380 584 L 482 418 L 573 242" stroke="#202b34" stroke-width="54" />
+      <path d="M 588 760 L 615 512 L 664 306 L 694 160" stroke="#202b34" stroke-width="50" />
+      <path d="M 846 730 L 853 440 L 832 212" stroke="#202b34" stroke-width="52" />
+      <path d="M 143 438 L 482 418 L 664 306 L 938 302" stroke="#202b34" stroke-width="48" />
+      <path d="M 147 305 L 381 286 L 573 242 L 832 212" stroke="#202b34" stroke-width="44" />
+    </g>
+
+    <g aria-label="Sidewalk network" fill="none" stroke="#d6c9a7" stroke-linecap="round">
+      <path d="M 163 628 L 373 554 L 604 481 L 840 409 L 1017 336" stroke-width="13" />
+      <path d="M 176 696 L 397 616 L 628 544 L 866 470 L 1044 395" stroke-width="13" />
+      <path d="M 224 724 L 348 564 L 450 397 L 543 226" stroke-width="12" />
+      <path d="M 290 764 L 414 603 L 514 439 L 606 260" stroke-width="12" />
+      <path d="M 553 756 L 580 505 L 630 298 L 659 157" stroke-width="12" />
+      <path d="M 623 764 L 651 519 L 699 316 L 729 162" stroke-width="12" />
+      <path d="M 811 728 L 817 441 L 797 215" stroke-width="12" />
+      <path d="M 881 730 L 888 439 L 867 207" stroke-width="12" />
+    </g>
+
+    <g aria-label="Crossings" stroke="#f5eee0" stroke-width="6">
+      <path d="M 364 558 L 406 611 M 374 551 L 416 604 M 385 547 L 426 597" />
+      <path d="M 592 478 L 637 543 M 603 475 L 648 537 M 614 470 L 659 530" />
+      <path d="M 828 407 L 875 470 M 839 403 L 885 463 M 850 398 L 895 456" />
+      <path d="M 452 393 L 514 443 M 458 382 L 520 432 M 466 372 L 527 422" />
+    </g>
+
+    <g aria-label="Buildings" stroke="#142536" stroke-width="3">
+      <path d="M 207 338 L 340 329 L 375 365 L 239 378 Z" fill="#d99b6b" />
+      <path d="M 207 338 L 237 306 L 368 299 L 340 329 Z" fill="#efc18c" />
+      <path d="M 340 329 L 368 299 L 401 335 L 375 365 Z" fill="#ad6b53" />
+
+      <path d="M 416 210 L 529 185 L 560 221 L 446 250 Z" fill="#b76f5c" />
+      <path d="M 416 210 L 439 174 L 550 151 L 529 185 Z" fill="#e5b57e" />
+      <path d="M 529 185 L 550 151 L 582 188 L 560 221 Z" fill="#915144" />
+
+      <path d="M 500 341 L 604 287 L 635 329 L 530 385 Z" fill="#c47c62" />
+      <path d="M 500 341 L 518 307 L 621 255 L 604 287 Z" fill="#f0c590" />
+      <path d="M 604 287 L 621 255 L 652 296 L 635 329 Z" fill="#9f5f50" />
+
+      <path d="M 701 235 L 776 218 L 809 255 L 732 276 Z" fill="#c68b5b" />
+      <path d="M 701 235 L 721 202 L 795 186 L 776 218 Z" fill="#efd19b" />
+      <path d="M 776 218 L 795 186 L 829 223 L 809 255 Z" fill="#9a6547" />
+
+      <path d="M 682 359 L 798 328 L 826 373 L 708 407 Z" fill="#d1935f" />
+      <path d="M 682 359 L 701 322 L 816 293 L 798 328 Z" fill="#f0ca8f" />
+      <path d="M 798 328 L 816 293 L 845 339 L 826 373 Z" fill="#a86749" />
+
+      <path d="M 403 491 L 521 457 L 552 501 L 432 539 Z" fill="#a96555" />
+      <path d="M 403 491 L 425 451 L 541 419 L 521 457 Z" fill="#dda778" />
+      <path d="M 521 457 L 541 419 L 573 463 L 552 501 Z" fill="#884b43" />
+
+      <path d="M 675 570 L 790 534 L 823 580 L 705 620 Z" fill="#bf7658" />
+      <path d="M 675 570 L 697 531 L 810 497 L 790 534 Z" fill="#e8ba82" />
+      <path d="M 790 534 L 810 497 L 843 544 L 823 580 Z" fill="#985443" />
+
+      <path d="M 879 504 L 966 457 L 993 499 L 904 548 Z" fill="#b26e55" />
+      <path d="M 879 504 L 896 468 L 982 423 L 966 457 Z" fill="#e4b37e" />
+      <path d="M 966 457 L 982 423 L 1010 465 L 993 499 Z" fill="#8c4d42" />
+    </g>
+
+    <g aria-label="Public spaces">
+      <path d="M 277 471 L 377 448 L 415 493 L 315 521 Z" fill="#79a95b" stroke="#b9d889" stroke-width="3" />
+      <circle cx="345" cy="477" r="9" fill="#dbe9b3" />
+      <circle cx="320" cy="491" r="7" fill="#dbe9b3" />
+      <path d="M 887 335 L 1000 292 L 1024 347 L 910 391 Z" fill="#d4ae57" stroke="#f5da83" stroke-width="3" />
+      <path d="M 920 350 L 988 324" stroke="#fff0b0" stroke-width="5" stroke-dasharray="7 8" />
+    </g>
+
+    <g aria-label="Walking people">
+      <use href="#person" transform="translate(255 649) scale(.78)" />
+      <use href="#personBlue" transform="translate(320 620) scale(.72)" />
+      <use href="#person" transform="translate(454 564) scale(.82)" />
+      <use href="#personBlue" transform="translate(526 535) scale(.76)" />
+      <use href="#person" transform="translate(675 493) scale(.84)" />
+      <use href="#personBlue" transform="translate(742 468) scale(.77)" />
+      <use href="#person" transform="translate(886 416) scale(.82)" />
+      <use href="#personBlue" transform="translate(949 388) scale(.72)" />
+      <use href="#person" transform="translate(372 536) scale(.78)" />
+      <use href="#personBlue" transform="translate(472 402) scale(.72)" />
+      <use href="#person" transform="translate(614 459) scale(.8)" />
+      <use href="#personBlue" transform="translate(646 342) scale(.7)" />
+      <use href="#person" transform="translate(849 381) scale(.78)" />
+      <use href="#personBlue" transform="translate(840 287) scale(.68)" />
+      <use href="#person" transform="translate(918 339) scale(.76)" />
+      <use href="#personBlue" transform="translate(952 327) scale(.72)" />
+      <use href="#person" transform="translate(976 346) scale(.7)" />
+    </g>
+
+    <g aria-label="Selected person">
+      <circle cx="604" cy="471" r="27" fill="none" stroke="#ffe56e" stroke-width="5" />
+      <circle cx="604" cy="471" r="35" fill="none" stroke="#ffe56e" stroke-width="2" stroke-dasharray="5 7" />
+      <use href="#personBlue" transform="translate(604 471) scale(.95)" />
+      <path d="M 629 449 L 702 411" stroke="#ffe56e" stroke-width="3" />
+      <rect x="700" y="382" width="178" height="57" rx="12" fill="#132334" stroke="#ffe56e" />
+      <text x="716" y="405" fill="#fff4b0" font-family="system-ui, sans-serif" font-size="15" font-weight="700">Selected person · weight 1</text>
+      <text x="716" y="426" fill="#c8d7df" font-family="system-ui, sans-serif" font-size="13">Following to Market Hall</text>
+    </g>
+
+    <g font-family="system-ui, sans-serif">
+      <rect x="78" y="141" width="236" height="47" rx="12" fill="#102536" stroke="#83b8c4" />
+      <text x="96" y="171" fill="#f3eee0" font-size="22" font-weight="700">Brindle Bay</text>
+      <rect x="127" y="402" width="160" height="34" rx="10" fill="#102536" opacity=".92" />
+      <text x="143" y="425" fill="#e8f2e8" font-size="15">Harbor Street</text>
+      <rect x="886" y="272" width="178" height="40" rx="10" fill="#5b451c" stroke="#f4d568" />
+      <text x="901" y="298" fill="#fff1ae" font-size="17" font-weight="700">Lantern Tide</text>
+      <rect x="285" y="441" width="105" height="28" rx="9" fill="#24452f" />
+      <text x="299" y="461" fill="#d9edc9" font-size="13">Bay Garden</text>
+      <rect x="672" y="527" width="115" height="29" rx="9" fill="#4a2c26" />
+      <text x="687" y="547" fill="#f5d7ba" font-size="13">Market Hall</text>
+      <rect x="209" y="294" width="89" height="29" rx="9" fill="#4a2c26" />
+      <text x="225" y="314" fill="#f5d7ba" font-size="13">School</text>
+      <rect x="103" y="714" width="154" height="34" rx="10" fill="#213245" stroke="#d6c9a7" />
+      <text x="120" y="737" fill="#f4ead7" font-size="14">Sidewalk network</text>
+    </g>
+  </g>
+
+  <g aria-label="Observer and controls panel" font-family="system-ui, sans-serif">
+    <rect x="1268" y="122" width="272" height="640" rx="20" fill="#122333" stroke="#466780" stroke-width="2" />
+    <text x="1295" y="162" fill="#f1ead7" font-size="21" font-weight="700">Follow Dara</text>
+    <text x="1295" y="189" fill="#9fc3d1" font-size="14">person_… · commuting</text>
+
+    <rect x="1292" y="215" width="224" height="90" rx="13" fill="#0d1a27" />
+    <text x="1310" y="244" fill="#dce8eb" font-size="15" font-weight="650">Route</text>
+    <text x="1310" y="270" fill="#9fc3d1" font-size="14">Home → Market Hall</text>
+    <text x="1310" y="292" fill="#80d0b5" font-size="13">trajectory hash matches</text>
+
+    <text x="1295" y="342" fill="#f1ead7" font-size="15" font-weight="700">TIME</text>
+    <rect x="1293" y="358" width="48" height="44" rx="10" fill="#273e50" />
+    <text x="1310" y="386" fill="#fff" font-size="18">↶</text>
+    <rect x="1350" y="358" width="71" height="44" rx="10" fill="#e2a957" />
+    <text x="1366" y="386" fill="#172231" font-size="15" font-weight="700">Pause</text>
+    <rect x="1430" y="358" width="86" height="44" rx="10" fill="#273e50" />
+    <text x="1445" y="386" fill="#fff" font-size="14">15 min/s</text>
+    <rect x="1293" y="418" width="223" height="9" rx="5" fill="#2c4558" />
+    <circle cx="1399" cy="422" r="11" fill="#ffe56e" />
+    <text x="1295" y="456" fill="#9fc3d1" font-size="13">Named moment: Morning commute</text>
+
+    <text x="1295" y="500" fill="#f1ead7" font-size="15" font-weight="700">OBSERVER B</text>
+    <rect x="1293" y="516" width="223" height="66" rx="13" fill="#173b35" stroke="#63c7a5" />
+    <text x="1310" y="544" fill="#dff8ee" font-size="15" font-weight="700">✓ Semantic match</text>
+    <text x="1310" y="567" fill="#9fd9c6" font-size="13">same tick + phase · own camera</text>
+
+    <text x="1295" y="625" fill="#f1ead7" font-size="15" font-weight="700">REALITY BUDGET</text>
+    <text x="1295" y="650" fill="#9fc3d1" font-size="13">weighted visible figures</text>
+    <text x="1295" y="673" fill="#9fc3d1" font-size="13">0 stored person rows</text>
+    <text x="1295" y="696" fill="#9fc3d1" font-size="13">Canvas · baseline quality</text>
+    <rect x="1293" y="714" width="223" height="31" rx="9" fill="#273e50" />
+    <text x="1350" y="735" fill="#f3eee0" font-size="13">Reveal fields</text>
+  </g>
+
+  <g aria-label="Zoom scale" font-family="system-ui, sans-serif">
+    <rect x="72" y="811" width="1140" height="42" rx="18" fill="#122333" stroke="#466780" />
+    <text x="96" y="837" fill="#9fc3d1" font-size="13">CITY</text>
+    <path d="M 151 832 L 1082 832" stroke="#3e6078" stroke-width="6" stroke-linecap="round" />
+    <circle cx="696" cy="832" r="12" fill="#ffe56e" />
+    <text x="1110" y="837" fill="#9fc3d1" font-size="13">PERSON</text>
+  </g>
+</svg>

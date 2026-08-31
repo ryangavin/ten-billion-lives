@@ -25,7 +25,10 @@
     "manifestation",
     "manifestations",
     "Mebibytes",
+    "Milli",
+    "noncanonical",
     "permille",
+    "Permillion",
     "Playwright",
     "pnpm",
     "PRNG",
@@ -41,12 +44,14 @@
     "testkit",
     "TypeScript",
     "unvalidated",
+    "uninspected",
     "Vite",
     "Vitest",
     "WebKit",
     "WebM",
     "WebGPU",
     "WebSocket",
-    "worktree"
+    "worktree",
+    "worktrees"
   ]
 }

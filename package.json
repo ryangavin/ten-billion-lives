@@ -36,7 +36,7 @@
     "replay:tracer": "node scripts/replay-tracer.mjs",
     "replay:world": "pnpm --silent --filter @ten-billion-lives/sim build && node scripts/replay-world.mjs",
     "test": "pnpm test:contracts && vitest run",
-    "test:contracts": "node scripts/check-product-contract.mjs && node scripts/check-architecture-contract.mjs",
+    "test:contracts": "node scripts/check-product-contract.mjs && node scripts/check-architecture-contract.mjs && node scripts/check-living-city-contract.mjs",
     "test:e2e": "playwright test",
     "lint": "eslint .",
     "format": "prettier --write .",

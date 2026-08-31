@@ -26,7 +26,7 @@ Authority is intentionally narrow:
 
 ## Deterministic world evolution
 
-The kernel advances one one-minute tick at a time:
+The kernel advances one analytical tick at a time:
 
 ```text
 S[t+1] = evolve(S[t], commands[t])
@@ -170,6 +170,32 @@ flowchart TD
 **Text alternative:** A seed initializes deterministic fields and an ordered local command log advances them. Authoritative state produces hashes/snapshots and feeds pure semantic queries. Semantic projections flow one way into WebGPU or Canvas and then two separate observer views. Neither observer can feed camera or UI state back into authority.
 
 For the product journey, planet and settlement views read aggregate world fields; street/person/festival views request manifestations; the second observer repeats those queries independently; rewind uses snapshot plus replay; field reveal shows the authoritative and derived values already present at these boundaries.
+
+## M4 living-city boundary freeze
+
+The [living-city contract](LIVING_CITY.md) freezes version 1 readonly shapes for seeded city geometry, canonical presentation time, pure trajectories, immutable scene input, picking, and accessible summaries. City and trajectory modules extend `packages/manifest`; they consume readonly simulation and itinerary values and do not become world authority. `packages/render` consumes those projections without importing the application or issuing commands. `apps/web` owns the injected-clock playback reducer, camera, selection, follow state, and accessibility composition.
+
+```mermaid
+flowchart LR
+  Tick[authoritative hourly tick] --> Context[explicit tick + bounded phase]
+  Clock[injected monotonic clock] -. app-only translation .-> Context
+  Seed[seed + settlement ID] --> City[pure CityProjection + cityHash]
+  State[readonly world + itinerary] --> Pose[pure trajectory + trajectoryHash]
+  Context --> Pose
+  City --> Pose
+  City --> Scene[immutable LivingCityScene]
+  Pose --> Scene
+  Crowd[weighted manifestations] --> Scene
+  Scene --> Render[WebGPU or Canvas]
+  Scene --> Summary[structured textual summary]
+  Camera[camera + viewport + quality] --> Render
+  Render --> Pick[stable-key pick result]
+  Pick -. UI selection only .-> Scene
+```
+
+**Text alternative:** The authoritative hourly tick is paired with an explicit bounded presentation phase. An injected monotonic clock can translate to that pair only in the app. Seeded city geometry, readonly world state, itineraries, and explicit time feed pure city and trajectory queries. Their hashes and weighted manifestations form an immutable scene used independently by the renderer and textual summary. Camera and quality affect only rendering; picking changes app selection, never world state.
+
+The phase is canonical only as an explicit query input. It is absent from snapshots, commands, `stateHash`, `eventHash`, and the 24-tick world kernel. It may enter `trajectoryHash` because that hash compares the derived visual pose at a named phase. Invalid phases and decreasing injected-clock samples fail closed. Boundary continuity, direct-seek/playback equality, two-observer equality, and camera/frame-cadence independence are owned by #31 and the #33/#37 gates.
 
 ## M0 tracer interface freeze
 

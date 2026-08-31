@@ -79,6 +79,7 @@ The complete [claims, non-claims, and limitations](docs/LIMITATIONS.md) are part
 - [Quickstart and troubleshooting](docs/QUICKSTART.md)
 - [Product story and guided journey](docs/PRODUCT.md)
 - [Architecture, equations, packages, data flow, identity, and LOD](docs/ARCHITECTURE.md)
+- [Living-city visual, time, interface, evidence, and ownership contract](docs/LIVING_CITY.md)
 - [Determinism](docs/DETERMINISM.md) and [snapshot/event formats](docs/FORMATS.md)
 - [Browser and accessibility support](docs/COMPATIBILITY.md)
 - [Benchmark methodology and baseline](docs/BENCHMARKS.md)

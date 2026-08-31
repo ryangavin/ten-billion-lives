@@ -14,6 +14,7 @@ const documentationFiles = [
   "docs/DETERMINISM.md",
   "docs/FORMATS.md",
   "docs/LIMITATIONS.md",
+  "docs/LIVING_CITY.md",
   "docs/PRODUCT.md",
   "docs/QUICKSTART.md",
   "docs/TESTING.md",
