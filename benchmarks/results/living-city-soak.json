@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "living-city-wall-clock-soak-v1",
+  "commit": "743ec52aff991bf55b2764549dbab48a11fc9da7",
+  "capturedAt": "2026-08-31T14:03:54.528Z",
+  "profile": "apple-m1-max-32gb-chromium",
+  "browser": {
+    "name": "chromium",
+    "version": "151.0.7922.34"
+  },
+  "workload": {
+    "productionBuild": true,
+    "backend": "canvas2d",
+    "requestedMinutes": 30,
+    "minuteDurationMs": 60000,
+    "actualDurationMs": 1800025.18075,
+    "realWallClock": true,
+    "releaseCandidateDuration": true,
+    "heapMeasurement": "post-explicit-gc",
+    "interactionCount": 35,
+    "interactions": [
+      {
+        "minute": 1,
+        "action": "playback-pause"
+      },
+      {
+        "minute": 2,
+        "action": "camera-orbit"
+      },
+      {
+        "minute": 3,
+        "action": "semantic-zoom-cycle"
+      },
+      {
+        "minute": 4,
+        "action": "branch-toggle"
+      },
+      {
+        "minute": 5,
+        "action": "keyboard-selection-follow"
+      },
+      {
+        "minute": 6,
+        "action": "signature-seek"
+      },
+      {
+        "minute": 7,
+        "action": "playback-pause"
+      },
+      {
+        "minute": 8,
+        "action": "camera-orbit"
+      },
+      {
+        "minute": 9,
+        "action": "semantic-zoom-cycle"
+      },
+      {
+        "minute": 10,
+        "action": "branch-toggle"
+      },
+      {
+        "minute": 10,
+        "action": "context-loss-recovery"
+      },
+      {
+        "minute": 11,
+        "action": "keyboard-selection-follow"
+      },
+      {
+        "minute": 12,
+        "action": "signature-seek"
+      },
+      {
+        "minute": 12,
+        "action": "background-resume"
+      },
+      {
+        "minute": 13,
+        "action": "playback-pause"
+      },
+      {
+        "minute": 14,
+        "action": "camera-orbit"
+      },
+      {
+        "minute": 15,
+        "action": "semantic-zoom-cycle"
+      },
+      {
+        "minute": 16,
+        "action": "branch-toggle"
+      },
+      {
+        "minute": 17,
+        "action": "keyboard-selection-follow"
+      },
+      {
+        "minute": 18,
+        "action": "signature-seek"
+      },
+      {
+        "minute": 19,
+        "action": "playback-pause"
+      },
+      {
+        "minute": 20,
+        "action": "camera-orbit"
+      },
+      {
+        "minute": 20,
+        "action": "context-loss-recovery"
+      },
+      {
+        "minute": 21,
+        "action": "semantic-zoom-cycle"
+      },
+      {
+        "minute": 22,
+        "action": "branch-toggle"
+      },
+      {
+        "minute": 23,
+        "action": "keyboard-selection-follow"
+      },
+      {
+        "minute": 24,
+        "action": "signature-seek"
+      },
+      {
+        "minute": 24,
+        "action": "background-resume"
+      },
+      {
+        "minute": 25,
+        "action": "playback-pause"
+      },
+      {
+        "minute": 26,
+        "action": "camera-orbit"
+      },
+      {
+        "minute": 27,
+        "action": "semantic-zoom-cycle"
+      },
+      {
+        "minute": 28,
+        "action": "branch-toggle"
+      },
+      {
+        "minute": 29,
+        "action": "keyboard-selection-follow"
+      },
+      {
+        "minute": 30,
+        "action": "signature-seek"
+      },
+      {
+        "minute": 30,
+        "action": "context-loss-recovery"
+      }
+    ]
+  },
+  "semanticEvidence": {
+    "initial": {
+      "personA": "person_27yi09s_1obkbba",
+      "personB": "person_27yi09s_1obkbba",
+      "stateHash": "b2007dbd631d0474",
+      "manifestationA": "b7d8ef2246775f8b",
+      "manifestationB": "b7d8ef2246775f8b",
+      "eventA": "b0bd84480511f52f",
+      "eventB": "b0bd84480511f52f",
+      "observerMatch": "Semantic match · trajectory match",
+      "representedPopulation": "10,000,000,000",
+      "projectionRepresented": "80,219,543",
+      "tick": "10",
+      "backend": "canvas2d",
+      "quality": "baseline",
+      "contextLosses": "0"
+    },
+    "final": {
+      "personA": "person_1j5ziwb_0779abc",
+      "personB": "person_1j5ziwb_0779abc",
+      "stateHash": "74cb0f747914e5c1",
+      "manifestationA": "79188b1f86db2166",
+      "manifestationB": "79188b1f86db2166",
+      "eventA": "5d896372b65a8573",
+      "eventB": "5d896372b65a8573",
+      "observerMatch": "Semantic match · trajectory match",
+      "representedPopulation": "10,000,000,000",
+      "projectionRepresented": "82,657,097",
+      "tick": "7",
+      "backend": "canvas2d",
+      "quality": "baseline",
+      "contextLosses": "1"
+    },
+    "observerEqualityCheckedEveryMinute": true,
+    "exactPopulationCheckedEveryMinute": true
+  },
+  "metrics": {
+    "initialHeapMiB": 22.031450271606445,
+    "maximumHeapMiB": 35.90743064880371,
+    "finalHeapMiB": 35.90714740753174,
+    "retainedHeapGrowthMiB": 13.875697135925293,
+    "maximumFrameP95Ms": 1.3199999928474426,
+    "firstWindowP95Ms": 1.225000023841858,
+    "lastWindowP95Ms": 1.0950000286102295,
+    "lastToFirstFrameP95Ratio": 0.89387755697839,
+    "contextLossRecoveries": 3,
+    "backgroundResumes": 2
+  },
+  "audits": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "externalRequests": []
+  },
+  "evidence": {
+    "startPath": "docs/evidence/issue-36/soak-start.png",
+    "finalPath": "docs/evidence/issue-36/soak-final.png",
+    "tracePath": "docs/evidence/issue-36/soak-trace.json",
+    "graphPath": "docs/evidence/issue-36/soak-graph.svg"
+  },
+  "budgets": {
+    "durationMsMin": 1800000,
+    "baselineFrameP95MsMax": 12,
+    "browserHeapMiBMax": 128,
+    "retainedHeapGrowthMiBMax": 32,
+    "lastToFirstFrameP95RatioMax": 1.5,
+    "passed": true
+  },
+  "failures": []
+}

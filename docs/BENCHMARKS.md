@@ -28,6 +28,13 @@ Run the complete release-gate matrix, which also checks all subsystem budgets an
 pnpm qa:benchmarks
 ```
 
+Run the integrated living-city scene and literal wall-clock soak with:
+
+```sh
+pnpm benchmark:living-city-hardening
+pnpm benchmark:living-city-soak
+```
+
 ## Current baseline
 
 The #25 gate at revision `551f0b0` recorded:
@@ -52,8 +59,22 @@ The #25 gate at revision `551f0b0` recorded:
 
 The literal soak ran for 1,800,068.88 ms (30.00 minutes) and 1,800 sampled frames. Baseline frame p95 was 1.87 ms, maximum heap was 105.35 MiB, retained heap growth was 49.35 MiB, and every soak budget passed. Its exact workload, samples, semantic comparisons, and retained screenshots/trace are in [`adaptive-quality.json`](../benchmarks/results/adaptive-quality.json) and [`issue-22 evidence`](evidence/issue-22/README.md).
 
+## M4 living-city release candidate
+
+The #36 gate at revision `743ec52` measures the integrated production city scene rather than the earlier generic token renderer:
+
+| Quality tier | Literal figures | Frame p95 | Heap maximum | Frame budget | Status |
+| ------------ | --------------: | --------: | -----------: | -----------: | ------ |
+| Fallback     |             128 |   0.51 ms |    16.59 MiB |      8.00 ms | pass   |
+| Baseline     |             256 |   0.85 ms |    17.95 MiB |     12.00 ms | pass   |
+| Showcase     |             512 |   1.44 ms |    21.91 MiB |     16.67 ms | pass   |
+
+All tiers preserve the selected person, state, manifestation, event, trajectory, exact represented population, and interaction target. Canvas draw count stays at one per frame; prepare, draw, pick, and resize budgets pass. The raw result and retained tier screenshots are in [`living-city-hardening.json`](../benchmarks/results/living-city-hardening.json) and [`issue-36 evidence`](evidence/issue-36/evidence-index.json).
+
+The release soak ran for 1,800,025.18 ms (30.00 minutes) against the production Canvas build. It exercised 35 playback, camera, semantic zoom, branch, selection, seek, context-loss, and background/resume actions. Maximum frame p95 was 1.32 ms; post-collection heap peaked at 35.91 MiB and grew 13.88 MiB; the final/initial frame-p95 ratio was 0.89. Both observers and the exact population matched every minute, with zero console errors, page errors, or external requests. See [`living-city-soak.json`](../benchmarks/results/living-city-soak.json), the [trace](evidence/issue-36/soak-trace.json), and the [graph](evidence/issue-36/soak-graph.svg).
+
 ## Interpretation
 
-These results demonstrate that the committed local journey fits the named profile and budgets. They do not claim that one million visible tokens are appropriate on every machine, that WebGPU is universally available, or that rendering ten billion individual records occurs. Adaptive quality may reduce visual tokens from 250,000 to 25,000 while keeping person, state, manifestation, event, and itinerary semantics identical.
+These results demonstrate that the committed local journey fits the named profile and budgets. They do not claim that WebGPU is universally available or that rendering ten billion individual records occurs. The planet tracer still uses its bounded token tiers; the production living city uses 128, 256, or 512 weighted figures while keeping person, state, manifestation, event, itinerary, and represented-population semantics identical.
 
 Profile before optimizing. If a current budget fails, reproduce it on this profile, preserve correctness tests, and choose the smallest quality or implementation fallback. Do not change a budget to make a regression green.

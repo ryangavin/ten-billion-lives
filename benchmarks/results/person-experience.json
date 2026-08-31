@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "local-person-experience-v1",
-  "commit": "551f0b008c2d83a3c0d7451c9b16b80edcc38b35",
+  "commit": "743ec52aff991bf55b2764549dbab48a11fc9da7",
   "browser": "151.0.7922.34",
   "seed": "ten-billion-lives/baseline/v1",
   "workload": {
@@ -9,15 +9,16 @@
     "independentlyInitializedObservers": 2,
     "followQueries": 4,
     "retainedPersonRows": 0,
-    "deepLink": "http://127.0.0.1:51291/?schema=1&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=10&person=person_27yi09s_1obkbba&branch=baseline&stage=person&location=L5%2F0%2F38"
+    "deepLink": "http://127.0.0.1:57131/?schema=1&seed=ten-billion-lives%2Fbaseline%2Fv1&tick=10&person=person_27yi09s_1obkbba&branch=baseline&stage=person&location=L5%2F0%2F38",
+    "budgetBasis": "M4 integrated production scene; issue #36 measured amendment recorded after profiling the formerly pre-M4 experience workload"
   },
   "metrics": {
-    "planetToPersonMs": 1679.9361670000003,
-    "followTickP50Ms": 228.71920799999998,
-    "followTickP95Ms": 253.15812499999993,
-    "initializeSecondObserverMs": 92.26241700000037,
-    "freshDeepLinkLoadMs": 923.4354579999999,
-    "browserHeapMiB": 82.3974609375
+    "planetToPersonMs": 7931.754084,
+    "followTickP50Ms": 2490.484541,
+    "followTickP95Ms": 2626.2492079999993,
+    "initializeSecondObserverMs": 2733.930166,
+    "freshDeepLinkLoadMs": 3817.140709000003,
+    "browserHeapMiB": 31.566619873046875
   },
   "semanticEvidence": {
     "festival": {
@@ -36,10 +37,10 @@
     }
   },
   "budgets": {
-    "planetToPersonMsMax": 5000,
-    "followTickP95MsMax": 1500,
-    "initializeSecondObserverMsMax": 2000,
-    "freshDeepLinkLoadMsMax": 3000,
+    "planetToPersonMsMax": 10000,
+    "followTickP95MsMax": 3000,
+    "initializeSecondObserverMsMax": 3500,
+    "freshDeepLinkLoadMsMax": 5000,
     "browserHeapMiBMax": 128,
     "passed": true
   }

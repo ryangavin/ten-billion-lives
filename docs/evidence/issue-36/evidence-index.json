@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "issue": 36,
+  "commit": "743ec52aff991bf55b2764549dbab48a11fc9da7",
+  "profile": "apple-m1-max-32gb-chromium",
+  "cleanCheckout": true,
+  "automated": {
+    "rootCheck": {
+      "command": "pnpm check",
+      "testFiles": 20,
+      "tests": 110,
+      "passed": true
+    },
+    "replay": {
+      "artifact": "deterministic-replay.json",
+      "vectors": [
+        "world",
+        "city",
+        "trajectory",
+        "person",
+        "itinerary",
+        "manifestation",
+        "event"
+      ],
+      "runsPerVector": 2,
+      "passed": true
+    },
+    "productionScene": {
+      "artifact": "../../../benchmarks/results/living-city-hardening.json",
+      "fallbackFrameP95Ms": 0.5149999856948853,
+      "baselineFrameP95Ms": 0.8450000286102295,
+      "showcaseFrameP95Ms": 1.4449999928474426,
+      "maximumHeapMiB": 21.905481338500977,
+      "semanticsMatchAcrossTiers": true,
+      "passed": true
+    },
+    "browserMatrix": {
+      "artifact": "playwright-summary.json",
+      "cases": 45,
+      "applicablePassed": 31,
+      "expectedSkipped": 14,
+      "unexpected": 0,
+      "flaky": 0,
+      "retries": 0,
+      "passed": true
+    },
+    "soak": {
+      "artifact": "../../../benchmarks/results/living-city-soak.json",
+      "durationMs": 1800025.18075,
+      "releaseCandidateDuration": true,
+      "maximumFrameP95Ms": 1.3199999928474426,
+      "maximumRetainedHeapMiB": 35.90743064880371,
+      "retainedHeapGrowthMiB": 13.875697135925293,
+      "lastToFirstFrameP95Ratio": 0.89387755697839,
+      "interactionCount": 35,
+      "contextLossRecoveries": 3,
+      "backgroundResumes": 2,
+      "consoleErrors": 0,
+      "pageErrors": 0,
+      "externalRequests": 0,
+      "passed": true
+    }
+  },
+  "visualInspection": {
+    "productionBaseline": "production-baseline.png",
+    "productionShowcase": "production-showcase.png",
+    "soakStart": "soak-start.png",
+    "soakFinal": "soak-final.png",
+    "observations": [
+      "The renderer is the dominant viewport surface and the document does not require page scrolling.",
+      "Compact world, follow, semantic zoom, moment, branch, and time controls remain visible.",
+      "Weighted figures, route arrows, meetings, festival markers, crossings, buildings, and the selected resident remain legible.",
+      "The final soak frame remains complete after three simulated renderer losses and two background/resume cycles."
+    ],
+    "passed": true
+  },
+  "limitations": [
+    "The usable production backend on this headless profile was Canvas2D; WebGPU performance is not claimed.",
+    "Firefox was unavailable on the validation machine and is not counted as passing.",
+    "Pixel equality across browsers or GPUs is not an acceptance criterion; semantic hashes are authoritative."
+  ],
+  "failures": []
+}

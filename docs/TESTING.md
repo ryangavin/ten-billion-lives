@@ -13,6 +13,8 @@ pnpm check
 pnpm test:e2e
 pnpm qa:replay
 pnpm qa:benchmarks
+pnpm benchmark:living-city-hardening
+pnpm benchmark:living-city-soak
 ```
 
 - `pnpm docs:check` spell-checks the maintained documentation and validates local links, heading fragments, shell snippets, diagram text alternatives, claim language, and the direct dependency inventory.
@@ -21,6 +23,8 @@ pnpm qa:benchmarks
 - `pnpm test:e2e` builds/launches the production preview and runs Chromium, WebKit, and the dedicated mobile Chromium cases.
 - `pnpm qa:replay` generates each canonical vector twice in independent processes and compares the transcripts byte-for-byte.
 - `pnpm qa:benchmarks` reruns the same-profile subsystem budgets and verifies the retained literal soak.
+- `pnpm benchmark:living-city-hardening` measures the integrated production scene at 128/256/512 figures, including prepare, draw, pick, resize, semantics, and retained heap.
+- `pnpm benchmark:living-city-soak` runs the literal 30-minute production interaction soak. Development diagnostics may shorten the per-minute interval explicitly, but only the default 60,000 ms interval satisfies the release criterion.
 
 Focused tests live beside their implementation in `packages/*/src/*.test.ts` and `apps/web/src/*.test.ts`. Product browser tests live in [`tests/e2e`](../tests/e2e). Deterministic fixtures live under `packages/sim/fixtures` and `packages/manifest/fixtures`.
 
@@ -53,6 +57,6 @@ Playwright retains traces and screenshots on failure. Browser tests use `reuseEx
 
 ## Milestone gates
 
-Issues #5, #10, #16, and #27 add the outer loop: clean checkout, full root suite, two independent replay runs, real-browser signature journey, same-profile performance/memory comparison, retained visual inspection, and local P0 defect review. The final #27 audit reruns the matrix independently rather than trusting earlier closures.
+Issues #5, #10, #16, #27, #36, and #37 add the outer loop: clean checkout, full root suite, two independent replay runs, real-browser signature journey, same-profile performance/memory comparison, retained visual inspection, and local P0 defect review. The final #37 audit reruns the matrix independently rather than trusting earlier closures.
 
 No local test requires a remote service. CI, deployment, server, networking, Pages, containers, and cloud operations are outside this guide.

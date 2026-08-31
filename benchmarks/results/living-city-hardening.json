@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "living-city-hardening-v1",
+  "commit": "743ec52aff991bf55b2764549dbab48a11fc9da7",
+  "capturedAt": "2026-08-31T13:23:31.486Z",
+  "profile": "apple-m1-max-32gb-chromium",
+  "browser": {
+    "name": "chromium",
+    "version": "151.0.7922.34"
+  },
+  "workload": {
+    "productionBuild": true,
+    "integratedProductionScene": true,
+    "backend": "canvas2d",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "warmupFrames": 10,
+    "measuredFrames": 60,
+    "picksPerTier": 120,
+    "resizeSamplesPerTier": 12
+  },
+  "capability": {
+    "logicalCores": 10,
+    "deviceMemoryGiB": 32,
+    "webgpuNavigatorPresent": true,
+    "backend": "canvas2d"
+  },
+  "tiers": [
+    {
+      "quality": "fallback",
+      "startupMs": 1136.041417,
+      "visibleCount": 128,
+      "semanticKey": "living-city/7304687b33b0ece7",
+      "selectedPersonId": "person_27yi09s_1obkbba",
+      "representedPeople": "80219543",
+      "unsampledRemainder": "79812026",
+      "backend": "canvas2d",
+      "frameMs": {
+        "minimum": 0.2999999523162842,
+        "p50": 0.3450000286102295,
+        "p95": 0.5149999856948853,
+        "maximum": 4.269999980926514
+      },
+      "cpuPrepareMs": {
+        "minimum": 0.11500000953674316,
+        "p50": 0.1350000500679016,
+        "p95": 0.23000001907348633,
+        "maximum": 4
+      },
+      "drawMs": {
+        "minimum": 0.1799999475479126,
+        "p50": 0.19999998807907104,
+        "p95": 0.30000001192092896,
+        "maximum": 0.38499999046325684
+      },
+      "uploadMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0
+      },
+      "pickMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0.005000054836273193
+      },
+      "resizeMs": {
+        "minimum": 0.3050000071525574,
+        "p50": 0.3250000476837158,
+        "p95": 0.5099999904632568,
+        "maximum": 0.5099999904632568
+      },
+      "drawCount": 1,
+      "heapMiB": {
+        "beforeWarmup": 16.494203567504883,
+        "initial": 16.526823043823242,
+        "final": 16.589624404907227,
+        "retainedGrowth": 0.06280136108398438,
+        "maximum": 16.589624404907227
+      },
+      "observation": {
+        "personId": "person_27yi09s_1obkbba",
+        "stateHash": "b2007dbd631d0474",
+        "manifestationHash": "b7d8ef2246775f8b",
+        "eventHash": "b0bd84480511f52f",
+        "representedPopulation": "10,000,000,000",
+        "trajectoryHash": "d9b4016cd166e1ae"
+      },
+      "screenshot": "docs/evidence/issue-36/production-fallback.png",
+      "audits": {
+        "consoleErrors": [],
+        "pageErrors": [],
+        "externalRequests": []
+      }
+    },
+    {
+      "quality": "baseline",
+      "startupMs": 1122.844083,
+      "visibleCount": 256,
+      "semanticKey": "living-city/af5bd0c804b3caf1",
+      "selectedPersonId": "person_27yi09s_1obkbba",
+      "representedPeople": "80219543",
+      "unsampledRemainder": "79401293",
+      "backend": "canvas2d",
+      "frameMs": {
+        "minimum": 0.5349999666213989,
+        "p50": 0.625,
+        "p95": 0.8450000286102295,
+        "maximum": 3.1549999713897705
+      },
+      "cpuPrepareMs": {
+        "minimum": 0.19499999284744263,
+        "p50": 0.25999999046325684,
+        "p95": 0.4050000309944153,
+        "maximum": 2.649999976158142
+      },
+      "drawMs": {
+        "minimum": 0.3199999928474426,
+        "p50": 0.35500001907348633,
+        "p95": 0.5250000357627869,
+        "maximum": 0.5550000071525574
+      },
+      "uploadMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0
+      },
+      "pickMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0.005000054836273193
+      },
+      "resizeMs": {
+        "minimum": 0.5299999713897705,
+        "p50": 0.5550000071525574,
+        "p95": 0.6949999928474426,
+        "maximum": 0.6949999928474426
+      },
+      "drawCount": 1,
+      "heapMiB": {
+        "beforeWarmup": 17.881404876708984,
+        "initial": 17.911815643310547,
+        "final": 17.95492172241211,
+        "retainedGrowth": 0.0431060791015625,
+        "maximum": 17.95492172241211
+      },
+      "observation": {
+        "personId": "person_27yi09s_1obkbba",
+        "stateHash": "b2007dbd631d0474",
+        "manifestationHash": "b7d8ef2246775f8b",
+        "eventHash": "b0bd84480511f52f",
+        "representedPopulation": "10,000,000,000",
+        "trajectoryHash": "d9b4016cd166e1ae"
+      },
+      "screenshot": "docs/evidence/issue-36/production-baseline.png",
+      "audits": {
+        "consoleErrors": [],
+        "pageErrors": [],
+        "externalRequests": []
+      }
+    },
+    {
+      "quality": "showcase",
+      "startupMs": 1157.8347500000018,
+      "visibleCount": 512,
+      "semanticKey": "living-city/37634a865e96bb0f",
+      "selectedPersonId": "person_27yi09s_1obkbba",
+      "representedPeople": "80219543",
+      "unsampledRemainder": "78579843",
+      "backend": "canvas2d",
+      "frameMs": {
+        "minimum": 1.0450000166893005,
+        "p50": 1.225000023841858,
+        "p95": 1.4449999928474426,
+        "maximum": 3.974999964237213
+      },
+      "cpuPrepareMs": {
+        "minimum": 0.38999998569488525,
+        "p50": 0.49000000953674316,
+        "p95": 0.7450000047683716,
+        "maximum": 2.884999990463257
+      },
+      "drawMs": {
+        "minimum": 0.6200000047683716,
+        "p50": 0.6899999976158142,
+        "p95": 0.8550000190734863,
+        "maximum": 1.0799999833106995
+      },
+      "uploadMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0
+      },
+      "pickMs": {
+        "minimum": 0,
+        "p50": 0,
+        "p95": 0,
+        "maximum": 0.009999990463256836
+      },
+      "resizeMs": {
+        "minimum": 1.0699999928474426,
+        "p50": 1.1899999976158142,
+        "p95": 1.3350000381469727,
+        "maximum": 1.3350000381469727
+      },
+      "drawCount": 1,
+      "heapMiB": {
+        "beforeWarmup": 21.80376434326172,
+        "initial": 21.85517692565918,
+        "final": 21.905481338500977,
+        "retainedGrowth": 0.050304412841796875,
+        "maximum": 21.905481338500977
+      },
+      "observation": {
+        "personId": "person_27yi09s_1obkbba",
+        "stateHash": "b2007dbd631d0474",
+        "manifestationHash": "b7d8ef2246775f8b",
+        "eventHash": "b0bd84480511f52f",
+        "representedPopulation": "10,000,000,000",
+        "trajectoryHash": "d9b4016cd166e1ae"
+      },
+      "screenshot": "docs/evidence/issue-36/production-showcase.png",
+      "audits": {
+        "consoleErrors": [],
+        "pageErrors": [],
+        "externalRequests": []
+      }
+    }
+  ],
+  "semanticEvidence": {
+    "authoritativeObservationsMatchAcrossTiers": true,
+    "viewSpecificPickKeys": [
+      "living-city/7304687b33b0ece7",
+      "living-city/af5bd0c804b3caf1",
+      "living-city/37634a865e96bb0f"
+    ],
+    "selectedInteractionTargetStable": true
+  },
+  "budgets": {
+    "startupMsMax": 5000,
+    "fallback": {
+      "frameP95MsMax": 8
+    },
+    "baseline": {
+      "frameP95MsMax": 12
+    },
+    "showcase": {
+      "frameP95MsMax": 16.666666666666668
+    },
+    "browserHeapMiBMax": 64,
+    "retainedHeapGrowthMiBMax": 8,
+    "cpuPrepareP95MsMax": 4,
+    "drawP95MsMax": 4,
+    "uploadP95MsMax": 0,
+    "pickP95MsMax": 1,
+    "resizeP95MsMax": 16.666666666666668,
+    "drawCountMax": 1,
+    "passed": true
+  },
+  "failures": []
+}
