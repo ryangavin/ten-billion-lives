@@ -67,6 +67,7 @@ import {
 } from "./playback";
 import {
   createProductionLivingCityScene,
+  livingCityCachePolicy,
   type LivingCityLevel,
 } from "./living-city";
 import { createSmokeModel } from "./smoke";
@@ -174,8 +175,10 @@ const itineraryQueryCache = new WeakMap<
   (personId: string, tick: bigint) => PersonItineraryPoint
 >();
 const maximumCachedRenderScenes = 8;
-const maximumCachedLivingCityScenes = 12;
-const maximumCachedProjections = 32;
+const maximumCachedLivingCityScenes =
+  livingCityCachePolicy.maximumPresentationScenes;
+const maximumCachedProjections =
+  livingCityCachePolicy.maximumProjectionsPerObserver;
 const localBenchmarkCanvas = document.createElement("canvas");
 const localLivingCityBenchmarkCanvas = document.createElement("canvas");
 const localBenchmarkScenes = new Map<string, RenderScene>();

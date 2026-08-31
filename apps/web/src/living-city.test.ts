@@ -19,10 +19,12 @@ import {
 } from "./living-city";
 
 describe("production living-city scene adapter", () => {
-  it("bounds derived route and itinerary caches to the visible showcase working set", () => {
+  it("bounds derived caches to the active viewport working set", () => {
     expect(livingCityCachePolicy).toEqual({
-      maximumTrajectoryCities: 256,
-      maximumItineraryWindows: 512,
+      maximumTrajectoryCities: 64,
+      maximumItineraryWindows: 128,
+      maximumPresentationScenes: 4,
+      maximumProjectionsPerObserver: 2,
     });
 
     const cache = new Map<string, number>();

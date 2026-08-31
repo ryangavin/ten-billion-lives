@@ -71,8 +71,10 @@ const fnvOffset = 0xcbf29ce484222325n;
 const fnvPrime = 0x100000001b3n;
 const u64Mask = 0xffffffffffffffffn;
 export const livingCityCachePolicy = Object.freeze({
-  maximumTrajectoryCities: qualityLimits.baseline,
-  maximumItineraryWindows: qualityLimits.showcase,
+  maximumTrajectoryCities: levelLimits.city,
+  maximumItineraryWindows: qualityLimits.fallback,
+  maximumPresentationScenes: 4,
+  maximumProjectionsPerObserver: 2,
 });
 const trajectoryCityCaches = new WeakMap<
   CityProjection,

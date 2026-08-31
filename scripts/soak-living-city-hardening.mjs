@@ -18,7 +18,21 @@ const soakMinutes =
   requestedMinutes === undefined ? 30 : Number(requestedMinutes);
 if (!Number.isSafeInteger(soakMinutes) || soakMinutes < 1 || soakMinutes > 30)
   throw new RangeError("soak minutes must be an integer from 1 through 30");
-const minuteDurationMs = 60_000;
+const requestedMinuteDurationMs = process.argv
+  .find((argument) => argument.startsWith("--minute-duration-ms="))
+  ?.slice("--minute-duration-ms=".length);
+const minuteDurationMs =
+  requestedMinuteDurationMs === undefined
+    ? 60_000
+    : Number(requestedMinuteDurationMs);
+if (
+  !Number.isSafeInteger(minuteDurationMs) ||
+  minuteDurationMs < 1_000 ||
+  minuteDurationMs > 60_000
+)
+  throw new RangeError(
+    "soak minute duration must be an integer from 1000 through 60000 ms",
+  );
 const profile = "apple-m1-max-32gb-chromium";
 
 function percentile(values, fraction) {
@@ -320,9 +334,11 @@ try {
       productionBuild: true,
       backend: "canvas2d",
       requestedMinutes: soakMinutes,
+      minuteDurationMs,
       actualDurationMs,
       realWallClock: true,
-      releaseCandidateDuration: soakMinutes === 30,
+      releaseCandidateDuration:
+        soakMinutes === 30 && minuteDurationMs === 60_000,
       heapMeasurement: "post-explicit-gc",
       interactionCount: interactions.length,
       interactions,
