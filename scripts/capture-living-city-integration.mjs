@@ -35,10 +35,57 @@ async function measure(action) {
 }
 
 async function screenshotRenderer(page, path) {
+  const renderer = page.getByTestId("journey-renderer");
+  await renderer.scrollIntoViewIfNeeded();
   await page.waitForTimeout(300);
-  const bounds = await page.getByTestId("journey-renderer").boundingBox();
+  const bounds = await renderer.boundingBox();
   assert(bounds !== null, "journey renderer has no screenshot bounds");
   await page.screenshot({ path, clip: bounds });
+}
+
+async function captureNarrow(browser, previewUrl) {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+  });
+  const page = await context.newPage();
+  const consoleErrors = [];
+  const pageErrors = [];
+  const externalRequests = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+  page.on("request", (request) => {
+    const url = new URL(request.url());
+    if (url.origin !== previewUrl) externalRequests.push(request.url());
+  });
+  await page.goto(`${previewUrl}/?renderer=canvas&quality=fallback`, {
+    waitUntil: "networkidle",
+  });
+  await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
+  await page.getByRole("button", { name: "Enter Harbor Street" }).click();
+  await canvasPickSelected(page);
+  await page.getByTestId("observer-a-person-id").waitFor();
+  await page.getByRole("button", { name: "Simulate renderer loss" }).click();
+  assert.equal(
+    await page.getByTestId("render-backend").textContent(),
+    "canvas2d",
+  );
+  assert.equal(
+    await page.getByTestId("render-context-losses").textContent(),
+    "1",
+  );
+  await page.waitForTimeout(300);
+  await page.screenshot({
+    path: `${evidenceDirectory}/fallback-narrow.png`,
+    fullPage: true,
+  });
+  assert.deepEqual(consoleErrors, []);
+  assert.deepEqual(pageErrors, []);
+  assert.deepEqual(externalRequests, []);
+  await page.close();
+  await context.close();
+  return { consoleErrors, pageErrors, externalRequests };
 }
 
 async function canvasPickSelected(page) {
@@ -280,15 +327,6 @@ async function recordJourney(browser, previewUrl, options) {
     .textContent();
   assert.equal(recoveryBackend, "canvas2d");
   assert.equal(contextLosses, "1");
-  if (options.narrow) {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.waitForTimeout(300);
-    await page.screenshot({
-      path: `${evidenceDirectory}/${options.name}-narrow.png`,
-      fullPage: true,
-    });
-  }
-
   const summary = await page.getByTestId("living-city-summary").textContent();
   const population = parsePopulationSummary(summary ?? "");
   assert((summary ?? "").includes("weight one"));
@@ -345,14 +383,13 @@ try {
     name: "production",
     query: "?quality=baseline",
     viewport: { width: 1280, height: 800 },
-    narrow: false,
   });
   const fallback = await recordJourney(browser, preview.url, {
     name: "fallback",
     query: "?renderer=canvas&quality=fallback",
     viewport: { width: 960, height: 720 },
-    narrow: true,
   });
+  const narrow = await captureNarrow(browser, preview.url);
   const failures = [];
   for (const journey of [production, fallback]) {
     if (journey.consoleErrors.length > 0)
@@ -411,6 +448,7 @@ try {
     browser: browserVersion,
     production,
     fallback,
+    narrow,
     metrics,
     budgets: { ...budgets, passed: true },
     caveats: {

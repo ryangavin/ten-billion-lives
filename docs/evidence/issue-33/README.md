@@ -15,7 +15,7 @@ Original-resolution inspection found:
 - city, neighborhood, and street stills preserve the same connected road, crossing, block, and person identities at progressively finer semantic samples;
 - `production-selected.png` and `fallback-selected.png` show the picked resident with the same ring, label, semantic ID, and weight one;
 - walking-phase and hour-boundary stills are sharp and show changed deterministic poses/locations; the recordings show the time and pose transitions between them;
-- `fallback-narrow.png` is a full 390 × 7965 page capture with readable wrapped controls, summaries, observer transcripts, and budget panels and no observed horizontal overflow;
+- `fallback-narrow.png` is a full 390 × 6912 page capture with readable wrapped controls, summaries, observer transcripts, and budget panels and no observed horizontal overflow;
 - Canvas context recovery reports one loss and returns to a complete Canvas scene;
 - no P0 visual defect was found.
 
@@ -36,18 +36,18 @@ The full values and semantic transcript are in [`living-city-integration.json`](
 
 | Measurement               |      Result |     Budget |
 | ------------------------- | ----------: | ---------: |
-| Cold city entry           | 2,664.04 ms | ≤ 3,500 ms |
-| Zoom p95                  | 1,798.15 ms | ≤ 2,500 ms |
-| Visible-coordinate pick   | 1,275.00 ms | ≤ 2,500 ms |
-| Initialize observer B     | 2,659.03 ms | ≤ 3,500 ms |
-| Worst retained frame      |     1.06 ms | ≤ 16.67 ms |
-| Maximum retained app heap |   64.85 MiB |  ≤ 128 MiB |
+| Cold city entry           | 2,735.68 ms | ≤ 3,500 ms |
+| Zoom p95                  | 1,783.66 ms | ≤ 2,500 ms |
+| Visible-coordinate pick   | 1,281.69 ms | ≤ 2,500 ms |
+| Initialize observer B     | 2,727.47 ms | ≤ 3,500 ms |
+| Worst retained frame      |     1.17 ms | ≤ 16.67 ms |
+| Maximum retained app heap |   82.40 MiB |  ≤ 128 MiB |
 
 Retained heap is sampled after explicit page GC at the end of the semantic journey and before the deliberate context loss and full-page evidence screenshot. Context loss and the narrow capture are asserted separately so pending garbage or capture-tool memory is not presented as retained application heap.
 
 ## Artifacts and reproduction
 
-`evidence-index.json` records the implementation commit, profile, skip, capture retries, every artifact path, and SHA-256. The final successful capture had no application failure or retry. Earlier harness attempts are retained in the index: a still raced an expected rerender, an exact intermediate tick label was skipped by a costly 60× frame, heap was initially sampled after the full-page capture, an uncollected one-point heap sample varied with pending garbage, and element screenshots contaminated the simultaneous video with Playwright's isolation compositor. Those were evidence-harness defects; each was reduced against the playback/render contract before the final run.
+`evidence-index.json` records the implementation commit, profile, skip, capture retries, every artifact path, and SHA-256. The final successful capture had no application failure or retry. Earlier harness attempts are retained in the index: a still raced an expected rerender, an exact intermediate tick label was skipped by a costly 60× frame, heap was initially sampled after the full-page capture, an uncollected one-point heap sample varied with pending garbage, element screenshots contaminated the simultaneous video with Playwright's isolation compositor, and a clipped renderer could be partly outside the viewport while a full-page narrow screenshot polluted the fallback recording. Those were evidence-harness defects; each was reduced against the playback/render contract before the final run. The stable harness now scrolls each renderer fully into view before clipping and performs the narrow audit in an independent, non-recording browser context.
 
 Run from the repository root with the pinned toolchain:
 

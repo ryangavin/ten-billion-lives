@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "issue": 33,
-  "commit": "bc5fc216a8a9c47e68d079c6863434052e364375",
+  "commit": "e7b5ac64fe58d28f83d860e075839b1ff930cbd7",
   "profile": "apple-m1-max-32gb-chromium",
-  "generatedAt": "2026-08-31T06:44:38.872Z",
-  "capturedImplementationCommit": "bc5fc216a8a9c47e68d079c6863434052e364375",
+  "generatedAt": "2026-08-31T06:56:54.127Z",
+  "capturedImplementationCommit": "e7b5ac64fe58d28f83d860e075839b1ff930cbd7",
   "productionBackend": "canvas2d",
   "fallbackBackend": "canvas2d",
   "failures": [],
@@ -12,33 +12,33 @@
   "retries": [
     {
       "attempt": 1,
-      "scope": "evidence harness",
-      "failure": "The hour-boundary still raced an expected renderer replacement.",
-      "resolution": "Pause after observing the boundary, then capture the stable still; retain the uninterrupted transition in video."
+      "failure": "The hour-boundary still raced the expected renderer replacement.",
+      "resolution": "Pause before stable still and video capture while retaining the transition in the recording."
     },
     {
       "attempt": 2,
-      "scope": "evidence harness",
-      "failure": "The harness required the exact DOM label tick 8, which a costly 60x render may pass between samples.",
-      "resolution": "Assert the playback contract by observing any authoritative tick greater than 7."
+      "failure": "A costly 60x playback frame skipped the exact intermediate tick-8 label.",
+      "resolution": "Assert the authoritative tick advanced beyond tick 7, then validate exact pause and replay convergence."
     },
     {
       "attempt": 3,
-      "scope": "evidence harness",
-      "failure": "The heap sample was taken after context loss and a 390x7965 full-page evidence screenshot.",
-      "resolution": "Sample application heap and backend before deliberate recovery and capture-tool work; assert recovery separately."
+      "failure": "Heap was sampled after deliberate context loss and the full-page screenshot.",
+      "resolution": "Move retained application heap sampling before renderer loss and capture-tool allocation."
     },
     {
       "attempt": 4,
-      "scope": "evidence harness",
-      "failure": "A one-point heap sample without collection varied with pending garbage and did not measure retained application memory.",
-      "resolution": "Request explicit page GC before sampling, rename the v2 metric to retained heap, and keep the 128 MiB budget unchanged."
+      "failure": "A single uncollected heap sample varied with pending garbage.",
+      "resolution": "Request explicit page garbage collection and version the benchmark as living-city-integration-v2 without changing its 128 MiB budget."
     },
     {
       "attempt": 5,
-      "scope": "evidence harness",
-      "failure": "Element screenshots caused Playwright's isolation compositor to paint gray outside the element in the simultaneous journey video.",
-      "resolution": "Capture the same renderer bounds with clipped page screenshots so the video contains only actual app output."
+      "failure": "Element screenshots contaminated the simultaneous journey recording with Playwright's isolation compositor.",
+      "resolution": "Capture renderer clips from the page compositor after a stable transition."
+    },
+    {
+      "attempt": 6,
+      "failure": "A clipped renderer could be partly outside the viewport, and the full-page narrow screenshot contaminated the fallback recording.",
+      "resolution": "Scroll the renderer fully into view before clipping and run the narrow audit in an independent non-recording browser context."
     }
   ],
   "externalRequests": [],
@@ -46,11 +46,11 @@
   "artifacts": [
     {
       "path": "benchmarks/results/living-city-integration.json",
-      "sha256": "d310b4c0fd0a5709018068c31a156a5ee1cb7f550cb2b9d7d9728d10c7b9f9e5"
+      "sha256": "566706550ec9b7364c44e96ca694b2ef87110d925b1ddf9bc5755c33966ef9bf"
     },
     {
       "path": "docs/evidence/issue-33/production-city.png",
-      "sha256": "b3d6ce1ed72deb75a6977698661125a33ba6cfa81e10a6cb3a60ead72927f0c8"
+      "sha256": "16f9ad59fae7bab1956f71f0c714e106060221407a06e98ece388fa8dc4eef90"
     },
     {
       "path": "docs/evidence/issue-33/production-neighborhood.png",
@@ -58,55 +58,55 @@
     },
     {
       "path": "docs/evidence/issue-33/production-street.png",
-      "sha256": "2baee4258d5530e13c04e82692ff7204879be7b8b433ed713b1beb6302c5f2d6"
+      "sha256": "27e25161372bdb5e1fbde8b90fadaa8f7f4ca23442370b54ea048064f3e0d761"
     },
     {
       "path": "docs/evidence/issue-33/production-selected.png",
-      "sha256": "e515770f3a81c13fbf849ce104809d27b3c0d9de667cbeead4d8e9caa4b89bb3"
+      "sha256": "21c02bb8c0739bd63c5b8642a994c2d80378eac93689ea9978d187c5d0eacbcc"
     },
     {
       "path": "docs/evidence/issue-33/production-walking-phase.png",
-      "sha256": "bbf4841eabd9768d8d06604fde85e28a18701c1423beb9bd58c72f1399a215ef"
+      "sha256": "5d7aef317e0c8513792b135ddac897df66d9253318153146a50c402ae3156afe"
     },
     {
       "path": "docs/evidence/issue-33/production-hour-boundary.png",
-      "sha256": "fc0af5e1d1b8cad6b8d430025498ec9f92b376bfea020aac4d2b2b85177361c0"
+      "sha256": "562d2aa96092018808bf6de4cc8ce37e7ba6c357d7aafd9813420bb6cffcdbc6"
     },
     {
       "path": "docs/evidence/issue-33/production-journey.webm",
-      "sha256": "2347f1e9cc74aed16c4da4ed672e7a0195074a8357943a70218d3c1eaab4091b"
+      "sha256": "8da5e386dee54db241cf3a9467517e6cae6c84c682abe49430e010ded62a4f2f"
     },
     {
       "path": "docs/evidence/issue-33/fallback-city.png",
-      "sha256": "c42053ce0d240eada9d3d889d0ba2958fca1ff2cd49cc290c67f9966a960a9bd"
+      "sha256": "4e2e8a9006aac3cc98815a3c8751b2a462eb8925e672ea7534825d99d35618f3"
     },
     {
       "path": "docs/evidence/issue-33/fallback-neighborhood.png",
-      "sha256": "70e4f98a97aaf79a9b17930de10606e2717f8ec3919bf5a74df606f83434672e"
+      "sha256": "614fa05e073b92e3b01cc76e33da917d9f9fdb49045f81aaf533885b0fb11b95"
     },
     {
       "path": "docs/evidence/issue-33/fallback-street.png",
-      "sha256": "a526dfc10408b5937486f765494918555a8de8478833f3889de33ae6aad51c99"
+      "sha256": "5182ac00ee1cf562866d67682c12d0f2f641504cf19ae19b3b3c6f338808390a"
     },
     {
       "path": "docs/evidence/issue-33/fallback-selected.png",
-      "sha256": "003cbb6c24d121ac167f9920070f72e74b552a9071385504b0dd3fb80c9df86b"
+      "sha256": "deac8e83d429de3bb8743ebd1cf47799fd6e8524b4c9ddd3a4fbead21c891c13"
     },
     {
       "path": "docs/evidence/issue-33/fallback-walking-phase.png",
-      "sha256": "24a24a0ebb35b4d9b5ba9cb071d5d3fa1eaab1d742cc3a5a56921890608f7831"
+      "sha256": "c874c6e14411deb9b195acba9dc7a8e9e42fa1543ef6f8ba46c6dde745c72810"
     },
     {
       "path": "docs/evidence/issue-33/fallback-hour-boundary.png",
-      "sha256": "77593150322ed7a4221a6678909774f9c6316a6ee54a04f4fbccab763d234aa2"
+      "sha256": "da0145083b252ae1e679e86409f24d6e3e0dff38b7e1114b00f443ba2521b71c"
     },
     {
       "path": "docs/evidence/issue-33/fallback-journey.webm",
-      "sha256": "3fc3ac9f1256d3384ab816861a12b59edce1de95be0153d427af65b583f787b5"
+      "sha256": "da17513321eb61930ce159041f6a2f2889772d255b4a77c79ba9eb1468e5a795"
     },
     {
       "path": "docs/evidence/issue-33/fallback-narrow.png",
-      "sha256": "8c283486f139ae6f8575f7504689709c80a39a7ae08e022d549909b04f671e52"
+      "sha256": "095e05736213e73bb383996993d543a01a7fb2840739880ec2885e682ff8e2d1"
     }
   ]
 }
