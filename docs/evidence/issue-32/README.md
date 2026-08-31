@@ -23,12 +23,12 @@ The full values are in [`living-city-renderer.json`](../../../benchmarks/results
 
 | Literal figures | Frame p50 / p95 | CPU prepare p95 | Draw p95 | Retained heap growth | Pick p95 |
 | --------------- | --------------- | --------------- | -------- | -------------------- | -------- |
-| 128             | 0.50 / 0.70 ms  | 0.20 ms         | 0.50 ms  | 0.08 MiB             | 0.00 ms  |
-| 256             | 0.80 / 1.30 ms  | 0.70 ms         | 0.70 ms  | 0.15 MiB             | 0.00 ms  |
-| 512             | 1.50 / 2.20 ms  | 1.20 ms         | 1.10 ms  | 0.31 MiB             | 0.00 ms  |
-| 1024 measured   | 2.80 / 4.00 ms  | 2.00 ms         | 1.90 ms  | 0.60 MiB             | 0.00 ms  |
+| 128             | 0.50 / 0.70 ms  | 0.30 ms         | 0.40 ms  | 0.09 MiB             | 0.00 ms  |
+| 256             | 0.80 / 1.00 ms  | 0.50 ms         | 0.70 ms  | 0.15 MiB             | 0.00 ms  |
+| 512             | 1.50 / 2.20 ms  | 1.30 ms         | 1.10 ms  | 0.31 MiB             | 0.00 ms  |
+| 1024 measured   | 2.80 / 3.90 ms  | 1.70 ms         | 2.30 ms  | 0.60 MiB             | 0.00 ms  |
 
-Resize p95 was 6.00 ms. Zoom-transition preparation p95 was 47.50 ms. Peak post-collection heap among measured points was 3.27 MiB. Every Canvas point used one draw pass.
+Resize p95 was 6.60 ms. Zoom-transition preparation p95 was 46.40 ms. Peak post-collection heap among measured points was 3.27 MiB. Every Canvas point used one draw pass.
 
 ## Frozen provisional budgets
 

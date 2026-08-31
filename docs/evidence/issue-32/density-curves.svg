@@ -4,10 +4,10 @@
   <rect width="980" height="440" fill="#0a1318"/>
   <line x1="64" y1="64" x2="64" y2="376" stroke="#849e93"/>
   <line x1="64" y1="376" x2="916" y2="376" stroke="#849e93"/>
-  <polyline points="64,337 277,321.40000092983246 490,274.59999907016754 703,204.40000092983246 916,64" fill="none" stroke="#ffe66d" stroke-width="3"/>
-  <polyline points="64,173.58791606399265 277,165.56082908481613 490,150.93472905577102 703,121.60930377834634 916,64" fill="none" stroke="#70b7e6" stroke-width="3"/>
+  <polyline points="64,327.9999985328088 277,320.0000014671912 490,296.00000073359564 703,200.00000256758466 916,64" fill="none" stroke="#ffe66d" stroke-width="3"/>
+  <polyline points="64,173.76909668957532 277,165.55640607152023 490,150.92999863090995 703,121.6105146114601 916,64" fill="none" stroke="#70b7e6" stroke-width="3"/>
   <text x="64" y="30" fill="#eaf6ef" font-family="system-ui" font-size="19">Fixed-time literal-person Canvas curves</text>
-  <text x="64" y="50" fill="#ffe66d" font-family="system-ui" font-size="13">yellow: frame p95 ms (max 4.00)</text>
+  <text x="64" y="50" fill="#ffe66d" font-family="system-ui" font-size="13">yellow: frame p95 ms (max 3.90)</text>
   <text x="324" y="50" fill="#70b7e6" font-family="system-ui" font-size="13">blue: heap MiB (max 3.27)</text>
   <text x="64" y="412" text-anchor="middle" fill="#cfe8dc" font-family="system-ui" font-size="13">64</text>
 <text x="277" y="412" text-anchor="middle" fill="#cfe8dc" font-family="system-ui" font-size="13">128</text>

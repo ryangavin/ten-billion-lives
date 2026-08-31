@@ -1,7 +1,7 @@
 {
   "requests": [
-    "http://127.0.0.1:58235/living-city-spike-host?backend=canvas&count=256&phase=250000",
-    "http://127.0.0.1:58235/living-city-spike.js"
+    "http://127.0.0.1:58303/living-city-spike-host?backend=canvas&count=256&phase=250000",
+    "http://127.0.0.1:58303/living-city-spike.js"
   ],
   "externalRequests": [],
   "consoleMessages": [],
