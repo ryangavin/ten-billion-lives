@@ -26,3 +26,4 @@ export type {
 } from "./renderer";
 export { BrowserJourneyRenderer, drawCanvasScene } from "./browser";
 export type { BrowserRendererElements, BrowserRendererStatus } from "./browser";
+export * from "./living-city";

@@ -139,29 +139,35 @@ export function createLivingCitySpikeInput(
       sidewalks: Object.freeze([
         Object.freeze({
           id: "sidewalk/harbor-north",
-          polygon: rectangle(-22_000, -1_800, 22_000, -700),
+          path: Object.freeze([point(-22_000, -1_250), point(22_000, -1_250)]),
+          widthCm: 1_100,
         }),
         Object.freeze({
           id: "sidewalk/harbor-south",
-          polygon: rectangle(-22_000, 700, 22_000, 1_800),
+          path: Object.freeze([point(-22_000, 1_250), point(22_000, 1_250)]),
+          widthCm: 1_100,
         }),
         Object.freeze({
           id: "sidewalk/market-west",
-          polygon: rectangle(-1_800, -22_000, -700, 22_000),
+          path: Object.freeze([point(-1_250, -22_000), point(-1_250, 22_000)]),
+          widthCm: 1_100,
         }),
         Object.freeze({
           id: "sidewalk/market-east",
-          polygon: rectangle(700, -22_000, 1_800, 22_000),
+          path: Object.freeze([point(1_250, -22_000), point(1_250, 22_000)]),
+          widthCm: 1_100,
         }),
       ]),
       crossings: Object.freeze([
         Object.freeze({
           id: "crossing/harbor",
-          polygon: rectangle(-650, -1_800, 650, 1_800),
+          path: Object.freeze([point(0, -1_800), point(0, 1_800)]),
+          widthCm: 1_300,
         }),
         Object.freeze({
           id: "crossing/market",
-          polygon: rectangle(-1_800, -650, 1_800, 650),
+          path: Object.freeze([point(-1_800, 0), point(1_800, 0)]),
+          widthCm: 1_300,
         }),
       ]),
       buildings: Object.freeze([
@@ -189,7 +195,7 @@ export function createLivingCitySpikeInput(
       publicSpaces: Object.freeze([
         Object.freeze({
           id: "public/lantern-square",
-          polygon: rectangle(4_500, 6_000, 18_500, 18_500),
+          boundary: rectangle(4_500, 6_000, 18_500, 18_500),
         }),
       ]),
       places: Object.freeze([]),

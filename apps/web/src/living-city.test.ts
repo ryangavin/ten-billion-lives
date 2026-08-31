@@ -1,0 +1,113 @@
+import { describe, expect, it } from "vitest";
+
+import {
+  createCityProjection,
+  createIllusionEngine,
+  createVisualTime,
+} from "@ten-billion-lives/manifest";
+import {
+  BASELINE_WORLD_SEED,
+  advanceWorldKernel,
+  createWorldKernel,
+  generateWorld,
+} from "@ten-billion-lives/sim";
+
+import { createProductionLivingCityScene } from "./living-city";
+
+describe("production living-city scene adapter", () => {
+  it("composes projection tokens, exact itineraries, and city routes without changing semantics", () => {
+    const world = generateWorld(BASELINE_WORLD_SEED);
+    const city = createCityProjection({
+      schema: 1,
+      seed: BASELINE_WORLD_SEED,
+      settlementId: "place/brindle-bay",
+    });
+    const genesis = createWorldKernel(BASELINE_WORLD_SEED, []);
+    const states = new Map([[0n, genesis]]);
+    const stateAt = (tick: bigint) => {
+      const cached = states.get(tick);
+      if (cached !== undefined) return cached;
+      const state = advanceWorldKernel(genesis, Number(tick));
+      states.set(tick, state);
+      return state;
+    };
+    const observerA = createIllusionEngine(world);
+    const observerB = createIllusionEngine(world);
+    const cellId = world.settlements[0]?.cellId;
+    if (cellId === undefined) throw new Error("missing Brindle Bay cell");
+    const selectedPersonId = observerA.manifestation.personIdAt(cellId, 42n);
+    const state = stateAt(7n);
+    const project = (engine: typeof observerA) =>
+      engine.project({
+        state,
+        tick: 7n,
+        scopeCellIds: [cellId],
+        lod: "person",
+        selectedPersonIds: [selectedPersonId],
+      });
+    const itineraryAt =
+      (engine: typeof observerA) => (personId: string, tick: bigint) =>
+        engine.itinerary.queryPerson(personId, tick, stateAt(tick));
+    const query = {
+      city,
+      branch: "baseline" as const,
+      time: createVisualTime(7n, 500_000),
+      selectedPersonId,
+      quality: "fallback" as const,
+    };
+    const projectionA = project(observerA);
+    const projectionB = project(observerB);
+
+    const cityScene = createProductionLivingCityScene({
+      ...query,
+      projection: projectionA,
+      itineraryAt: itineraryAt(observerA),
+      level: "city",
+    });
+    const neighborhoodScene = createProductionLivingCityScene({
+      ...query,
+      projection: projectionA,
+      itineraryAt: itineraryAt(observerA),
+      level: "neighborhood",
+    });
+    const independent = createProductionLivingCityScene({
+      ...query,
+      projection: projectionB,
+      itineraryAt: itineraryAt(observerB),
+      level: "city",
+    });
+
+    expect(cityScene.figures).toHaveLength(64);
+    expect(neighborhoodScene.figures).toHaveLength(128);
+    expect(
+      cityScene.figures.every((figure) =>
+        neighborhoodScene.figures.some(
+          (candidate) => candidate.personId === figure.personId,
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      cityScene.figures.every((figure) =>
+        projectionA.tokens.some((token) => token.personId === figure.personId),
+      ),
+    ).toBe(true);
+    expect(
+      cityScene.figures.reduce(
+        (total, figure) => total + figure.representedWeight,
+        cityScene.unsampledRemainder,
+      ),
+    ).toBe(cityScene.representedPeople);
+    expect(
+      cityScene.figures.find((figure) => figure.personId === selectedPersonId),
+    ).toMatchObject({ representedWeight: 1n, pinned: true });
+    expect(
+      cityScene.figures.every(
+        (figure) =>
+          figure.pose.time.tick === 7n &&
+          figure.pose.time.phasePermillion === 500_000 &&
+          figure.pose.trajectoryHash.length === 16,
+      ),
+    ).toBe(true);
+    expect(independent).toEqual(cityScene);
+  });
+});

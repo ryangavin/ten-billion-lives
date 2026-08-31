@@ -15,9 +15,15 @@ export interface CityRoad {
   readonly widthCm: number;
 }
 
-export interface CityPolygonFeature {
+export interface CityPathFeature {
   readonly id: string;
-  readonly polygon: readonly MapPoint[];
+  readonly path: readonly MapPoint[];
+  readonly widthCm: number;
+}
+
+export interface CityAreaFeature {
+  readonly id: string;
+  readonly boundary: readonly MapPoint[];
 }
 
 export interface CityBuilding {
@@ -32,10 +38,10 @@ export interface CityProjection {
   readonly settlementId: "place/brindle-bay";
   readonly bounds: Readonly<{ min: MapPoint; max: MapPoint }>;
   readonly roads: readonly CityRoad[];
-  readonly sidewalks: readonly CityPolygonFeature[];
-  readonly crossings: readonly CityPolygonFeature[];
+  readonly sidewalks: readonly CityPathFeature[];
+  readonly crossings: readonly CityPathFeature[];
   readonly buildings: readonly CityBuilding[];
-  readonly publicSpaces: readonly CityPolygonFeature[];
+  readonly publicSpaces: readonly CityAreaFeature[];
   readonly places: readonly unknown[];
   readonly pedestrianNodes: readonly unknown[];
   readonly pedestrianEdges: readonly unknown[];
@@ -183,8 +189,8 @@ export interface PreparedLivingCityFrame {
   readonly viewport: Readonly<{ width: number; height: number }>;
   readonly treatment: "day" | "evening";
   readonly roads: readonly PreparedRoad[];
-  readonly sidewalks: readonly PreparedPolygon[];
-  readonly crossings: readonly PreparedPolygon[];
+  readonly sidewalks: readonly PreparedRoad[];
+  readonly crossings: readonly PreparedRoad[];
   readonly publicSpaces: readonly PreparedPolygon[];
   readonly buildings: readonly PreparedBuilding[];
   readonly figures: readonly PreparedLivingCityFigure[];
@@ -496,13 +502,23 @@ export function prepareLivingCityFrame(
       widthPx: (road.widthCm / 100) * camera.pixelsPerMeter,
     });
   });
-  const polygonFeatures = (features: readonly CityPolygonFeature[]) =>
+  const pathFeatures = (features: readonly CityPathFeature[]) =>
     features.map((feature) => {
-      if (feature.polygon.length < 3)
+      if (feature.path.length < 2 || feature.widthCm <= 0)
+        throw new RangeError(`${feature.id} requires a width and path`);
+      return Object.freeze({
+        id: feature.id,
+        centerline: projectPolygon(feature.path, camera, viewport),
+        widthPx: (feature.widthCm / 100) * camera.pixelsPerMeter,
+      });
+    });
+  const areaFeatures = (features: readonly CityAreaFeature[]) =>
+    features.map((feature) => {
+      if (feature.boundary.length < 3)
         throw new RangeError(`${feature.id} requires at least three points`);
       return Object.freeze({
         id: feature.id,
-        points: projectPolygon(feature.polygon, camera, viewport),
+        points: projectPolygon(feature.boundary, camera, viewport),
       });
     });
   const buildings = scene.city.buildings
@@ -559,9 +575,9 @@ export function prepareLivingCityFrame(
     viewport: Object.freeze({ ...viewport }),
     treatment: hour >= 7 && hour < 18 ? "day" : "evening",
     roads: Object.freeze(roads),
-    sidewalks: Object.freeze(polygonFeatures(scene.city.sidewalks)),
-    crossings: Object.freeze(polygonFeatures(scene.city.crossings)),
-    publicSpaces: Object.freeze(polygonFeatures(scene.city.publicSpaces)),
+    sidewalks: Object.freeze(pathFeatures(scene.city.sidewalks)),
+    crossings: Object.freeze(pathFeatures(scene.city.crossings)),
+    publicSpaces: Object.freeze(areaFeatures(scene.city.publicSpaces)),
     buildings: Object.freeze(buildings),
     figures: Object.freeze(figures),
     pickTable: Object.freeze(pickTable),
@@ -780,19 +796,28 @@ export function drawLivingCityCanvas(
     context.setLineDash([]);
   }
   for (const sidewalk of frame.sidewalks) {
-    canvasPolygon(context, sidewalk.points);
-    context.fillStyle = frame.treatment === "day" ? "#c8c4b5" : "#777a78";
-    context.fill();
-    context.strokeStyle = "rgba(34, 39, 41, 0.38)";
-    context.lineWidth = 1;
+    const first = sidewalk.centerline[0];
+    if (first === undefined) continue;
+    context.beginPath();
+    context.moveTo(first.x, first.y);
+    for (const point of sidewalk.centerline.slice(1))
+      context.lineTo(point.x, point.y);
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.strokeStyle = frame.treatment === "day" ? "#c8c4b5" : "#777a78";
+    context.lineWidth = sidewalk.widthPx;
     context.stroke();
   }
   for (const crossing of frame.crossings) {
-    canvasPolygon(context, crossing.points);
-    context.fillStyle = "rgba(235, 234, 216, 0.88)";
-    context.fill();
-    context.strokeStyle = "rgba(60, 65, 67, 0.72)";
-    context.lineWidth = 2;
+    const first = crossing.centerline[0];
+    if (first === undefined) continue;
+    context.beginPath();
+    context.moveTo(first.x, first.y);
+    for (const point of crossing.centerline.slice(1))
+      context.lineTo(point.x, point.y);
+    context.lineCap = "butt";
+    context.strokeStyle = "rgba(235, 234, 216, 0.88)";
+    context.lineWidth = crossing.widthPx;
     context.setLineDash([5, 5]);
     context.stroke();
     context.setLineDash([]);
@@ -995,9 +1020,33 @@ function gpuVertices(frame: PreparedLivingCityFrame): Float32Array {
         );
     }
   for (const sidewalk of frame.sidewalks)
-    triangleVertices(output, viewport, sidewalk.points, color("#c8c4b5"));
+    for (let index = 0; index < sidewalk.centerline.length - 1; index += 1) {
+      const start = sidewalk.centerline[index];
+      const end = sidewalk.centerline[index + 1];
+      if (start !== undefined && end !== undefined)
+        lineVertices(
+          output,
+          viewport,
+          start,
+          end,
+          sidewalk.widthPx,
+          color("#c8c4b5"),
+        );
+    }
   for (const crossing of frame.crossings)
-    triangleVertices(output, viewport, crossing.points, color("#e9e7d8"));
+    for (let index = 0; index < crossing.centerline.length - 1; index += 1) {
+      const start = crossing.centerline[index];
+      const end = crossing.centerline[index + 1];
+      if (start !== undefined && end !== undefined)
+        lineVertices(
+          output,
+          viewport,
+          start,
+          end,
+          crossing.widthPx,
+          color("#e9e7d8"),
+        );
+    }
   for (const building of frame.buildings) {
     triangleVertices(output, viewport, building.footprint, color("#596a6e"));
     triangleVertices(output, viewport, building.roof, color("#b5aa92"));

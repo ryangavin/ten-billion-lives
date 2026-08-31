@@ -58,23 +58,15 @@ function fixedInput(): LivingCityRenderInput {
         sidewalks: [
           {
             id: "sidewalk/north",
-            polygon: [
-              point(-20_000, -1_200),
-              point(20_000, -1_200),
-              point(20_000, -600),
-              point(-20_000, -600),
-            ],
+            path: [point(-20_000, -900), point(20_000, -900)],
+            widthCm: 600,
           },
         ],
         crossings: [
           {
             id: "crossing/market",
-            polygon: [
-              point(-600, -600),
-              point(600, -600),
-              point(600, 600),
-              point(-600, 600),
-            ],
+            path: [point(0, -600), point(0, 600)],
+            widthCm: 1_200,
           },
         ],
         buildings: [
