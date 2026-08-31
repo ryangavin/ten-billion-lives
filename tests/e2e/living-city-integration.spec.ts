@@ -49,7 +49,30 @@ test("production journey composes semantic zoom, playback, observers, and Canvas
     manifestationHash ?? "",
   );
 
-  await page.getByRole("button", { name: "Zoom person" }).click();
+  const selectedScreenX = Number(
+    await renderer.getAttribute("data-selected-screen-x"),
+  );
+  const selectedScreenY = Number(
+    await renderer.getAttribute("data-selected-screen-y"),
+  );
+  const canvas = page.locator("[data-render-surface]:not([hidden])");
+  const canvasBox = await canvas.boundingBox();
+  const canvasSize = await canvas.evaluate((element) => ({
+    width: (element as HTMLCanvasElement).width,
+    height: (element as HTMLCanvasElement).height,
+  }));
+  if (
+    !Number.isFinite(selectedScreenX) ||
+    !Number.isFinite(selectedScreenY) ||
+    canvasBox === null
+  )
+    throw new Error("selected production figure has no screen coordinate");
+  await canvas.click({
+    position: {
+      x: (selectedScreenX / canvasSize.width) * canvasBox.width,
+      y: (selectedScreenY / canvasSize.height) * canvasBox.height,
+    },
+  });
   await expect(page.getByTestId("observer-a-person-id")).toHaveText(
     selectedPersonId ?? "",
   );

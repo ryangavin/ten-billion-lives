@@ -612,6 +612,18 @@ export function pickLivingCityFigure(
   return null;
 }
 
+export function livingCityFigureScreenPoint(
+  frame: PreparedLivingCityFrame,
+  personId: string,
+  expectedSemanticKey: string,
+): ScreenPoint | null {
+  if (frame.semanticKey !== expectedSemanticKey) return null;
+  const figure = frame.figures.find(
+    (candidate) => candidate.personId === personId,
+  );
+  return figure === undefined ? null : Object.freeze({ ...figure.screen });
+}
+
 export function createLivingCitySummary(
   scene: LivingCityScene,
 ): LivingCitySummary {
@@ -1292,6 +1304,15 @@ struct VertexOutput {
     return this.#frame === null
       ? null
       : pickLivingCityFigure(this.#frame, x, y, expectedSemanticKey);
+  }
+
+  screenPoint(
+    personId: string,
+    expectedSemanticKey: string,
+  ): ScreenPoint | null {
+    return this.#frame === null
+      ? null
+      : livingCityFigureScreenPoint(this.#frame, personId, expectedSemanticKey);
   }
 
   simulateContextLoss(): LivingCityRenderMetrics | null {

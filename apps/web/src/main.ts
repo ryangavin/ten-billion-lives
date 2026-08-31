@@ -570,6 +570,25 @@ async function mountJourneyRenderer(
   journeyResizeObserver.observe(stack);
 }
 
+function exposeSelectedScreenPoint(
+  stack: HTMLElement,
+  renderer: LivingCityBrowserRenderer,
+  scene: LivingCityScene,
+): void {
+  const selectedPersonId = scene.selectedPersonId;
+  const point =
+    selectedPersonId === null
+      ? null
+      : renderer.screenPoint(selectedPersonId, scene.semanticKey);
+  if (point === null) {
+    delete stack.dataset["selectedScreenX"];
+    delete stack.dataset["selectedScreenY"];
+    return;
+  }
+  stack.dataset["selectedScreenX"] = point.x.toFixed(3);
+  stack.dataset["selectedScreenY"] = point.y.toFixed(3);
+}
+
 async function mountLivingCityRenderer(
   root: HTMLElement,
   scene: LivingCityScene,
@@ -613,11 +632,15 @@ async function mountLivingCityRenderer(
     renderer.destroy();
     return;
   }
+  exposeSelectedScreenPoint(stack, renderer, scene);
   if (applyAdaptiveRenderQuality(root, status)) return;
   journeyResizeObserver = new ResizeObserver(() => {
     const size = dimensions();
     const resized = renderer.resize(size.width, size.height);
-    if (resized !== null) applyAdaptiveRenderQuality(root, resized);
+    if (resized !== null) {
+      exposeSelectedScreenPoint(stack, renderer, livingCityScene ?? scene);
+      applyAdaptiveRenderQuality(root, resized);
+    }
   });
   journeyResizeObserver.observe(stack);
 }
@@ -660,6 +683,8 @@ function updatePlaybackPresentation(root: HTMLElement): boolean {
   );
   const stack = root.querySelector<HTMLElement>("[data-render-stack]");
   stack?.setAttribute("data-projection-key", sceneA.semanticKey);
+  if (stack !== null)
+    exposeSelectedScreenPoint(stack, livingCityRenderer, sceneA);
   const time = root.querySelector<HTMLElement>(
     "[data-testid=living-city-time]",
   );

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   LivingCityLifecycle,
   createLivingCitySummary,
+  livingCityFigureScreenPoint,
   pickLivingCityFigure,
   prepareLivingCityFrame,
   type LivingCityRenderInput,
@@ -179,6 +180,12 @@ describe("literal-person living-city renderer", () => {
       representedWeight: 1n,
     });
     expect(pickLivingCityFigure(baseline, 0, 0, "scene/stale")).toBeNull();
+    expect(
+      livingCityFigureScreenPoint(baseline, "person/ada", baseline.semanticKey),
+    ).toEqual(selected?.screen);
+    expect(
+      livingCityFigureScreenPoint(baseline, "person/ada", "scene/stale"),
+    ).toBeNull();
   });
 
   it("falls back to Canvas on context loss without changing scene or selection", () => {
