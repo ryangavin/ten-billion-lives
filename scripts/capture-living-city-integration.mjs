@@ -36,7 +36,9 @@ async function measure(action) {
 
 async function screenshotRenderer(page, path) {
   await page.waitForTimeout(300);
-  await page.getByTestId("journey-renderer").screenshot({ path });
+  const bounds = await page.getByTestId("journey-renderer").boundingBox();
+  assert(bounds !== null, "journey renderer has no screenshot bounds");
+  await page.screenshot({ path, clip: bounds });
 }
 
 async function canvasPickSelected(page) {
@@ -260,8 +262,9 @@ async function recordJourney(browser, previewUrl, options) {
     .getAttribute("data-projection-key");
   assert.equal(replayKey, directSeekKey);
 
+  await page.requestGC();
   const browserMetrics = await page.evaluate(() => ({
-    heapMiB: (performance.memory?.usedJSHeapSize ?? 0) / 1_048_576,
+    retainedHeapMiB: (performance.memory?.usedJSHeapSize ?? 0) / 1_048_576,
     gpuNavigatorPresent: Boolean(navigator.gpu),
   }));
   const frameMs = Number.parseFloat(
@@ -373,9 +376,9 @@ try {
     initializeObserverBMs: production.timings.observerBMs,
     productionFrameMs: production.frameMs,
     fallbackFrameMs: fallback.frameMs,
-    peakObservedHeapMiB: Math.max(
-      production.browserMetrics.heapMiB,
-      fallback.browserMetrics.heapMiB,
+    maxRetainedHeapMiB: Math.max(
+      production.browserMetrics.retainedHeapMiB,
+      fallback.browserMetrics.retainedHeapMiB,
     ),
   };
   const budgets = {
@@ -384,7 +387,7 @@ try {
     pickResponseMsMax: 2_500,
     initializeObserverBMsMax: 3_500,
     frameMsMax: 16.67,
-    peakObservedHeapMiBMax: 128,
+    retainedHeapMiBMax: 128,
   };
   if (metrics.coldCityMs > budgets.coldCityMsMax) failures.push("cold city");
   if (metrics.zoomP95Ms > budgets.zoomP95MsMax) failures.push("zoom");
@@ -396,13 +399,13 @@ try {
     metrics.fallbackFrameMs > budgets.frameMsMax
   )
     failures.push("frame");
-  if (metrics.peakObservedHeapMiB > budgets.peakObservedHeapMiBMax)
+  if (metrics.maxRetainedHeapMiB > budgets.retainedHeapMiBMax)
     failures.push("heap");
   assert.deepEqual(failures, [], JSON.stringify({ metrics, budgets }));
 
   const result = {
     schemaVersion: 1,
-    benchmarkVersion: "living-city-integration-v1",
+    benchmarkVersion: "living-city-integration-v2",
     commit,
     profile,
     browser: browserVersion,

@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "issue": 33,
-  "commit": "e916883a629ad0f9af8e9006501a5f1f25eedc93",
+  "commit": "bc5fc216a8a9c47e68d079c6863434052e364375",
   "profile": "apple-m1-max-32gb-chromium",
-  "generatedAt": "2026-08-31T06:11:20.318Z",
-  "capturedImplementationCommit": "e916883a629ad0f9af8e9006501a5f1f25eedc93",
+  "generatedAt": "2026-08-31T06:44:38.872Z",
+  "capturedImplementationCommit": "bc5fc216a8a9c47e68d079c6863434052e364375",
   "productionBackend": "canvas2d",
   "fallbackBackend": "canvas2d",
   "failures": [],
@@ -27,6 +27,18 @@
       "scope": "evidence harness",
       "failure": "The heap sample was taken after context loss and a 390x7965 full-page evidence screenshot.",
       "resolution": "Sample application heap and backend before deliberate recovery and capture-tool work; assert recovery separately."
+    },
+    {
+      "attempt": 4,
+      "scope": "evidence harness",
+      "failure": "A one-point heap sample without collection varied with pending garbage and did not measure retained application memory.",
+      "resolution": "Request explicit page GC before sampling, rename the v2 metric to retained heap, and keep the 128 MiB budget unchanged."
+    },
+    {
+      "attempt": 5,
+      "scope": "evidence harness",
+      "failure": "Element screenshots caused Playwright's isolation compositor to paint gray outside the element in the simultaneous journey video.",
+      "resolution": "Capture the same renderer bounds with clipped page screenshots so the video contains only actual app output."
     }
   ],
   "externalRequests": [],
@@ -34,67 +46,67 @@
   "artifacts": [
     {
       "path": "benchmarks/results/living-city-integration.json",
-      "sha256": "dbe5605d3f81e46a66ed84430de07c2eee4ec28573dc2dec7e0f3552453e3746"
+      "sha256": "d310b4c0fd0a5709018068c31a156a5ee1cb7f550cb2b9d7d9728d10c7b9f9e5"
     },
     {
       "path": "docs/evidence/issue-33/production-city.png",
-      "sha256": "141f8930b21d445bbd3522939aa7125dd0ed2135ee0ec87f4ba0fe02213d086e"
+      "sha256": "b3d6ce1ed72deb75a6977698661125a33ba6cfa81e10a6cb3a60ead72927f0c8"
     },
     {
       "path": "docs/evidence/issue-33/production-neighborhood.png",
-      "sha256": "b1970c62aaa28cf7058edf80a736d2272c093b52bb7710c253cd7c039aa4162a"
+      "sha256": "e70a7393ccec661124f6460f0c3edccb32ba7ecc0f474b2bc562219f75e29680"
     },
     {
       "path": "docs/evidence/issue-33/production-street.png",
-      "sha256": "1132ff4286aa39edc2f73a8f90cd85a1f2ba42816f70afd174dd3d943dc6054e"
+      "sha256": "2baee4258d5530e13c04e82692ff7204879be7b8b433ed713b1beb6302c5f2d6"
     },
     {
       "path": "docs/evidence/issue-33/production-selected.png",
-      "sha256": "56649357fa33c23333938fe84902107fc3ed6a53d1ac8d0fa2e4637bade6ca1c"
+      "sha256": "e515770f3a81c13fbf849ce104809d27b3c0d9de667cbeead4d8e9caa4b89bb3"
     },
     {
       "path": "docs/evidence/issue-33/production-walking-phase.png",
-      "sha256": "6e132e6ea91456213f911bb8673429c55478dcd58a81337385272dd322cbce20"
+      "sha256": "bbf4841eabd9768d8d06604fde85e28a18701c1423beb9bd58c72f1399a215ef"
     },
     {
       "path": "docs/evidence/issue-33/production-hour-boundary.png",
-      "sha256": "fa222f4eaad46568c2b5e615cc21507880828fdf93a332b2bb9e824f86028822"
+      "sha256": "fc0af5e1d1b8cad6b8d430025498ec9f92b376bfea020aac4d2b2b85177361c0"
     },
     {
       "path": "docs/evidence/issue-33/production-journey.webm",
-      "sha256": "9840e72e60b2b63b3b2a72ccaf673af20654fb9c2641755118303c595da83351"
+      "sha256": "2347f1e9cc74aed16c4da4ed672e7a0195074a8357943a70218d3c1eaab4091b"
     },
     {
       "path": "docs/evidence/issue-33/fallback-city.png",
-      "sha256": "e9214428d4ce626e06652f144308f6bf1cbb184f50f9d82deb465def7144e9d3"
+      "sha256": "c42053ce0d240eada9d3d889d0ba2958fca1ff2cd49cc290c67f9966a960a9bd"
     },
     {
       "path": "docs/evidence/issue-33/fallback-neighborhood.png",
-      "sha256": "c7217702958a1794d6ab4b02f0973ca372ef8b76ffd551823918f8850cf829cc"
+      "sha256": "70e4f98a97aaf79a9b17930de10606e2717f8ec3919bf5a74df606f83434672e"
     },
     {
       "path": "docs/evidence/issue-33/fallback-street.png",
-      "sha256": "42f01245fffb1aa3a40212991019d6aebfa67004395a1faf353c26b920cbb9ff"
+      "sha256": "a526dfc10408b5937486f765494918555a8de8478833f3889de33ae6aad51c99"
     },
     {
       "path": "docs/evidence/issue-33/fallback-selected.png",
-      "sha256": "69d87c3a6ee2858b6ad99da8f9d5a2b6d0a4020de7b4bea8e39d364624d7befd"
+      "sha256": "003cbb6c24d121ac167f9920070f72e74b552a9071385504b0dd3fb80c9df86b"
     },
     {
       "path": "docs/evidence/issue-33/fallback-walking-phase.png",
-      "sha256": "4e75147510e8efc5cedc1515115395c1231858bdba5f43678043bacd375c3bef"
+      "sha256": "24a24a0ebb35b4d9b5ba9cb071d5d3fa1eaab1d742cc3a5a56921890608f7831"
     },
     {
       "path": "docs/evidence/issue-33/fallback-hour-boundary.png",
-      "sha256": "37484c17588c125285cfb7eaa854ac0b8b7d21428154a6115f66a6956b79ae4b"
+      "sha256": "77593150322ed7a4221a6678909774f9c6316a6ee54a04f4fbccab763d234aa2"
     },
     {
       "path": "docs/evidence/issue-33/fallback-journey.webm",
-      "sha256": "214988c7ce9d2c63f00aaa491a138215d0d35491548cea9bc840c2fd15dd449c"
+      "sha256": "3fc3ac9f1256d3384ab816861a12b59edce1de95be0153d427af65b583f787b5"
     },
     {
       "path": "docs/evidence/issue-33/fallback-narrow.png",
-      "sha256": "71d3928ed30bc38ba18024595c1f4baf2f7b661cc059d2ba42d4f261f9a90643"
+      "sha256": "8c283486f139ae6f8575f7504689709c80a39a7ae08e022d549909b04f671e52"
     }
   ]
 }

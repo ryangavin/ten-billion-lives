@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "benchmarkVersion": "living-city-integration-v1",
-  "commit": "e916883a629ad0f9af8e9006501a5f1f25eedc93",
+  "benchmarkVersion": "living-city-integration-v2",
+  "commit": "bc5fc216a8a9c47e68d079c6863434052e364375",
   "profile": "apple-m1-max-32gb-chromium",
   "browser": "151.0.7922.34",
   "production": {
@@ -14,15 +14,15 @@
       "contextLosses": "1"
     },
     "timings": {
-      "cityMs": 2751.314125,
-      "neighborhoodMs": 1510.8032920000005,
-      "streetMs": 1810.6343340000003,
-      "pickMs": 1283.919041000001,
-      "observerBMs": 2699.729792
+      "cityMs": 2664.043292,
+      "neighborhoodMs": 1488.3895830000001,
+      "streetMs": 1798.151167,
+      "pickMs": 1275.0028329999996,
+      "observerBMs": 2659.030666999999
     },
-    "frameMs": 1.23,
+    "frameMs": 1.06,
     "browserMetrics": {
-      "heapMiB": 98.22845458984375,
+      "retainedHeapMiB": 64.849853515625,
       "gpuNavigatorPresent": true
     },
     "semantic": {
@@ -35,7 +35,7 @@
       "trajectoryComparison": "Semantic match · trajectory match",
       "directSeekKey": "living-city/fe9008bc3a7b22c5",
       "replayKey": "living-city/fe9008bc3a7b22c5",
-      "pausedKey": "living-city/90d47618a5b1c102",
+      "pausedKey": "living-city/85b88ebe78707cde",
       "population": {
         "figures": 256,
         "sampled": "818250",
@@ -70,15 +70,15 @@
       "contextLosses": "1"
     },
     "timings": {
-      "cityMs": 2771.506417000004,
-      "neighborhoodMs": 1521.5118329999968,
-      "streetMs": 1249.0611250000002,
-      "pickMs": 1336.5278749999998,
-      "observerBMs": 2132.7734589999964
+      "cityMs": 2803.090833000002,
+      "neighborhoodMs": 1542.8221249999988,
+      "streetMs": 1281.2915409999987,
+      "pickMs": 1338.9792080000043,
+      "observerBMs": 2201.3383749999994
     },
-    "frameMs": 0.5,
+    "frameMs": 0.78,
     "browserMetrics": {
-      "heapMiB": 51.021575927734375,
+      "retainedHeapMiB": 35.572052001953125,
       "gpuNavigatorPresent": true
     },
     "semantic": {
@@ -91,7 +91,7 @@
       "trajectoryComparison": "Semantic match · trajectory match",
       "directSeekKey": "living-city/ce8177a5153f8c0e",
       "replayKey": "living-city/ce8177a5153f8c0e",
-      "pausedKey": "living-city/f693f125e99c338c",
+      "pausedKey": "living-city/f127f9e2c2f62e58",
       "population": {
         "figures": 128,
         "sampled": "407517",
@@ -117,13 +117,13 @@
     "recording": "docs/evidence/issue-33/fallback-journey.webm"
   },
   "metrics": {
-    "coldCityMs": 2751.314125,
-    "zoomP95Ms": 1810.6343340000003,
-    "pickResponseMs": 1283.919041000001,
-    "initializeObserverBMs": 2699.729792,
-    "productionFrameMs": 1.23,
-    "fallbackFrameMs": 0.5,
-    "peakObservedHeapMiB": 98.22845458984375
+    "coldCityMs": 2664.043292,
+    "zoomP95Ms": 1798.151167,
+    "pickResponseMs": 1275.0028329999996,
+    "initializeObserverBMs": 2659.030666999999,
+    "productionFrameMs": 1.06,
+    "fallbackFrameMs": 0.78,
+    "maxRetainedHeapMiB": 64.849853515625
   },
   "budgets": {
     "coldCityMsMax": 3500,
@@ -131,7 +131,7 @@
     "pickResponseMsMax": 2500,
     "initializeObserverBMsMax": 3500,
     "frameMsMax": 16.67,
-    "peakObservedHeapMiBMax": 128,
+    "retainedHeapMiBMax": 128,
     "passed": true
   },
   "caveats": {

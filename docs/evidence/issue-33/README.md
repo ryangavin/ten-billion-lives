@@ -34,20 +34,20 @@ The retained summaries conserve the exact local population:
 
 The full values and semantic transcript are in [`living-city-integration.json`](../../../benchmarks/results/living-city-integration.json). These are #33 integration budgets on one local profile; issue #36 owns release-candidate soak evidence.
 
-| Measurement             |      Result |     Budget |
-| ----------------------- | ----------: | ---------: |
-| Cold city entry         | 2,751.31 ms | ≤ 3,500 ms |
-| Zoom p95                | 1,810.63 ms | ≤ 2,500 ms |
-| Visible-coordinate pick | 1,283.92 ms | ≤ 2,500 ms |
-| Initialize observer B   | 2,699.73 ms | ≤ 3,500 ms |
-| Worst retained frame    |     1.23 ms | ≤ 16.67 ms |
-| Peak observed app heap  |   98.23 MiB |  ≤ 128 MiB |
+| Measurement               |      Result |     Budget |
+| ------------------------- | ----------: | ---------: |
+| Cold city entry           | 2,664.04 ms | ≤ 3,500 ms |
+| Zoom p95                  | 1,798.15 ms | ≤ 2,500 ms |
+| Visible-coordinate pick   | 1,275.00 ms | ≤ 2,500 ms |
+| Initialize observer B     | 2,659.03 ms | ≤ 3,500 ms |
+| Worst retained frame      |     1.06 ms | ≤ 16.67 ms |
+| Maximum retained app heap |   64.85 MiB |  ≤ 128 MiB |
 
-Heap and backend are sampled after the semantic journey and before the deliberate context loss and full-page evidence screenshot. Context loss and the narrow capture are asserted separately so capture-tool memory is not presented as application heap.
+Retained heap is sampled after explicit page GC at the end of the semantic journey and before the deliberate context loss and full-page evidence screenshot. Context loss and the narrow capture are asserted separately so pending garbage or capture-tool memory is not presented as retained application heap.
 
 ## Artifacts and reproduction
 
-`evidence-index.json` records the implementation commit, profile, skip, capture retries, every artifact path, and SHA-256. The final successful capture had no application failure or retry. Earlier harness attempts are retained in the index: a still raced an expected rerender, an exact intermediate tick label was skipped by a costly 60× frame, and a heap sample was initially taken after the full-page capture. Those were evidence-harness defects; each was reduced against the playback/render contract before the final run.
+`evidence-index.json` records the implementation commit, profile, skip, capture retries, every artifact path, and SHA-256. The final successful capture had no application failure or retry. Earlier harness attempts are retained in the index: a still raced an expected rerender, an exact intermediate tick label was skipped by a costly 60× frame, heap was initially sampled after the full-page capture, an uncollected one-point heap sample varied with pending garbage, and element screenshots contaminated the simultaneous video with Playwright's isolation compositor. Those were evidence-harness defects; each was reduced against the playback/render contract before the final run.
 
 Run from the repository root with the pinned toolchain:
 
