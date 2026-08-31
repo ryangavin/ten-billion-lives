@@ -6,9 +6,12 @@ import { mkdir, writeFile } from "node:fs/promises";
 const outputDirectory = process.argv[2] ?? "docs/evidence/issue-16";
 const vectors = [
   ["world", "scripts/replay-world.mjs"],
-  ["projection", "scripts/projection-vector.mjs"],
+  ["city", "scripts/city-vector.mjs"],
+  ["trajectory", "scripts/trajectory-vector.mjs"],
   ["person", "scripts/person-vector.mjs"],
   ["itinerary", "scripts/itinerary-vector.mjs"],
+  ["manifestation", "scripts/projection-vector.mjs"],
+  ["event", "scripts/projection-vector.mjs"],
 ];
 
 function run(script) {
@@ -29,6 +32,21 @@ function digest(value) {
   return createHash("sha256").update(value).digest("hex");
 }
 
+function semanticHashes(value, path = "") {
+  if (value === null || typeof value !== "object") return {};
+  return Object.fromEntries(
+    Object.entries(value).flatMap(([key, child]) => {
+      const childPath = path.length === 0 ? key : `${path}.${key}`;
+      if (
+        (key.toLowerCase().includes("hash") || key === "population") &&
+        (typeof child === "string" || typeof child === "number")
+      )
+        return [[childPath, String(child)]];
+      return Object.entries(semanticHashes(child, childPath));
+    }),
+  );
+}
+
 const results = {};
 for (const [name, script] of vectors) {
   const first = run(script);
@@ -41,13 +59,7 @@ for (const [name, script] of vectors) {
     byteLength: Buffer.byteLength(first),
     sha256: digest(first),
     identical: true,
-    semanticHashes: Object.fromEntries(
-      Object.entries(parsed).filter(
-        ([key, value]) =>
-          (key.toLowerCase().includes("hash") || key === "population") &&
-          typeof value === "string",
-      ),
-    ),
+    semanticHashes: semanticHashes(parsed),
   };
 }
 
