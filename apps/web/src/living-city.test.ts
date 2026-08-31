@@ -12,9 +12,30 @@ import {
   generateWorld,
 } from "@ten-billion-lives/sim";
 
-import { createProductionLivingCityScene } from "./living-city";
+import {
+  createProductionLivingCityScene,
+  livingCityCachePolicy,
+  setBoundedLivingCityCache,
+} from "./living-city";
 
 describe("production living-city scene adapter", () => {
+  it("bounds derived route and itinerary caches to the visible showcase working set", () => {
+    expect(livingCityCachePolicy).toEqual({
+      maximumTrajectoryCities: 256,
+      maximumItineraryWindows: 512,
+    });
+
+    const cache = new Map<string, number>();
+    setBoundedLivingCityCache(cache, "first", 1, 2);
+    setBoundedLivingCityCache(cache, "second", 2, 2);
+    setBoundedLivingCityCache(cache, "third", 3, 2);
+
+    expect([...cache]).toEqual([
+      ["second", 2],
+      ["third", 3],
+    ]);
+  });
+
   it("composes projection tokens, exact itineraries, and city routes without changing semantics", () => {
     const world = generateWorld(BASELINE_WORLD_SEED);
     const city = createCityProjection({

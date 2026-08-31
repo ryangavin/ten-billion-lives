@@ -179,7 +179,7 @@ function graphSvg(samples, heapBudgetMiB, frameBudgetMs) {
     .join(" ");
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
   <title id="title">Living-city real wall-clock soak</title>
-  <desc id="desc">Production Canvas frame-time p95 and JavaScript heap across ${samples.length} real wall-clock minutes.</desc>
+  <desc id="desc">Production Canvas frame-time p95 and retained JavaScript heap across ${samples.length} real wall-clock minutes.</desc>
   <rect width="${width}" height="${height}" fill="#07110f"/>
   <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" stroke="#759b8a"/>
   <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#759b8a"/>
@@ -246,6 +246,10 @@ try {
     assert.equal(semantic.representedPopulation, "10,000,000,000");
     assert.equal(semantic.manifestationA, semantic.manifestationB);
     assert.equal(semantic.eventA, semantic.eventB);
+    // Compare the live working set at stable collection boundaries. Sampling
+    // directly after the synthetic 60-frame burst instead measures temporary
+    // allocation churn whose collection timing varies between Chromium runs.
+    await page.requestGC();
     const heapMiB = await page.evaluate(
       () => (performance.memory?.usedJSHeapSize ?? 0) / 1_048_576,
     );
@@ -319,6 +323,7 @@ try {
       actualDurationMs,
       realWallClock: true,
       releaseCandidateDuration: soakMinutes === 30,
+      heapMeasurement: "post-explicit-gc",
       interactionCount: interactions.length,
       interactions,
     },

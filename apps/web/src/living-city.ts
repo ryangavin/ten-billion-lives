@@ -70,8 +70,10 @@ const levelLimits: Readonly<Record<LivingCityLevel, number>> = Object.freeze({
 const fnvOffset = 0xcbf29ce484222325n;
 const fnvPrime = 0x100000001b3n;
 const u64Mask = 0xffffffffffffffffn;
-const maximumCachedTrajectoryCities = 4_096;
-const maximumCachedItineraryWindows = 8_192;
+export const livingCityCachePolicy = Object.freeze({
+  maximumTrajectoryCities: qualityLimits.baseline,
+  maximumItineraryWindows: qualityLimits.showcase,
+});
 const trajectoryCityCaches = new WeakMap<
   CityProjection,
   Map<string, TrajectoryCityProjection>
@@ -80,6 +82,21 @@ const itineraryWindowCaches = new WeakMap<
   ProductionLivingCityQuery["itineraryAt"],
   Map<string, readonly PersonItineraryPoint[]>
 >();
+
+export function setBoundedLivingCityCache<K, V>(
+  cache: Map<K, V>,
+  key: K,
+  value: V,
+  maximumEntries: number,
+): void {
+  if (!Number.isSafeInteger(maximumEntries) || maximumEntries < 1)
+    throw new RangeError("living-city cache capacity must be positive");
+  if (!cache.has(key) && cache.size >= maximumEntries) {
+    const oldest = cache.keys().next().value as K | undefined;
+    if (oldest !== undefined) cache.delete(oldest);
+  }
+  cache.set(key, value);
+}
 
 function stableHash(value: string): bigint {
   let hash = fnvOffset;
@@ -323,11 +340,12 @@ function trajectoryCity(
     pedestrianEdges: city.pedestrianEdges,
     cityHash: `${city.cityHash}/${mappingHash}`,
   });
-  if (cache.size >= maximumCachedTrajectoryCities) {
-    const oldest = cache.keys().next().value;
-    if (oldest !== undefined) cache.delete(oldest);
-  }
-  cache.set(itineraryKey, projection);
+  setBoundedLivingCityCache(
+    cache,
+    itineraryKey,
+    projection,
+    livingCityCachePolicy.maximumTrajectoryCities,
+  );
   return projection;
 }
 
@@ -358,11 +376,12 @@ export function createProductionLivingCityScene(
       query.time.tick,
       query.itineraryAt,
     );
-    if (itineraryCache.size >= maximumCachedItineraryWindows) {
-      const oldest = itineraryCache.keys().next().value;
-      if (oldest !== undefined) itineraryCache.delete(oldest);
-    }
-    itineraryCache.set(key, itinerary);
+    setBoundedLivingCityCache(
+      itineraryCache,
+      key,
+      itinerary,
+      livingCityCachePolicy.maximumItineraryWindows,
+    );
     return itinerary;
   });
   const figures: readonly LivingCityFigure[] = Object.freeze(
