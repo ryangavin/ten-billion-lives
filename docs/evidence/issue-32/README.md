@@ -23,12 +23,12 @@ The full values are in [`living-city-renderer.json`](../../../benchmarks/results
 
 | Literal figures | Frame p50 / p95 | CPU prepare p95 | Draw p95 | Retained heap growth | Pick p95 |
 | --------------- | --------------- | --------------- | -------- | -------------------- | -------- |
-| 128             | 0.50 / 0.60 ms  | 0.30 ms         | 0.40 ms  | 0.09 MiB             | 0.00 ms  |
-| 256             | 0.80 / 0.90 ms  | 0.40 ms         | 0.60 ms  | 0.15 MiB             | 0.00 ms  |
-| 512             | 1.40 / 2.20 ms  | 1.20 ms         | 1.00 ms  | 0.31 MiB             | 0.00 ms  |
-| 1024 measured   | 2.80 / 3.90 ms  | 1.80 ms         | 2.50 ms  | 0.61 MiB             | 0.00 ms  |
+| 128             | 0.50 / 0.70 ms  | 0.20 ms         | 0.50 ms  | 0.08 MiB             | 0.00 ms  |
+| 256             | 0.80 / 1.30 ms  | 0.70 ms         | 0.70 ms  | 0.15 MiB             | 0.00 ms  |
+| 512             | 1.50 / 2.20 ms  | 1.20 ms         | 1.10 ms  | 0.31 MiB             | 0.00 ms  |
+| 1024 measured   | 2.80 / 4.00 ms  | 2.00 ms         | 1.90 ms  | 0.60 MiB             | 0.00 ms  |
 
-Resize p95 was 6.10 ms. Zoom-transition preparation p95 was 46.60 ms. Peak post-collection heap among measured points was 3.28 MiB. Every Canvas point used one draw pass.
+Resize p95 was 6.00 ms. Zoom-transition preparation p95 was 47.50 ms. Peak post-collection heap among measured points was 3.27 MiB. Every Canvas point used one draw pass.
 
 ## Frozen provisional budgets
 
@@ -45,11 +45,12 @@ The benchmark enforces these values and records `passed: true`. They are provisi
 
 ## Original-resolution inspection
 
+- Before/current comparison — [`issue-13/street-baseline-canvas.png`](../issue-13/street-baseline-canvas.png) shows the prior one-pixel weighted-token pyramid with no street map, literal pose, or person-linked pick. `canvas-fixed.png` replaces that visual vocabulary with a bounded 2.5D block and 256 recognizable, posed people while preserving explicit weighting and selection. The old 250,000-token capture remains the throughput baseline, not a literal-person density target.
 - `canvas-fixed.png` — pass: 256 figures remain distinguishable as people rather than points; the selected figure has ring, label, stable ID, and weight one. Road/sidewalk/crossing vocabulary and four extruded blocks are legible. No clipping at 1280 × 720.
 - `canvas-showcase-1024.png` — qualified pass: literal silhouettes and the selected treatment remain visible and performance stays green, but overlapping streams add limited new readable information. That visual disposition is why the selected showcase tier is 512, not 1024.
 - `canvas-evening.png` — pass: the same immutable geometry and figures receive a visibly distinct evening palette at explicit tick 19; selection and route remain legible.
 - `context-loss-canvas.png` — pass: after the lifecycle loss, Canvas remains complete and the same selected ID, weight-one label, fixed time, and route summary remain visible.
-- `walking-loop.webm` — pass: VP8, 1280 × 720, 25 fps, 4.96 seconds. Inspected frames at 0.5 and 2.8 seconds have different hashes and show the selected ring moving with `person/spike-000000`; heading/stride change while identity stays fixed. This is a bounded repeating visual loop, not production playback semantics.
+- `walking-loop.webm` — pass: VP8, 1280 × 720, 25 fps, 5.04 seconds. Inspected frames at 0.5 and 2.8 seconds show the selected ring moving with `person/spike-000000`; heading/stride change while identity stays fixed. This is a bounded repeating visual loop, not production playback semantics.
 - `webgpu-fixed.png` — absent by design because no usable adapter/context was available. The capability log is evidence of the skip, not a pass claim.
 
 No P0 visual defect was found. This proof remains deliberately sparse: building faces have no windows or destination labels, crowd paths are four synthetic fixture streams, crossings are simple polygons, and 1024 figures overplot. #33 owns production adaptation/export reconciliation; later visual issues own final city composition and semantics.
