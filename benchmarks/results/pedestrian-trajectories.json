@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "pedestrian-trajectories-v1",
+  "commit": "aec79e02d9372c661c0584a5b6637536ebd2601d",
+  "profile": {
+    "profileId": "apple-m1-max-32gb-node",
+    "node": "v24.18.0",
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "seed": "trajectory-fixture/v1",
+  "cityHash": "b4ecf238d36b9be8",
+  "stateHash": "state-fixture",
+  "eventHash": "event-fixture",
+  "workload": {
+    "queryCountPerSample": 5000,
+    "sampleCount": 7,
+    "retentionQueryCount": 20000,
+    "retainedPersonRows": 0,
+    "retainedTrajectoryRows": 0,
+    "derivation": "pure query from explicit itinerary, city, branch, and VisualTime"
+  },
+  "metrics": {
+    "queriesPerSecondP50": 10801.336788994928,
+    "queriesPerSecondP95": 15735.22030095184,
+    "retainedHeapMiBAfterTwentyThousandQueries": 0
+  },
+  "budgets": {
+    "queriesPerSecondP50Min": 1000,
+    "retainedHeapMiBMax": 8,
+    "passed": true
+  }
+}

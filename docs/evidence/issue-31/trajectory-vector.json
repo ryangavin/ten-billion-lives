@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 1,
+  "vectorVersion": "pedestrian-trajectory-v1",
+  "seed": "trajectory-fixture/v1",
+  "cityHash": "b4ecf238d36b9be8",
+  "stateHash": "state-fixture",
+  "eventHash": "event-fixture",
+  "personId": "person_0000001_0000001",
+  "derivedTrajectoryRowsRetained": 0,
+  "independentObserversMatch": true,
+  "boundaryRemainderCm": {
+    "east": 1,
+    "north": 0,
+    "up": 0
+  },
+  "baseline": [
+    {
+      "tick": "0",
+      "phasePermillion": 0,
+      "mode": "dwelling",
+      "position": {
+        "eastCm": 0,
+        "northCm": 0,
+        "upCm": 0
+      },
+      "headingMilliTurns": 0,
+      "stridePermillion": 0,
+      "routeId": null,
+      "edgeId": null,
+      "activity": "home",
+      "originPlaceId": "household/ada",
+      "destinationPlaceId": "household/ada",
+      "trajectoryHash": "49c05f741217d68c"
+    },
+    {
+      "tick": "0",
+      "phasePermillion": 500000,
+      "mode": "walking",
+      "position": {
+        "eastCm": 500,
+        "northCm": 0,
+        "upCm": 0
+      },
+      "headingMilliTurns": 0,
+      "stridePermillion": 12607,
+      "routeId": "route/107f0dfe097961a3",
+      "edgeId": "edge/direct-a",
+      "activity": "home",
+      "originPlaceId": "household/ada",
+      "destinationPlaceId": "place/work",
+      "trajectoryHash": "b01c4602f89eec7c"
+    },
+    {
+      "tick": "1",
+      "phasePermillion": 0,
+      "mode": "walking",
+      "position": {
+        "eastCm": 1000,
+        "northCm": 0,
+        "upCm": 0
+      },
+      "headingMilliTurns": 0,
+      "stridePermillion": 12607,
+      "routeId": "route/107f0dfe097961a3",
+      "edgeId": "edge/direct-a",
+      "activity": "transit",
+      "originPlaceId": "household/ada",
+      "destinationPlaceId": "place/work",
+      "trajectoryHash": "b50a1d2d8b2106a0"
+    },
+    {
+      "tick": "1",
+      "phasePermillion": 999999,
+      "mode": "walking",
+      "position": {
+        "eastCm": 1999,
+        "northCm": 0,
+        "upCm": 0
+      },
+      "headingMilliTurns": 0,
+      "stridePermillion": 12603,
+      "routeId": "route/107f0dfe097961a3",
+      "edgeId": "edge/direct-b",
+      "activity": "transit",
+      "originPlaceId": "household/ada",
+      "destinationPlaceId": "place/work",
+      "trajectoryHash": "648feb8b7bfc6f5a"
+    },
+    {
+      "tick": "2",
+      "phasePermillion": 0,
+      "mode": "dwelling",
+      "position": {
+        "eastCm": 2000,
+        "northCm": 0,
+        "upCm": 0
+      },
+      "headingMilliTurns": 0,
+      "stridePermillion": 0,
+      "routeId": null,
+      "edgeId": null,
+      "activity": "work",
+      "originPlaceId": "place/work",
+      "destinationPlaceId": "place/work",
+      "trajectoryHash": "5f06160cfdbfe0e3"
+    },
+    {
+      "tick": "3",
+      "phasePermillion": 500000,
+      "mode": "walking",
+      "position": {
+        "eastCm": 1500,
+        "northCm": 0,
+        "upCm": 0
+      },
+      "headingMilliTurns": 500,
+      "stridePermillion": 12607,
+      "routeId": "route/cb2e3f66c8fa4359",
+      "edgeId": "edge/direct-b",
+      "activity": "work",
+      "originPlaceId": "place/work",
+      "destinationPlaceId": "household/ada",
+      "trajectoryHash": "5fed7b5cda51bc38"
+    },
+    {
+      "tick": "4",
+      "phasePermillion": 0,
+      "mode": "walking",
+      "position": {
+        "eastCm": 1000,
+        "northCm": 0,
+        "upCm": 0
+      },
+      "headingMilliTurns": 500,
+      "stridePermillion": 12607,
+      "routeId": "route/cb2e3f66c8fa4359",
+      "edgeId": "edge/direct-b",
+      "activity": "transit",
+      "originPlaceId": "place/work",
+      "destinationPlaceId": "household/ada",
+      "trajectoryHash": "7a8b5b77ad5c3764"
+    }
+  ],
+  "closure": [
+    {
+      "tick": "0",
+      "phasePermillion": 0,
+      "mode": "dwelling",
+      "position": {
+        "eastCm": 0,
+        "northCm": 0,
+        "upCm": 0
+      },
+      "headingMilliTurns": 0,
+      "stridePermillion": 0,
+      "routeId": null,
+      "edgeId": null,
+      "activity": "home",
+      "originPlaceId": "household/ada",
+      "destinationPlaceId": "household/ada",
+      "trajectoryHash": "1aee97065a8e903f"
+    },
+    {
+      "tick": "0",
+      "phasePermillion": 500000,
+      "mode": "walking",
+      "position": {
+        "eastCm": 1000,
+        "northCm": 0,
+        "upCm": 0
+      },
+      "headingMilliTurns": 0,
+      "stridePermillion": 12607,
+      "routeId": "route/23df45a7a5762b33",
+      "edgeId": "edge/direct-a",
+      "activity": "home",
+      "originPlaceId": "household/ada",
+      "destinationPlaceId": "place/work",
+      "trajectoryHash": "e7d3e75c846c771b"
+    },
+    {
+      "tick": "1",
+      "phasePermillion": 0,
+      "mode": "walking",
+      "position": {
+        "eastCm": 1000,
+        "northCm": 1000,
+        "upCm": 0
+      },
+      "headingMilliTurns": 250,
+      "stridePermillion": 12607,
+      "routeId": "route/23df45a7a5762b33",
+      "edgeId": "edge/alt-a",
+      "activity": "transit",
+      "originPlaceId": "household/ada",
+      "destinationPlaceId": "place/work",
+      "trajectoryHash": "315087cbb584e531"
+    },
+    {
+      "tick": "1",
+      "phasePermillion": 999999,
+      "mode": "walking",
+      "position": {
+        "eastCm": 2000,
+        "northCm": 1,
+        "upCm": 0
+      },
+      "headingMilliTurns": 750,
+      "stridePermillion": 12603,
+      "routeId": "route/23df45a7a5762b33",
+      "edgeId": "edge/alt-b",
+      "activity": "transit",
+      "originPlaceId": "household/ada",
+      "destinationPlaceId": "place/work",
+      "trajectoryHash": "e64b9fcb18eaa4d4"
+    },
+    {
+      "tick": "2",
+      "phasePermillion": 0,
+      "mode": "dwelling",
+      "position": {
+        "eastCm": 2000,
+        "northCm": 0,
+        "upCm": 0
+      },
+      "headingMilliTurns": 0,
+      "stridePermillion": 0,
+      "routeId": null,
+      "edgeId": null,
+      "activity": "work",
+      "originPlaceId": "place/work",
+      "destinationPlaceId": "place/work",
+      "trajectoryHash": "2454c9e7b841683c"
+    },
+    {
+      "tick": "3",
+      "phasePermillion": 500000,
+      "mode": "walking",
+      "position": {
+        "eastCm": 2000,
+        "northCm": 1000,
+        "upCm": 0
+      },
+      "headingMilliTurns": 250,
+      "stridePermillion": 12607,
+      "routeId": "route/81f980a0926144fe",
+      "edgeId": "edge/alt-b",
+      "activity": "work",
+      "originPlaceId": "place/work",
+      "destinationPlaceId": "household/ada",
+      "trajectoryHash": "f9103c0f838fd3f8"
+    },
+    {
+      "tick": "4",
+      "phasePermillion": 0,
+      "mode": "walking",
+      "position": {
+        "eastCm": 1000,
+        "northCm": 1000,
+        "upCm": 0
+      },
+      "headingMilliTurns": 500,
+      "stridePermillion": 12607,
+      "routeId": "route/81f980a0926144fe",
+      "edgeId": "edge/alt-b",
+      "activity": "transit",
+      "originPlaceId": "place/work",
+      "destinationPlaceId": "household/ada",
+      "trajectoryHash": "d8b9d4f8f40640e9"
+    }
+  ]
+}

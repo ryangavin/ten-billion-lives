@@ -41,6 +41,7 @@ export {
   allocateManifestationWeights,
   createIllusionEngine,
 } from "./projection";
+export * from "./trajectory";
 export type {
   IllusionProjection,
   ManifestationToken,
