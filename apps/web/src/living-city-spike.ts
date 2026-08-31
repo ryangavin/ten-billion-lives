@@ -57,7 +57,7 @@ function routePose(
     mode: "walking" as const,
     position,
     headingMilliTurns:
-      lane === 0 ? 250_000 : lane === 1 ? 750_000 : lane === 2 ? 0 : 500_000,
+      lane === 0 ? 250 : lane === 1 ? 750 : lane === 2 ? 0 : 500,
     stridePermillion: (travel * 7 + index * 13_771) % 1_000_000,
     routeId: lane < 2 ? "route/harbor-east-west" : "route/market-north-south",
     edgeId: lane < 2 ? "edge/harbor-sidewalk" : "edge/market-sidewalk",
@@ -100,6 +100,15 @@ export function createLivingCitySpikeInput(
       pinned: index === 0,
       pose: routePose(index, personId, phasePermillion, tick),
       appearanceKey: (index * 2_654_435_761) >>> 0,
+      story: Object.freeze({
+        activity: "transit" as const,
+        locationId: "route/spike-harbor",
+        encounterGroupId: "encounter/spike-harbor",
+        encounterCount: index === 0 ? 1 : 0,
+        eventIds: Object.freeze(index === 0 ? ["event/spike-arrival"] : []),
+        routeReason: "festival convergence" as const,
+        routeEdgeCount: 1,
+      }),
     });
   });
   const sampledPeople = figures.reduce(
@@ -204,6 +213,24 @@ export function createLivingCitySpikeInput(
       cityHash: "city/spike-harbor-block-v1",
     }),
     figures: Object.freeze(figures),
+    story: Object.freeze({
+      phase: "festival-arrival" as const,
+      events: Object.freeze([
+        Object.freeze({
+          id: "event/spike-arrival",
+          kind: "arrival" as const,
+          locationId: "festival/lantern-confluence",
+          participantIds: Object.freeze([figures[0]?.personId ?? ""]),
+        }),
+      ]),
+      activityGroups: Object.freeze([
+        Object.freeze({
+          activity: "transit" as const,
+          literalFigures: figures.length,
+          representedPeople: sampledPeople,
+        }),
+      ]),
+    }),
     selectedPersonId: figures[0]?.personId ?? null,
     representedPeople,
     unsampledRemainder: representedPeople - sampledPeople,

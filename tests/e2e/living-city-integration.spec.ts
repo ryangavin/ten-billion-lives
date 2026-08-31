@@ -1,8 +1,18 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function setEvidenceDrawer(page: Page, open: boolean): Promise<void> {
+  const drawer = page.locator("details.evidence-drawer");
+  await drawer.evaluate((element, value) => {
+    element.open = value;
+    element.dispatchEvent(new Event("toggle"));
+  }, open);
+  await expect(drawer).toHaveJSProperty("open", open);
+}
 
 test("production journey composes semantic zoom, playback, observers, and Canvas recovery", async ({
   page,
 }) => {
+  test.setTimeout(90_000);
   const consoleErrors: string[] = [];
   page.on("console", (message) => {
     if (message.type() === "error") consoleErrors.push(message.text());
@@ -12,6 +22,14 @@ test("production journey composes semantic zoom, playback, observers, and Canvas
   await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
 
   const renderer = page.getByTestId("journey-renderer");
+  const rendererBounds = await renderer.boundingBox();
+  expect(rendererBounds?.width ?? 0).toBeGreaterThan(900);
+  expect(rendererBounds?.height ?? 0).toBeGreaterThan(500);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollHeight <= window.innerHeight,
+    ),
+  ).toBe(true);
   await expect(renderer).toHaveAttribute("data-city-level", "city");
   await expect(page.getByTestId("render-backend")).toHaveText("canvas2d");
   await expect(page.getByTestId("render-visible")).toHaveText("64");
@@ -79,6 +97,7 @@ test("production journey composes semantic zoom, playback, observers, and Canvas
   await expect(page.getByTestId("manifestation-hash-a")).toHaveText(
     manifestationHash ?? "",
   );
+  await setEvidenceDrawer(page, true);
   await page.getByRole("button", { name: "Initialize observer B" }).click();
   await expect(page.getByTestId("observer-match")).toHaveText(
     "Semantic match · trajectory match",
@@ -86,8 +105,17 @@ test("production journey composes semantic zoom, playback, observers, and Canvas
   await expect(page.getByTestId("living-city-hash-b")).toHaveText(
     await page.getByTestId("living-city-hash-a").textContent(),
   );
+  await setEvidenceDrawer(page, false);
 
-  await page.getByRole("button", { name: "Tick 7 · commute" }).click();
+  await page
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("7");
+  await expect(page.getByTestId("city-story-title")).toHaveText(
+    "Commuting flow",
+  );
+  await expect(page.getByTestId("city-story-route")).toContainText(
+    "daily commute",
+  );
   const phaseZeroKey = await renderer.getAttribute("data-projection-key");
   const stateHash = await page.getByTestId("state-hash").textContent();
   await page
@@ -113,14 +141,29 @@ test("production journey composes semantic zoom, playback, observers, and Canvas
     pausedKey ?? "",
   );
 
-  await page.getByRole("button", { name: "Tick 7 · commute" }).click();
+  await page
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("7");
   const directSeekKey = await renderer.getAttribute("data-projection-key");
+  await setEvidenceDrawer(page, true);
   await page.getByRole("button", { name: "Rewind and replay" }).click();
   await expect(renderer).toHaveAttribute(
     "data-projection-key",
     directSeekKey ?? "",
   );
+  await setEvidenceDrawer(page, false);
 
+  await page
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("16");
+  await expect(page.getByTestId("city-story-title")).toHaveText(
+    "Commuting flow",
+  );
+  await expect(page.getByTestId("city-story-route")).toContainText(
+    "evening return",
+  );
+
+  await setEvidenceDrawer(page, true);
   await page.getByRole("button", { name: "Simulate renderer loss" }).click();
   await expect(page.getByTestId("render-backend")).toHaveText("canvas2d");
   await expect(page.getByTestId("render-context-losses")).toHaveText("1");

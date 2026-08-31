@@ -67,6 +67,60 @@ export interface LivingCityFigure {
   readonly pinned: boolean;
   readonly pose: PedestrianPose;
   readonly appearanceKey: number;
+  readonly story: LivingCityFigureStory;
+}
+
+export type LivingCityActivity =
+  | "sleep"
+  | "home"
+  | "transit"
+  | "work"
+  | "school"
+  | "service"
+  | "leisure"
+  | "festival";
+
+export type LivingCityRouteReason =
+  | "daily commute"
+  | "closure detour"
+  | "evening return"
+  | "festival convergence"
+  | "festival return";
+
+export interface LivingCityFigureStory {
+  readonly activity: LivingCityActivity;
+  readonly locationId: string;
+  readonly encounterGroupId: string;
+  readonly encounterCount: number;
+  readonly eventIds: readonly string[];
+  readonly routeReason: LivingCityRouteReason | null;
+  readonly routeEdgeCount: number;
+}
+
+export interface LivingCityStoryEvent {
+  readonly id: string;
+  readonly kind: "arrival" | "meeting" | "festival";
+  readonly locationId: string;
+  readonly participantIds: readonly string[];
+}
+
+export interface LivingCityActivityGroup {
+  readonly activity: LivingCityActivity;
+  readonly literalFigures: number;
+  readonly representedPeople: bigint;
+}
+
+export interface LivingCityStory {
+  readonly phase:
+    | "daily-life"
+    | "commute"
+    | "meeting"
+    | "festival-arrival"
+    | "festival-peak"
+    | "festival-departure"
+    | "closure-detour";
+  readonly events: readonly LivingCityStoryEvent[];
+  readonly activityGroups: readonly LivingCityActivityGroup[];
 }
 
 export interface LivingCityScene {
@@ -81,6 +135,8 @@ export interface LivingCityScene {
   }>;
   readonly city: CityProjection;
   readonly figures: readonly LivingCityFigure[];
+  /** Read-only explanatory metadata; excluded from semanticKey authority. */
+  readonly story: LivingCityStory;
   readonly selectedPersonId: string | null;
   readonly representedPeople: bigint;
   readonly unsampledRemainder: bigint;
@@ -182,6 +238,23 @@ export interface PreparedLivingCityFigure {
   readonly parts: readonly PreparedFigurePart[];
 }
 
+export interface PreparedFlowMark {
+  readonly personId: string;
+  readonly kind: "commute" | "festival" | "closure";
+  readonly start: ScreenPoint;
+  readonly end: ScreenPoint;
+  readonly color: string;
+  readonly selected: boolean;
+}
+
+export interface PreparedEventMark {
+  readonly personId: string;
+  readonly kind: "meeting" | "festival";
+  readonly center: ScreenPoint;
+  readonly radius: number;
+  readonly color: string;
+}
+
 export interface PreparedLivingCityFrame {
   readonly semanticKey: string;
   readonly selectedPersonId: string | null;
@@ -193,6 +266,8 @@ export interface PreparedLivingCityFrame {
   readonly crossings: readonly PreparedRoad[];
   readonly publicSpaces: readonly PreparedPolygon[];
   readonly buildings: readonly PreparedBuilding[];
+  readonly flowMarks: readonly PreparedFlowMark[];
+  readonly eventMarks: readonly PreparedEventMark[];
   readonly figures: readonly PreparedLivingCityFigure[];
   readonly pickTable: readonly PickResult[];
 }
@@ -302,9 +377,9 @@ function validateScene(scene: LivingCityScene): void {
     );
     if (
       figure.pose.headingMilliTurns < 0 ||
-      figure.pose.headingMilliTurns >= 1_000_000
+      figure.pose.headingMilliTurns >= 1_000
     )
-      throw new RangeError("headingMilliTurns must be in [0, 1000000)");
+      throw new RangeError("headingMilliTurns must be in [0, 1000)");
     assertSafeInteger(
       figure.pose.stridePermillion,
       `figure ${figure.personId} stridePermillion`,
@@ -327,6 +402,18 @@ function validateScene(scene: LivingCityScene): void {
     );
   if (scene.selectedPersonId !== null && selectedCount !== 1)
     throw new RangeError("selected person must occur exactly once");
+  const groupedPeople = scene.story.activityGroups.reduce(
+    (total, group) => total + group.representedPeople,
+    0n,
+  );
+  if (groupedPeople !== sampledPeople)
+    throw new RangeError(
+      "story activity weights must reconcile to sampled people",
+    );
+  const eventIds = new Set(scene.story.events.map((event) => event.id));
+  for (const figure of scene.figures)
+    if (figure.story.eventIds.some((id) => !eventIds.has(id)))
+      throw new RangeError("figure story references an unknown event ID");
 }
 
 function validatePresentation(input: LivingCityRenderInput): void {
@@ -401,8 +488,7 @@ function prepareFigure(
   const bodyHeight = 12 * scale;
   const bodyWidth = 5.2 * scale;
   const headRadius = 2.5 * scale;
-  const headingRadians =
-    (figure.pose.headingMilliTurns / 1_000_000) * Math.PI * 2;
+  const headingRadians = (figure.pose.headingMilliTurns / 1_000) * Math.PI * 2;
   const headingX = Math.sin(headingRadians) * 1.6 * scale;
   const stridePhase = reducedMotion
     ? 0
@@ -567,6 +653,77 @@ export function prepareLivingCityFrame(
       if (left.selected !== right.selected) return left.selected ? 1 : -1;
       return left.depth - right.depth;
     });
+  const preparedByPerson = new Map(
+    figures.map((figure) => [figure.personId, figure]),
+  );
+  const flowMarks = scene.figures.flatMap((figure) => {
+    if (figure.pose.mode !== "walking" || figure.story.routeReason === null)
+      return [];
+    const prepared = preparedByPerson.get(figure.personId);
+    if (prepared === undefined) return [];
+    const radians = (figure.pose.headingMilliTurns / 1_000) * Math.PI * 2;
+    const selected = figure.personId === scene.selectedPersonId;
+    const behind = selected ? 58 : 14;
+    const ahead = selected ? 20 : 14;
+    const unit = Object.freeze({
+      x: Math.cos(radians),
+      y: Math.sin(radians) * 0.5,
+    });
+    const kind =
+      figure.story.routeReason === "closure detour"
+        ? ("closure" as const)
+        : figure.story.routeReason === "festival convergence" ||
+            figure.story.routeReason === "festival return"
+          ? ("festival" as const)
+          : ("commute" as const);
+    return [
+      Object.freeze({
+        personId: figure.personId,
+        kind,
+        start: Object.freeze({
+          x: prepared.screen.x - unit.x * behind,
+          y: prepared.screen.y - unit.y * behind,
+        }),
+        end: Object.freeze({
+          x: prepared.screen.x + unit.x * ahead,
+          y: prepared.screen.y + unit.y * ahead,
+        }),
+        color:
+          kind === "closure"
+            ? "#ff7b6e"
+            : kind === "festival"
+              ? "#ffd166"
+              : "#6ee7d0",
+        selected,
+      }),
+    ];
+  });
+  const eventKindById = new Map(
+    scene.story.events.map((event) => [event.id, event.kind]),
+  );
+  const eventMarks = scene.figures.flatMap((figure) => {
+    const prepared = preparedByPerson.get(figure.personId);
+    if (prepared === undefined) return [];
+    const meeting = figure.story.eventIds.some(
+      (id) => eventKindById.get(id) === "meeting",
+    );
+    const kind =
+      figure.story.activity === "festival"
+        ? ("festival" as const)
+        : meeting
+          ? ("meeting" as const)
+          : null;
+    if (kind === null) return [];
+    return [
+      Object.freeze({
+        personId: figure.personId,
+        kind,
+        center: prepared.screen,
+        radius: prepared.hitRadius * (kind === "festival" ? 1.35 : 1.1),
+        color: kind === "festival" ? "#ffd166" : "#d8b4fe",
+      }),
+    ];
+  });
   const hour = Number(scene.context.time.tick % 24n);
   return Object.freeze({
     semanticKey: scene.semanticKey,
@@ -579,6 +736,8 @@ export function prepareLivingCityFrame(
     crossings: Object.freeze(pathFeatures(scene.city.crossings)),
     publicSpaces: Object.freeze(areaFeatures(scene.city.publicSpaces)),
     buildings: Object.freeze(buildings),
+    flowMarks: Object.freeze(flowMarks),
+    eventMarks: Object.freeze(eventMarks),
     figures: Object.freeze(figures),
     pickTable: Object.freeze(pickTable),
   });
@@ -862,6 +1021,48 @@ export function drawLivingCityCanvas(
     context.lineWidth = 1;
     context.stroke();
   }
+  for (const flow of frame.flowMarks) {
+    context.beginPath();
+    context.moveTo(flow.start.x, flow.start.y);
+    context.lineTo(flow.end.x, flow.end.y);
+    context.strokeStyle = flow.color;
+    context.lineWidth = flow.selected ? 3.5 : 1.5;
+    context.globalAlpha = flow.selected ? 0.95 : 0.48;
+    context.stroke();
+    const angle = Math.atan2(
+      flow.end.y - flow.start.y,
+      flow.end.x - flow.start.x,
+    );
+    context.beginPath();
+    context.moveTo(flow.end.x, flow.end.y);
+    context.lineTo(
+      flow.end.x - Math.cos(angle - 0.55) * 6,
+      flow.end.y - Math.sin(angle - 0.55) * 6,
+    );
+    context.lineTo(
+      flow.end.x - Math.cos(angle + 0.55) * 6,
+      flow.end.y - Math.sin(angle + 0.55) * 6,
+    );
+    context.closePath();
+    context.fillStyle = flow.color;
+    context.fill();
+    context.globalAlpha = 1;
+  }
+  for (const event of frame.eventMarks) {
+    context.beginPath();
+    context.arc(
+      event.center.x,
+      event.center.y - event.radius * 0.7,
+      event.radius,
+      0,
+      Math.PI * 2,
+    );
+    context.strokeStyle = event.color;
+    context.lineWidth = event.kind === "festival" ? 2.5 : 2;
+    context.globalAlpha = 0.78;
+    context.stroke();
+    context.globalAlpha = 1;
+  }
   for (const figure of frame.figures) drawPreparedFigure(context, figure);
   const selected = frame.figures.find((figure) => figure.selected);
   if (selected !== undefined) {
@@ -1063,6 +1264,24 @@ function gpuVertices(frame: PreparedLivingCityFrame): Float32Array {
     triangleVertices(output, viewport, building.footprint, color("#596a6e"));
     triangleVertices(output, viewport, building.roof, color("#b5aa92"));
   }
+  for (const flow of frame.flowMarks)
+    lineVertices(
+      output,
+      viewport,
+      flow.start,
+      flow.end,
+      flow.selected ? 3.5 : 1.5,
+      color(flow.color),
+    );
+  for (const event of frame.eventMarks)
+    circleVertices(
+      output,
+      viewport,
+      { x: event.center.x, y: event.center.y - event.radius * 0.7 },
+      event.radius,
+      color(event.color),
+      true,
+    );
   for (const figure of frame.figures)
     for (const figurePart of figure.parts) {
       const fill = color(figurePart.color);

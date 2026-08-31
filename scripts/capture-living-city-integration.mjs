@@ -43,6 +43,13 @@ async function screenshotRenderer(page, path) {
   await page.screenshot({ path, clip: bounds });
 }
 
+async function setEvidenceDrawer(page, open) {
+  await page.locator("details.evidence-drawer").evaluate((drawer, value) => {
+    drawer.open = value;
+    drawer.dispatchEvent(new Event("toggle"));
+  }, open);
+}
+
 async function captureNarrow(browser, previewUrl) {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -66,6 +73,7 @@ async function captureNarrow(browser, previewUrl) {
   await page.getByRole("button", { name: "Enter Harbor Street" }).click();
   await canvasPickSelected(page);
   await page.getByTestId("observer-a-person-id").waitFor();
+  await setEvidenceDrawer(page, true);
   await page.getByRole("button", { name: "Simulate renderer loss" }).click();
   assert.equal(
     await page.getByTestId("render-backend").textContent(),
@@ -136,7 +144,9 @@ async function captureStills(browser, previewUrl, options) {
     page,
     `${evidenceDirectory}/${options.name}-selected.png`,
   );
-  await page.getByRole("button", { name: "Tick 7 · commute" }).click();
+  await page
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("7");
   await page
     .getByRole("button", {
       name: "60 simulated minutes per real second",
@@ -284,6 +294,7 @@ async function recordJourney(browser, previewUrl, options) {
     await page.getByTestId("observer-a-person-id").textContent(),
     selectedPersonId,
   );
+  await setEvidenceDrawer(page, true);
   timings.observerBMs = await measure(async () => {
     await page.getByRole("button", { name: "Initialize observer B" }).click();
     await page.getByTestId("living-city-hash-b").waitFor();
@@ -299,6 +310,7 @@ async function recordJourney(browser, previewUrl, options) {
     await page.getByTestId("observer-match").textContent(),
     "Semantic match · trajectory match",
   );
+  await setEvidenceDrawer(page, false);
 
   const invariantsBeforeCamera = {
     state: await page.getByTestId("state-hash").textContent(),
@@ -315,7 +327,9 @@ async function recordJourney(browser, previewUrl, options) {
   };
   assert.deepEqual(invariantsAfterCamera, invariantsBeforeCamera);
 
-  await page.getByRole("button", { name: "Tick 7 · commute" }).click();
+  await page
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("7");
   const directSeekKey = await page
     .getByTestId("journey-renderer")
     .getAttribute("data-projection-key");
@@ -361,13 +375,16 @@ async function recordJourney(browser, previewUrl, options) {
     pausedKey,
   );
 
-  await page.getByRole("button", { name: "Tick 7 · commute" }).click();
+  await page
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("7");
   assert.equal(
     await page
       .getByTestId("journey-renderer")
       .getAttribute("data-projection-key"),
     directSeekKey,
   );
+  await setEvidenceDrawer(page, true);
   await page.getByRole("button", { name: "Rewind and replay" }).click();
   const replayKey = await page
     .getByTestId("journey-renderer")

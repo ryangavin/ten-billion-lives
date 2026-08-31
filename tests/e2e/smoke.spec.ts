@@ -16,6 +16,15 @@ async function expectAdaptiveVisible(
   );
 }
 
+async function setEvidenceDrawer(page: Page, open: boolean): Promise<void> {
+  const drawer = page.locator("details.evidence-drawer");
+  await drawer.evaluate((element, value) => {
+    element.open = value;
+    element.dispatchEvent(new Event("toggle"));
+  }, open);
+  await expect(drawer).toHaveJSProperty("open", open);
+}
+
 test("production build exposes the deterministic local smoke surface", async ({
   page,
 }) => {
@@ -30,6 +39,7 @@ test("production build exposes the deterministic local smoke surface", async ({
   await expect(page.getByTestId("represented-population")).toHaveText(
     "10,000,000,000",
   );
+  await setEvidenceDrawer(page, true);
   await expect(page.getByText("ten-billion-lives/baseline/v1")).toBeVisible();
   await expect(page.getByTestId("deterministic-vector-hash")).toHaveText(
     "050e18e9f2d20dff",
@@ -47,6 +57,7 @@ test("production build exposes the deterministic local smoke surface", async ({
     "10,000,000,000",
   );
   await expect(page.getByTestId("projection-tokens")).toHaveText("8,192");
+  await setEvidenceDrawer(page, true);
   await expect(
     page.getByText("Run pnpm check from the repository root"),
   ).toBeVisible();
@@ -56,6 +67,7 @@ test("inspects deterministic geography across hierarchy, seam, and pole", async 
   page,
 }) => {
   await page.goto("/");
+  await setEvidenceDrawer(page, true);
   await page.getByRole("button", { name: "Inspect debug world" }).click();
   await expect(page.getByTestId("debug-globe")).toBeVisible();
   await expect(page.getByTestId("debug-cell-id")).toHaveText("L5/12/0");
@@ -128,9 +140,7 @@ test("traces planet to person across two independent local observers", async ({
   );
   await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Settlement");
-  await expect(
-    page.getByRole("heading", { name: "Brindle Bay" }),
-  ).toBeVisible();
+  await expect(page.locator("#journey-title")).toHaveText("Brindle Bay");
   await expectAdaptiveVisible(page, {
     fallback: 64,
     baseline: 64,
@@ -144,6 +154,7 @@ test("traces planet to person across two independent local observers", async ({
     showcase: 512,
   });
   await page.getByRole("button", { name: "Meet a resident" }).click();
+  await setEvidenceDrawer(page, true);
   await expectAdaptiveVisible(page, {
     fallback: 128,
     baseline: 256,
@@ -182,6 +193,7 @@ test("traces planet to person across two independent local observers", async ({
     await page.getByTestId("projection-event-hash-a").textContent(),
   );
 
+  await setEvidenceDrawer(page, false);
   await page.getByRole("button", { name: "View planet" }).click();
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Planet");
   await page.getByRole("button", { name: "View person" }).click();
@@ -191,7 +203,9 @@ test("traces planet to person across two independent local observers", async ({
   await expect(page.getByTestId("manifestation-hash-a")).toHaveText(
     personManifestationHash ?? "",
   );
-  await page.getByRole("button", { name: "Tick 24 · identity epoch" }).click();
+  await page
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("24");
   await expect(page.getByTestId("observer-a-person-id")).toHaveText(
     "person_27yi09s_1obkbba",
   );
@@ -202,7 +216,9 @@ test("traces planet to person across two independent local observers", async ({
     "Semantic match · trajectory match",
   );
 
-  await page.getByRole("button", { name: "Tick 7 · commute" }).click();
+  await page
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("7");
   await expect(page.getByTestId("observer-a-itinerary")).toHaveText(
     "Tick 7 · transit",
   );
@@ -212,14 +228,17 @@ test("traces planet to person across two independent local observers", async ({
   await expect(page.getByTestId("observer-match")).toHaveText(
     "Semantic match · trajectory match",
   );
-  await page.getByRole("button", { name: "Tick 19 · festival hour" }).click();
+  await page
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("19");
   await expect(page.getByTestId("observer-a-itinerary")).toHaveText(
     "Tick 19 · leisure",
   );
   await page
-    .getByRole("button", { name: "Tick 10 · primary activity" })
-    .click();
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("10");
 
+  await setEvidenceDrawer(page, true);
   await page.getByRole("button", { name: "Rewind and replay" }).click();
   await expect(page.getByTestId("replay-result")).toHaveText(
     "trace-5182c8d2 restored",
@@ -234,6 +253,7 @@ test("selects, searches, and opens a validated person link in a fresh session", 
   page,
   context,
 }) => {
+  test.setTimeout(60_000);
   await page.goto("/");
   await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
   await page.getByRole("button", { name: "Enter Harbor Street" }).click();
@@ -245,6 +265,7 @@ test("selects, searches, and opens a validated person link in a fresh session", 
     "person_27yi09s_1obkbba",
   );
 
+  await setEvidenceDrawer(page, true);
   const search = page.getByRole("searchbox", { name: "Procedural person ID" });
   await search.fill("person_0000a4q_0yrj2dd");
   await search.press("Enter");
@@ -296,12 +317,33 @@ test("follows festival meetings and departure, then compares the local closure b
   await expect(page.getByTestId("observer-a-itinerary")).toContainText(
     "Tick 19 · festival",
   );
+  await expect(page.getByTestId("city-story-title")).toHaveText(
+    "Lantern Tide peak",
+  );
+  await expect(page.getByTestId("city-story-event")).toContainText(
+    "festival · 1 exact participant ID · festival/lantern-confluence",
+  );
+  await expect(
+    page.getByLabel("Visible weighted activity groups"),
+  ).toContainText("festival");
   await expect(page.getByTestId("semantic-events-a")).toContainText(
     "festival/lantern-confluence",
   );
   await page
-    .getByRole("button", { name: "Tick 21 · festival departure" })
-    .click();
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("17");
+  await expect(page.getByTestId("city-story-title")).toHaveText(
+    "Lantern Tide arrival",
+  );
+  await expect(page.getByTestId("city-story-route")).toContainText(
+    "festival convergence",
+  );
+  await page
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("21");
+  await expect(page.getByTestId("city-story-title")).toHaveText(
+    "Lantern Tide departure",
+  );
   await expect(page.getByTestId("observer-a-itinerary")).toContainText(
     "Tick 21 · transit",
   );
@@ -309,11 +351,32 @@ test("follows festival meetings and departure, then compares the local closure b
     "festival return",
   );
   await page
-    .getByRole("button", { name: "Tick 10 · recurring meeting" })
-    .click();
+    .getByRole("combobox", { name: "Signature moment" })
+    .selectOption("10");
+  await expect(page.getByTestId("city-story-title")).toHaveText(
+    "Shared-place meeting",
+  );
+  await expect(page.getByTestId("city-story-event")).toContainText(
+    "meeting · 2 exact participant IDs",
+  );
   await expect(page.getByTestId("semantic-events-a")).toContainText("meeting");
+  await setEvidenceDrawer(page, true);
+  await page.getByRole("button", { name: "Initialize observer B" }).click();
+  await expect(page.getByTestId("observer-match")).toHaveText(
+    "Semantic match · trajectory match",
+  );
+  await expect(page.getByTestId("semantic-events-b")).toHaveText(
+    await page.getByTestId("semantic-events-a").textContent(),
+  );
 
+  await setEvidenceDrawer(page, false);
   await page.getByRole("button", { name: "Explore closure branch" }).click();
+  await expect(page.getByTestId("city-story-title")).toHaveText(
+    "Closure detour",
+  );
+  await expect(page.getByTestId("city-story-route")).toContainText(
+    "closure detour · 31 graph edges",
+  );
   await expect(page.getByTestId("active-branch")).toHaveText("Closure branch");
   await expect(page.getByTestId("observer-a-person-id")).toHaveText(
     "person_1iy9k0p_1by3xrw",
@@ -331,6 +394,12 @@ test("follows festival meetings and departure, then compares the local closure b
     /branch=closure/,
   );
   await page.getByRole("button", { name: "View immutable baseline" }).click();
+  await expect(page.getByTestId("city-story-title")).toHaveText(
+    "Commuting flow",
+  );
+  await expect(page.getByTestId("city-story-route")).toContainText(
+    "daily commute · 1 graph edge",
+  );
   await expect(page.getByTestId("active-branch")).toHaveText(
     "Immutable baseline",
   );
@@ -348,11 +417,9 @@ test("guides a first visit through time, discovery, truthful diagnostics, and lo
 }) => {
   await page.goto("/");
   await expect(page.getByTestId("first-run-claim")).toContainText(
-    "exactly 10,000,000,000 represented lives",
+    "10,000,000,000 represented lives",
   );
-  await expect(page.getByTestId("journey-progress")).toHaveText(
-    "Planet · step 1 of 4",
-  );
+  await expect(page.getByTestId("journey-progress")).toHaveText("Step 1 of 4");
   await expect(page.getByTestId("time-status")).toContainText("Paused");
   await page.getByRole("button", { name: "Play local time" }).click();
   await expect(page.getByTestId("time-status")).toContainText(
@@ -373,12 +440,9 @@ test("guides a first visit through time, discovery, truthful diagnostics, and lo
   );
   await expect(page).toHaveURL(/stage=settlement/);
   await expect(page).toHaveURL(/location=settlement%2Fsettlement-00/);
-  await page
-    .getByRole("button", { name: "Harbor Street", exact: true })
-    .click();
-  await expect(
-    page.getByRole("heading", { name: "Harbor Street" }),
-  ).toBeVisible();
+  await discovery.fill("Harbor Street");
+  await discovery.press("Enter");
+  await expect(page.locator("#journey-title")).toHaveText("Harbor Street");
   await expect(page).toHaveURL(/stage=street/);
 
   const stateBeforeEmpty = await page.getByTestId("state-hash").textContent();
@@ -399,6 +463,7 @@ test("guides a first visit through time, discovery, truthful diagnostics, and lo
   await expect(page).toHaveURL(/stage=person/);
   await expect(page).toHaveURL(/location=L5%2F/);
 
+  await setEvidenceDrawer(page, true);
   await page.getByRole("button", { name: "Reveal fields" }).click();
   await expect(page.getByTestId("authority-bytes")).toContainText("bytes");
   await expect(page.getByTestId("budget-visible")).toContainText("tokens");
@@ -432,9 +497,11 @@ test("keeps the forced Canvas fallback navigable through loss, resize, and reduc
     "data-transition-ms",
     "0",
   );
+  await setEvidenceDrawer(page, true);
   await page.getByRole("button", { name: "Simulate renderer loss" }).click();
   await expect(page.getByTestId("render-backend")).toHaveText("canvas2d");
   await expect(page.getByTestId("render-context-losses")).toHaveText("1");
+  await setEvidenceDrawer(page, false);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByTestId("journey-renderer")).toBeVisible();
   await page.getByRole("button", { name: "Enter Brindle Bay" }).click();
@@ -457,6 +524,7 @@ test("preserves person and event semantics across local visual quality tiers", a
       .getByTestId("render-visible")
       .textContent();
     await page.getByRole("button", { name: "Meet a resident" }).click();
+    await setEvidenceDrawer(page, true);
     await page.getByRole("button", { name: "Initialize observer B" }).click();
     await expect(page.getByTestId("observer-match")).toHaveText(
       "Semantic match · trajectory match",

@@ -152,6 +152,8 @@ let playbackState: PlaybackState = createPlaybackState(
 let clockRate: PlaybackRate = 1;
 let clockTimer: ReturnType<typeof setInterval> | null = null;
 let replayVerified = false;
+let journeyDrawerOpen = false;
+let evidenceDrawerOpen = false;
 let journeyRenderer: BrowserJourneyRenderer | null = null;
 let livingCityRenderer: LivingCityBrowserRenderer | null = null;
 let livingCityScene: LivingCityScene | null = null;
@@ -240,6 +242,7 @@ function activeFocusSelector(root: HTMLElement): string | null {
     "data-discover",
     "data-stage-index",
     "data-person-tick",
+    "data-person-tick-select",
     "data-debug-level",
     "data-debug-cell",
     "data-day-tick",
@@ -413,6 +416,7 @@ function livingCitySceneFor(
     selectedPersonId,
     level: livingCityLevel,
     quality: effectiveLivingCityQuality(),
+    festivalPeakHour: transportGraph.festival.peakTick,
     itineraryAt: itineraryQueryFor(source),
   });
   setBoundedCache(
@@ -553,7 +557,7 @@ async function mountJourneyRenderer(
   journeyRenderer = renderer;
   const resize = (): BrowserRendererStatus | null => {
     const width = Math.max(320, Math.round(stack.clientWidth));
-    const height = Math.max(240, Math.round(width * 0.625));
+    const height = Math.max(240, Math.round(stack.clientHeight));
     return renderer.resize(width, height);
   };
   resize();
@@ -620,7 +624,7 @@ async function mountLivingCityRenderer(
     const width = Math.max(320, Math.round(stack.clientWidth));
     return Object.freeze({
       width,
-      height: Math.max(240, Math.round(width * 0.625)),
+      height: Math.max(240, Math.round(stack.clientHeight)),
     });
   };
   const initialDimensions = dimensions();
@@ -967,6 +971,7 @@ function personTimeControls(): readonly (readonly [number, string])[] {
     [0, "midnight"],
     [7, "commute"],
     [10, "primary activity"],
+    [16, "return commute"],
     [19, "festival hour"],
     [23, "sleep"],
     [24, "identity epoch"],
@@ -995,7 +1000,7 @@ function branchComparisonPanel(): string {
   );
   if (baselineFlow === undefined || closureFlow === undefined)
     throw new Error("Missing local intervention comparison");
-  return `<section class="branch-comparison" aria-labelledby="branch-title"><div><p class="kicker">Reversible local scenario</p><h2 id="branch-title" data-testid="active-branch">${activeBranch === "baseline" ? "Immutable baseline" : "Closure branch"}</h2><p>The branch changes one scheduled route at tick 7. It never mutates the baseline checkpoint.</p></div><dl><div><dt>Baseline macro flow</dt><dd>${baselineFlow.count.toLocaleString("en-US")} on signature edge</dd></div><div><dt>Closure macro flow</dt><dd>${closureFlow.count.toLocaleString("en-US")} on closed edge</dd></div><div><dt>Baseline traveler route</dt><dd data-testid="baseline-route">${baselinePoint.route?.edgeIds.length ?? 0} edge</dd></div><div><dt>Closure traveler route</dt><dd data-testid="closure-route">${closurePoint.route?.edgeIds.length ?? 0} edges</dd></div><div><dt>Population fields</dt><dd class="valid" data-testid="branch-field-match">${baselineState.field.stateHash === closureState.field.stateHash ? "Identical field state" : "Unexpected field divergence"}</dd></div><div><dt>Branch event hash</dt><dd><code>${activeBranch === "baseline" ? baselineState.eventHash : closureState.eventHash}</code></dd></div></dl><div class="tracer-actions"><button type="button" data-action="closure-branch">Explore closure branch</button><button type="button" class="secondary" data-action="baseline-branch">View immutable baseline</button></div></section>`;
+  return `<section class="branch-comparison" aria-labelledby="branch-title"><div><p class="kicker">Reversible local scenario</p><h2 id="branch-title" data-testid="active-branch">${activeBranch === "baseline" ? "Immutable baseline" : "Closure branch"}</h2><p>The branch changes one scheduled route at tick 7. It never mutates the baseline checkpoint.</p></div><dl><div><dt>Baseline macro flow</dt><dd>${baselineFlow.count.toLocaleString("en-US")} on signature edge</dd></div><div><dt>Closure macro flow</dt><dd>${closureFlow.count.toLocaleString("en-US")} on closed edge</dd></div><div><dt>Baseline traveler route</dt><dd data-testid="baseline-route">${baselinePoint.route?.edgeIds.length ?? 0} edge</dd></div><div><dt>Closure traveler route</dt><dd data-testid="closure-route">${closurePoint.route?.edgeIds.length ?? 0} edges</dd></div><div><dt>Population fields</dt><dd class="valid" data-testid="branch-field-match">${baselineState.field.stateHash === closureState.field.stateHash ? "Identical field state" : "Unexpected field divergence"}</dd></div><div><dt>Branch event hash</dt><dd><code>${activeBranch === "baseline" ? baselineState.eventHash : closureState.eventHash}</code></dd></div></dl></section>`;
 }
 
 function transportDebugPanel(): string {
@@ -1032,6 +1037,54 @@ function transportDebugPanel(): string {
     planetaryDay.ticks.map((sample) => sample.festivalAttendance),
     planetaryDay.graph.festival.peakAttendance,
   )}"></polyline><line class="tick-marker" x1="${markerX}" y1="28" x2="${markerX}" y2="176"></line><text x="24" y="193">00</text><text x="205" y="193">06</text><text x="393" y="193">12</text><text x="581" y="193">18</text><text x="728" y="193">23</text></svg><div class="chart-legend"><span class="movement">aggregate movement</span><span class="festival">festival attendance</span><span>vertical marker: selected tick</span></div><dl class="field-channels"><div><dt>Cohort activity reconciliation</dt><dd>${activities}</dd></div><div><dt>Festival</dt><dd>${planetaryDay.graph.festival.name} · ${tick.festivalAttendance.toLocaleString("en-US")} attending from ${tick.festivalOrigins.length} surrounding regions</dd></div><div><dt>Signature route</dt><dd data-testid="signature-route">${signatureFlow.closed ? "Closed" : "Open"} · ${signatureFlow.count.toLocaleString("en-US")} / ${signatureFlow.capacity.toLocaleString("en-US")}</dd></div><div><dt>Bottlenecks</dt><dd>${bottlenecks.length.toLocaleString("en-US")} capacity-limited edges at regional/globe LOD</dd></div><div class="flow-explanation"><dt>Why this flow?</dt><dd data-testid="flow-explanation">${explainFlow(planetaryDay, selectedDayTick, signatureFlow.edgeId)}</dd></div><div><dt>Invariant failures</dt><dd class="valid">${tick.invariantIssues.length === 0 ? "None — activities and routes valid" : tick.invariantIssues.join("; ")}</dd></div></dl></article><article class="checkpoint-debug" aria-labelledby="checkpoint-debug-title"><div><p class="kicker">Local checkpoint round-trip</p><h2 id="checkpoint-debug-title">Tick 13 · <code data-testid="kernel-hash">${checkpointKernel.kernelHash}</code></h2></div><dl class="field-channels"><div><dt>Frozen formats</dt><dd>world ${WORLD_FORMAT_VERSION} · events ${EVENT_FORMAT_VERSION} · checkpoint ${LOCAL_CHECKPOINT_VERSION}</dd></div><div><dt>Event hash</dt><dd><code data-testid="event-hash">${checkpointKernel.eventHash}</code></dd></div><div><dt>Canonical snapshot</dt><dd>${checkpointBytes.length.toLocaleString("en-US")} bytes · local UTF-8 JSON</dd></div><div><dt>Restore result</dt><dd class="${checkpointResult === "Not restored" ? "" : "valid"}" data-testid="checkpoint-result">${checkpointResult}</dd></div></dl><button type="button" data-action="checkpoint-restore">Save and restore checkpoint</button></article>`;
+}
+
+function livingCityStoryCopy(scene: LivingCityScene) {
+  const selected = scene.figures.find(
+    (figure) => figure.personId === scene.selectedPersonId,
+  );
+  const title = {
+    "daily-life": "Daily life",
+    commute: "Commuting flow",
+    meeting: "Shared-place meeting",
+    "festival-arrival": "Lantern Tide arrival",
+    "festival-peak": "Lantern Tide peak",
+    "festival-departure": "Lantern Tide departure",
+    "closure-detour": "Closure detour",
+  }[scene.story.phase];
+  const hour = Number(scene.context.time.tick % 24n);
+  const light = hour >= 7 && hour < 18 ? "Daylight" : "Evening glow";
+  const selectedRoute =
+    selected?.story.routeReason === null ||
+    selected?.story.routeReason === undefined
+      ? `${selected?.story.activity ?? "activity"} at ${selected?.story.locationId ?? "place"}`
+      : `${selected.story.routeReason} · ${selected.story.routeEdgeCount} graph ${selected.story.routeEdgeCount === 1 ? "edge" : "edges"}`;
+  const preferredEventKind = scene.story.phase.startsWith("festival-")
+    ? "festival"
+    : scene.story.phase === "meeting"
+      ? "meeting"
+      : null;
+  const selectedEvents = scene.story.events.filter((candidate) =>
+    candidate.participantIds.includes(scene.selectedPersonId ?? ""),
+  );
+  const event =
+    selectedEvents.find((candidate) => candidate.kind === preferredEventKind) ??
+    selectedEvents[0];
+  const eventText =
+    event === undefined
+      ? "No selected semantic event"
+      : `${event.kind} · ${event.participantIds.length} exact participant ${event.participantIds.length === 1 ? "ID" : "IDs"} · ${event.locationId}`;
+  return Object.freeze({ title, light, selectedRoute, eventText });
+}
+
+function livingCityStoryPanel(scene: LivingCityScene): string {
+  const copy = livingCityStoryCopy(scene);
+  return `<aside class="city-story" data-testid="city-story" data-story-phase="${scene.story.phase}" data-event-ids="${scene.story.events.map((candidate) => candidate.id).join(" ")}" aria-label="Visible city story"><div class="city-story-heading"><p class="kicker">${copy.light} · tick ${scene.context.time.tick}</p><strong data-testid="city-story-title">${copy.title}</strong><p data-testid="city-story-route">${copy.selectedRoute}</p></div><div class="city-story-legend" aria-label="City visual legend"><span class="legend-flow">→ route</span><span class="legend-meeting">○ meeting</span><span class="legend-festival">○ festival</span><span class="legend-weight">● weighted figure</span></div></aside>`;
+}
+
+function livingCityStoryDetails(scene: LivingCityScene): string {
+  const copy = livingCityStoryCopy(scene);
+  return `<div class="city-story-details"><p data-testid="city-story-event"><strong>Exact selected event</strong> · ${copy.eventText}</p><div class="city-activity-groups" aria-label="Visible weighted activity groups">${scene.story.activityGroups.map((group) => `<span><b>${group.activity}</b> ${group.literalFigures} literal / ${group.representedPeople.toLocaleString("en-US")} represented</span>`).join("")}</div><p>Arrows show route direction. Rings mark exact meeting or festival semantics. Each person shape is literal; its weight reports how many represented people that sample carries.</p></div>`;
 }
 
 function render(root: HTMLElement): void {
@@ -1151,35 +1204,71 @@ function render(root: HTMLElement): void {
     (_match, row: string, column: string) =>
       `L4/${Math.floor(Number(row) / 2)}/${Math.floor(Number(column) / 2)}`,
   );
+  const journeyTitle =
+    stage === "Planet"
+      ? "Seeded fictional planet"
+      : stage === "Settlement"
+        ? canonicalSettlementName
+        : stage === "Street"
+          ? canonicalStreetName
+          : (personA?.name ?? "Resident");
+  const journeyDescription =
+    stage === "Planet"
+      ? "Start at the whole field; each closer view is a deterministic query."
+      : stage === "Settlement"
+        ? "One conserved region becomes a living city."
+        : stage === "Street"
+          ? "Choose a visible resident to follow."
+          : "Identity, itinerary, and events are reconstructed on demand.";
+  const zoomControls =
+    cityScene === null
+      ? ""
+      : (["city", "neighborhood", "street", "person"] as const)
+          .map(
+            (level) =>
+              `<button type="button" class="secondary" data-city-level="${level}" aria-label="Zoom ${level}" aria-pressed="${livingCityLevel === level}">${level}</button>`,
+          )
+          .join("");
+  const momentControls = personA
+    ? `<label class="moment-select"><span>Moment</span><select data-person-tick-select aria-label="Signature moment">${personTimeControls()
+        .map(
+          ([tick, label]) =>
+            `<option value="${tick}" ${selectedPersonTick === tick ? "selected" : ""}>Tick ${tick} · ${label}</option>`,
+        )
+        .join("")}</select></label>`
+    : "";
+  const followControls = personA
+    ? `<button type="button" class="secondary" data-stage-index="0" aria-label="View planet" aria-pressed="${stage === "Planet"}">World</button><button type="button" class="secondary" data-stage-index="3" aria-label="View person" aria-pressed="${stage === "Person"}">${stage === "Person" ? "Following" : "Follow"}</button>`
+    : "";
 
   root.innerHTML = `<main class="observatory" aria-labelledby="app-title">
-    <header class="tracer-header"><div><p class="eyebrow"><span aria-hidden="true"></span> Local deterministic observatory</p><h1 id="app-title">Ten Billion Lives</h1><p class="first-run-claim" data-testid="first-run-claim">One fictional planet, exactly <strong>${world.totalPopulation.toLocaleString("en-US")} represented lives</strong>, and no table of people. Zoom in to reconstruct one coherent life from compact fields.</p></div><div class="header-status"><div class="status" data-testid="smoke-status"><span aria-hidden="true"></span>${smoke.status}</div><p data-testid="render-support" role="status">Checking WebGPU; Canvas fallback is ready</p></div></header>
-    <section class="command-deck" aria-label="Local observatory controls"><article class="time-console"><div><p class="kicker">Local world time</p><h2 data-testid="time-status">${playbackStatusText()}</h2><p>Explicit presentation phase moves walkers continuously; camera and clock samples never enter world authority.</p></div><div class="time-actions"><button type="button" data-action="clock-toggle">${clockPlaying ? "Pause local time" : "Play local time"}</button><button type="button" class="secondary" data-action="clock-step">Advance one tick</button>${PLAYBACK_RATE_OPTIONS.map(({ rate, label }) => `<button type="button" class="secondary" data-clock-rate="${rate}" aria-label="${label}" aria-pressed="${rate === "Paused" ? !clockPlaying : clockPlaying && clockRate === rate}">${label}</button>`).join("")}</div>${playbackState.error === null ? "" : `<p class="form-error" role="alert">${playbackState.error}</p>`}</article><article class="discovery-console"><div><p class="kicker">Find a place or event</p><h2>Go somewhere meaningful</h2><p>Search the small canonical guide; no remote index or network request is used.</p></div><form role="search" aria-label="Place and event discovery" data-discovery-search><label for="discovery-search">Find a place or event</label><div class="search-row"><input id="discovery-search" type="search" name="discovery" autocomplete="off"><button type="submit">Open</button></div><p class="discovery-status" data-testid="discovery-status" role="status">${discoveryStatus}</p></form><div class="discovery-shortcuts" aria-label="Suggested destinations"><button type="button" class="secondary" data-discover="Brindle Bay">Brindle Bay</button><button type="button" class="secondary" data-discover="Harbor Street">Harbor Street</button><button type="button" class="secondary" data-discover="Lantern Tide">Lantern Tide festival</button></div></article></section>
+    <header class="tracer-header"><div class="brand"><p class="eyebrow"><span aria-hidden="true"></span> Local deterministic city</p><h1 id="app-title">Ten Billion Lives</h1><p class="first-run-claim" data-testid="first-run-claim"><strong>${world.totalPopulation.toLocaleString("en-US")}</strong> represented lives</p></div><div class="header-status"><div class="status" data-testid="smoke-status"><span aria-hidden="true"></span>${smoke.status}</div><p data-testid="render-support" role="status">Checking renderer</p></div></header>
+    <section class="command-deck" aria-label="Simulation time and discovery controls"><article class="time-console"><div class="time-readout"><span>Simulated time</span><strong data-testid="time-status">${playbackStatusText()}</strong></div><label class="time-scrub"><span class="visually-hidden">Seek simulated hour</span><input type="range" min="0" max="23" step="1" value="${selectedPersonTick % FIELD_TICKS_PER_DAY}" data-time-scrub aria-label="Seek simulated hour"><output>${selectedPersonTick % FIELD_TICKS_PER_DAY}:00</output></label><div class="time-actions"><button type="button" data-action="clock-toggle" aria-label="${clockPlaying ? "Pause local time" : "Play local time"}">${clockPlaying ? "Pause" : "Play"}</button><button type="button" class="secondary" data-action="clock-step" aria-label="Advance one tick">+1 hour</button>${PLAYBACK_RATE_OPTIONS.filter(
+      ({ rate }) => rate !== "Paused",
+    )
+      .map(
+        ({ rate, label }) =>
+          `<button type="button" class="secondary" data-clock-rate="${rate}" aria-label="${label}" aria-pressed="${clockPlaying && clockRate === rate}">${rate} min/s</button>`,
+      )
+      .join(
+        "",
+      )}</div>${playbackState.error === null ? "" : `<p class="form-error" role="alert">${playbackState.error}</p>`}</article><article class="discovery-console"><form role="search" aria-label="Place and event discovery" data-discovery-search><label class="visually-hidden" for="discovery-search">Find a place or event</label><div class="search-row"><input id="discovery-search" type="search" name="discovery" autocomplete="off" placeholder="Find a place or event"><button type="submit">Open</button></div><p class="discovery-status visually-hidden" data-testid="discovery-status" role="status">${discoveryStatus}</p></form></article></section>
     <section class="tracer-world" aria-labelledby="journey-title">
-      <div class="journey-renderer ${tracerProjection.cssStage}" style="--camera-shift: ${stage === "Planet" ? cameraShift.toFixed(2) : "0"}px" data-render-stack data-projection-key="${renderSemanticKey}" data-selection-id="${renderSelectionId}" data-camera-degrees="${cameraDegrees}" data-transition-ms="${transitionDurationMs}" data-city-level="${livingCityLevel}" data-testid="journey-renderer" ${stage === "Street" || stage === "Person" ? 'role="button" tabindex="0" aria-label="Pick or inspect a visible resident"' : ""}><canvas width="768" height="480" data-render-surface="canvas2d" aria-label="${stage === "Planet" ? stage : `${canonicalSettlementName} ${livingCityLevel}`} Canvas fallback visualization"></canvas><canvas width="768" height="480" data-render-surface="webgpu" aria-label="${stage === "Planet" ? stage : `${canonicalSettlementName} ${livingCityLevel}`} WebGPU visualization" hidden></canvas><div class="render-hud"><span><b data-testid="render-backend">probing</b> · <b data-testid="render-quality">${renderQuality}</b> quality · <b data-testid="render-visible">${visibleCount.toLocaleString("en-US")}</b> visible · weights ${minimumVisibleWeight}–${maximumVisibleWeight}</span><span><b data-testid="render-frame-time">pending</b> · <code>${renderSemanticKey.slice(-8)}</code> · losses <b data-testid="render-context-losses">0</b></span></div></div>
-      <div class="journey-copy"><p class="kicker">Observer A · <span data-testid="observer-a-stage">${stage}</span></p><p class="journey-progress" data-testid="journey-progress">${stage} · step ${stageIndex + 1} of ${stages.length}</p><h2 id="journey-title" tabindex="-1">${stage === "Planet" ? "Seeded fictional planet" : stage === "Settlement" ? canonicalSettlementName : stage === "Street" ? canonicalStreetName : (personA?.name ?? "Resident")}</h2><p>${stage === "Planet" ? "Start at the whole field; each closer view is a deterministic query, not another simulation." : stage === "Settlement" ? "One conserved region becomes legible without changing the world beneath it." : stage === "Street" ? "Weighted manifestations resolve locally; choose the highlighted resident to continue." : "This identity, household, itinerary, and events are reconstructed on demand."}</p><p>Camera ${cameraDegrees}° · tick <span data-testid="person-tick">${selectedPersonTick}</span> · <code data-testid="state-hash">${currentKernel.kernelHash}</code></p>
-      <p class="branch-label">Viewing <strong data-testid="experience-mode">${experienceMode}</strong></p>${citySummary === null ? "" : `<section class="living-city-summary" aria-label="Living city text alternative" data-testid="living-city-summary"><p><strong data-testid="living-city-time">${citySummary.timeLabel}</strong> · ${citySummary.movementSummary}</p><p>${citySummary.selectionSummary ?? "No resident selected."}</p><p>${citySummary.populationSummary}</p></section><div class="semantic-zoom" aria-label="Semantic city zoom">${(["city", "neighborhood", "street", "person"] as const).map((level) => `<button type="button" class="secondary" data-city-level="${level}" aria-pressed="${livingCityLevel === level}">Zoom ${level}</button>`).join("")}</div>`}<div class="tracer-actions">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}<button type="button" data-action="festival">Visit Lantern Tide</button><button type="button" class="secondary" data-action="camera">Orbit camera</button>${personA ? stages.map((candidate, index) => `<button type="button" class="secondary" data-stage-index="${index}" aria-pressed="${stage === candidate}">View ${candidate.toLowerCase()}</button>`).join("") : ""}</div></div>
+      <div class="journey-renderer ${tracerProjection.cssStage}" style="--camera-shift: ${stage === "Planet" ? cameraShift.toFixed(2) : "0"}px" data-render-stack data-projection-key="${renderSemanticKey}" data-selection-id="${renderSelectionId}" data-camera-degrees="${cameraDegrees}" data-transition-ms="${transitionDurationMs}" data-city-level="${livingCityLevel}" data-testid="journey-renderer" ${stage === "Street" || stage === "Person" ? 'role="button" tabindex="0" aria-label="Pick a visible resident; use arrow keys to preview and Enter to follow"' : ""}><canvas width="768" height="480" data-render-surface="canvas2d" aria-label="${stage === "Planet" ? stage : `${canonicalSettlementName} ${livingCityLevel}`} Canvas fallback visualization"></canvas><canvas width="768" height="480" data-render-surface="webgpu" aria-label="${stage === "Planet" ? stage : `${canonicalSettlementName} ${livingCityLevel}`} WebGPU visualization" hidden></canvas>${cityScene === null ? "" : livingCityStoryPanel(cityScene)}<output class="city-preview" data-testid="city-preview"></output><div class="render-hud"><span><b data-testid="render-backend">probing</b> · <b data-testid="render-quality">${renderQuality}</b> quality · <b data-testid="render-visible">${visibleCount.toLocaleString("en-US")}</b> visible · weights ${minimumVisibleWeight}–${maximumVisibleWeight}</span><span><b data-testid="render-frame-time">pending</b> · <code>${renderSemanticKey.slice(-8)}</code> · losses <b data-testid="render-context-losses">0</b></span></div></div>
+      <nav class="journey-toolbar" aria-label="City view and signature moments">${nextLabel ? `<button type="button" data-action="next">${nextLabel}</button>` : ""}${followControls}${zoomControls}<button type="button" data-action="festival" aria-label="Visit Lantern Tide">Lantern Tide</button><button type="button" class="secondary" data-action="camera" aria-label="Orbit camera">Orbit</button>${momentControls}<button type="button" class="secondary" data-action="closure-branch" aria-label="Explore closure branch" aria-pressed="${activeBranch === "closure"}">Closure</button><button type="button" class="secondary" data-action="baseline-branch" aria-label="View immutable baseline" aria-pressed="${activeBranch === "baseline"}">Baseline</button></nav>
+      <details class="journey-drawer" ${journeyDrawerOpen ? "open" : ""}><summary><span data-testid="observer-a-stage">${stage}</span><strong id="journey-title" tabindex="-1">${journeyTitle}</strong></summary><div class="journey-copy"><p data-testid="journey-progress">Step ${stageIndex + 1} of ${stages.length}</p><p>${journeyDescription}</p><p>Camera ${cameraDegrees}° · tick <span data-testid="person-tick">${selectedPersonTick}</span> · <code data-testid="state-hash">${currentKernel.kernelHash}</code></p><p class="branch-label">Viewing <strong data-testid="experience-mode">${experienceMode}</strong></p>${citySummary === null || cityScene === null ? "" : `<section class="living-city-summary" aria-label="Living city text alternative" data-testid="living-city-summary"><p><strong data-testid="living-city-time">${citySummary.timeLabel}</strong> · ${citySummary.movementSummary}</p><p>${citySummary.selectionSummary ?? "No resident selected."}</p><p>${citySummary.populationSummary}</p>${livingCityStoryDetails(cityScene)}</section>`}</div></details>
     </section>
+    <details class="evidence-drawer" ${evidenceDrawerOpen ? "open" : ""}><summary>Person &amp; evidence</summary><div class="evidence-drawer-body">
     <section class="observer-grid" aria-label="Independent observer comparison">
       <article><p class="kicker">Observer A</p><h2>${personA?.name ?? "Journey in progress"}</h2><p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-a">${semanticProjectionA.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-a">${semanticProjectionA.eventHash}</code>${cityScene === null ? "" : `<br>Living city <code data-testid="living-city-hash-a">${cityScene.semanticKey}</code>`}</p>${personCard(personA, "a", semanticProjectionA)}</article>
       <article><p class="kicker">Observer B · independent instance</p><h2>${personB?.name ?? "Not initialized"}</h2>${semanticProjectionB ? `<p class="projection-hashes">Manifestation <code data-testid="manifestation-hash-b">${semanticProjectionB.manifestationHash}</code><br>Events <code data-testid="projection-event-hash-b">${semanticProjectionB.eventHash}</code>${observerBCityScene === null ? "" : `<br>Living city <code data-testid="living-city-hash-b">${observerBCityScene.semanticKey}</code>`}</p>` : ""}${personCard(personB, "b", semanticProjectionB)}${personA && !personB ? '<button type="button" data-action="observer-b">Initialize observer B</button>' : ""}${semanticMatch ? `<p class="match" data-testid="observer-match">Semantic match${cityScene === null ? "" : livingCityObserverMatch ? " · trajectory match" : " · trajectory mismatch"}</p>` : ""}</article>
     </section>
     <section class="person-tools" aria-labelledby="person-tools-title"><div><p class="kicker">Find and share a represented life</p><h2 id="person-tools-title">Procedural identity, not a stored agent</h2><p id="experience-claim" data-testid="experience-claim">Each selected life is represented from compact fields—not an independently simulated mind. Facts are reconstructed from the same seed, snapshot, tick, and branch.</p></div><form role="search" aria-label="Procedural person search" data-person-search><label for="person-search">Procedural person ID</label><div class="search-row"><input id="person-search" name="person" type="search" value="${selectedPersonId}" aria-describedby="person-search-error"><button type="submit">Inspect person</button></div><p id="person-search-error" class="form-error" role="alert">${personSearchError}</p></form>${personA ? `<div class="share-row"><a data-testid="person-deep-link" href="${personLink}">Open this person at tick ${selectedPersonTick}</a><button type="button" class="secondary" data-action="copy-link">Copy local link</button><span role="status">${shareStatus}</span></div>` : ""}</section>
-    ${
-      personA
-        ? `<section class="trace-controls" aria-label="Analytical person time"><p><strong>Follow through the day</strong> · direct random access, no resident stepping or promoted agent</p>${personTimeControls()
-            .map(
-              ([tick, label]) =>
-                `<button type="button" class="secondary" data-person-tick="${tick}" aria-pressed="${selectedPersonTick === tick}">Tick ${tick} · ${label}</button>`,
-            )
-            .join("")}</section>`
-        : ""
-    }
     ${branchComparisonPanel()}
     <section class="trace-controls" aria-label="Replay and field controls"><button type="button" data-action="replay" ${personA ? "" : "disabled"}>Rewind and replay</button><p data-testid="replay-result">${replayResult}</p><button type="button" class="secondary" data-action="fields">Reveal fields</button><button type="button" class="secondary" data-action="render-loss">Simulate renderer loss</button><button type="button" class="secondary" data-action="debug" aria-expanded="${debugVisible}">${debugVisible ? "Hide debug world" : "Inspect debug world"}</button></section>
     <section class="reality-budget ${fieldsRevealed ? "revealed" : ""}" data-testid="reality-budget" aria-live="polite"><div><p class="kicker">Reality budget · ${fieldsRevealed ? "field revealed" : "reveal available"}</p><h2><span data-testid="represented-population">${world.totalPopulation.toLocaleString("en-US")}</span> represented lives</h2><p>Authoritative integers stay compact; visible people are weighted, disposable projections.</p></div><dl><div><dt>Authority</dt><dd data-testid="authority-bytes">${world.cells.length.toLocaleString("en-US")} integer cells · ${authorityBytes.toLocaleString("en-US")} checkpoint bytes</dd></div><div><dt>Stored people</dt><dd>0 person rows</dd></div><div><dt>Visible / represented</dt><dd data-testid="budget-visible">${visibleCount.toLocaleString("en-US")} literal figures · weights ${minimumVisibleWeight}–${maximumVisibleWeight} · <span data-testid="projection-represented">${semanticProjectionA.realityBudget.representedPeople.toLocaleString("en-US")}</span> people → <span data-testid="projection-tokens">${semanticProjectionA.realityBudget.materializedTokens.toLocaleString("en-US")}</span> projected tokens</dd></div><div><dt>Derived projection</dt><dd>${semanticProjectionA.realityBudget.estimatedBytes.toLocaleString("en-US")} bytes · epoch ${semanticProjectionA.identityEpoch} / ${semanticProjectionA.realityBudget.continuityHorizonTicks} ticks</dd></div><div><dt>Tick / state hash</dt><dd><span data-testid="budget-tick">${selectedPersonTick}</span> · phase ${playbackState.visualTime.phasePermillion} · <code data-testid="budget-state-hash">${currentKernel.kernelHash}</code></dd></div><div><dt>Event hash</dt><dd><code data-testid="budget-event-hash">${semanticProjectionA.eventHash}</code> · ${semanticProjectionA.events.length} local events</dd></div><div><dt>Frame / backend</dt><dd><span data-testid="budget-frame-time">pending</span> · ${forceCanvasRenderer ? "Canvas forced" : "automatic backend"} · ${renderQualityReason}</dd></div><div><dt>Observer contract</dt><dd>${semanticProjectionA.realityBudget.samplingContract}; camera and GPU quality excluded from hashes</dd></div></dl></section>
     ${debugVisible ? `<section class="debug-world" aria-labelledby="debug-title"><div class="debug-heading"><div><p class="kicker">Seeded semantic atlas</p><h2 id="debug-title">Debug globe · L${debugLevel}</h2><p>Fictional geography; orange edges are the wrapped seam. Cell population brightens land.</p></div><div class="debug-controls" aria-label="Debug world level"><button type="button" class="secondary" data-debug-level="2" aria-pressed="${debugLevel === 2}">L2 regions</button><button type="button" class="secondary" data-debug-level="3" aria-pressed="${debugLevel === 3}">L3</button><button type="button" class="secondary" data-debug-level="5" aria-pressed="${debugLevel === 5}">L5 cells</button></div></div><canvas width="768" height="384" data-testid="debug-globe" aria-label="Fictional world cell map" aria-describedby="debug-cell-details">A deterministic map of fictional geography and population.</canvas><div class="debug-inspector" id="debug-cell-details"><div><dt>Selected cell</dt><dd data-testid="debug-cell-id">${selectedCell.id}</dd></div><div><dt>Hierarchy</dt><dd>${selectedParent} → ${selectedCell.id}</dd></div><div><dt>Geography</dt><dd>${selectedCell.biome} · ${selectedCell.elevationMeters.toLocaleString("en-US")} m</dd></div><div><dt>Population</dt><dd>${selectedCell.population.toLocaleString("en-US")}</dd></div><div><dt>Region</dt><dd>${selectedCell.regionId}</dd></div></div><div class="debug-probes"><button type="button" data-debug-cell="L5/12/0">Inspect seam</button><button type="button" data-debug-cell="L5/0/3">Inspect north pole</button></div><article class="field-debug" aria-labelledby="field-debug-title"><div class="field-debug-heading"><div><p class="kicker">Conservative field simulation</p><h2 id="field-debug-title">Tick <span data-testid="field-tick">${fieldState.tick}</span> · <code data-testid="field-hash">${fieldState.stateHash}</code></h2></div><div class="debug-controls"><button type="button" data-action="field-step">Single-step</button><button type="button" class="secondary" data-action="field-day">Advance one day</button></div></div><dl class="field-channels"><div><dt>Resident cohorts</dt><dd>${selectedFieldCell.cohorts.young.toLocaleString("en-US")} young · ${selectedFieldCell.cohorts.adult.toLocaleString("en-US")} adult · ${selectedFieldCell.cohorts.older.toLocaleString("en-US")} older</dd></div><div><dt>Activity channels</dt><dd>sleep ${selectedFieldCell.activities.sleep.toLocaleString("en-US")} · home ${selectedFieldCell.activities.home.toLocaleString("en-US")} · work ${selectedFieldCell.activities.work.toLocaleString("en-US")} · transit ${selectedFieldCell.activities.transit.toLocaleString("en-US")} · community ${selectedFieldCell.activities.community.toLocaleString("en-US")}</dd></div><div><dt>Capacity / amenity</dt><dd>${selectedFieldCell.capacityPermille}‰ / ${selectedFieldCell.amenityPermille}‰ · demand ${selectedFieldCell.flowDemand.toLocaleString("en-US")}</dd></div><div><dt>Sparse active regions</dt><dd>${fieldState.activeCellIds.length}</dd></div><div><dt>Flux ledger</dt><dd>${fieldState.lastFluxes.length.toLocaleString("en-US")} transfers; ${selectedFluxes.length} touch this cell${selectedFluxes[0] ? ` · #${selectedFluxes[0].processingOrder} ${selectedFluxes[0].sourceCellId} → ${selectedFluxes[0].destinationCellId} (${selectedFluxes[0].count.toLocaleString("en-US")})` : ""}</dd></div><div><dt>Invariant failures</dt><dd class="${fieldInvariant.valid ? "valid" : "invalid"}" data-testid="field-invariants">${fieldInvariant.valid ? "None — exact conservation" : fieldInvariant.issues.join("; ")}</dd></div></dl></article>${transportDebugPanel()}</section>` : ""}
-    <footer><span>World seed <code>${world.seed}</code> · hash <code data-testid="world-hash">${world.worldHash}</code> · vectors <code data-testid="deterministic-vector-hash">${deterministicVectorHash()}</code></span><span>Run <code>pnpm check</code> from the repository root if a diagnostic fails.</span></footer>
+    <footer><span>World seed <code>${world.seed}</code> · hash <code data-testid="world-hash">${world.worldHash}</code> · vectors <code data-testid="deterministic-vector-hash">${deterministicVectorHash()}</code></span><span>Run <code>pnpm check</code> from the repository root if a diagnostic fails.</span></footer></div></details>
   </main>`;
 
   if (focusSelector !== null) {
@@ -1204,25 +1293,59 @@ function render(root: HTMLElement): void {
     if (nextStage === "Person") personA = queryPerson(snapshotA);
     render(root);
   });
+  root
+    .querySelector<HTMLDetailsElement>(".journey-drawer")
+    ?.addEventListener("toggle", (event) => {
+      journeyDrawerOpen = (event.currentTarget as HTMLDetailsElement).open;
+    });
+  root
+    .querySelector<HTMLDetailsElement>(".evidence-drawer")
+    ?.addEventListener("toggle", (event) => {
+      evidenceDrawerOpen = (event.currentTarget as HTMLDetailsElement).open;
+    });
   const journeySurface = root.querySelector<HTMLElement>(
     "[data-testid=journey-renderer][role=button]",
   );
-  const inspectHighlighted = (event?: MouseEvent): void => {
-    let personId = selectedPersonId;
-    if (event !== undefined && livingCityRenderer !== null) {
-      const canvas = root.querySelector<HTMLCanvasElement>(
-        "[data-render-surface]:not([hidden])",
-      );
-      if (canvas !== null) {
-        const bounds = canvas.getBoundingClientRect();
-        const pick = livingCityRenderer.pick(
-          ((event.clientX - bounds.left) / bounds.width) * canvas.width,
-          ((event.clientY - bounds.top) / bounds.height) * canvas.height,
-          livingCityScene?.semanticKey ?? "",
-        );
-        if (pick !== null) personId = pick.personId;
-      }
+  const pickAt = (event: MouseEvent): string | null => {
+    if (livingCityRenderer === null) return null;
+    const canvas = root.querySelector<HTMLCanvasElement>(
+      "[data-render-surface]:not([hidden])",
+    );
+    if (canvas === null) return null;
+    const bounds = canvas.getBoundingClientRect();
+    return (
+      livingCityRenderer.pick(
+        ((event.clientX - bounds.left) / bounds.width) * canvas.width,
+        ((event.clientY - bounds.top) / bounds.height) * canvas.height,
+        livingCityScene?.semanticKey ?? "",
+      )?.personId ?? null
+    );
+  };
+  const showPreview = (personId: string | null): void => {
+    const preview = root.querySelector<HTMLOutputElement>(
+      "[data-testid=city-preview]",
+    );
+    if (preview === null || journeySurface === null) return;
+    if (personId === null) {
+      preview.textContent = "";
+      delete journeySurface.dataset["previewPersonId"];
+      return;
     }
+    const figure = livingCityScene?.figures.find(
+      (candidate) => candidate.personId === personId,
+    );
+    if (figure === undefined) return;
+    journeySurface.dataset["previewPersonId"] = personId;
+    preview.textContent = `Preview ${personId} · weight ${figure.representedWeight.toLocaleString("en-US")} · Enter to follow`;
+  };
+  const inspectHighlighted = (
+    event?: MouseEvent,
+    previewPersonId?: string,
+  ): void => {
+    const personId =
+      previewPersonId ??
+      (event === undefined ? null : pickAt(event)) ??
+      selectedPersonId;
     stopClock();
     selectExperience(personId, selectedPersonTick, activeBranch);
     render(root);
@@ -1233,9 +1356,35 @@ function render(root: HTMLElement): void {
   journeySurface?.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      inspectHighlighted();
+      inspectHighlighted(undefined, journeySurface.dataset["previewPersonId"]);
+      return;
     }
+    if (
+      event.key !== "ArrowLeft" &&
+      event.key !== "ArrowRight" &&
+      event.key !== "ArrowUp" &&
+      event.key !== "ArrowDown"
+    )
+      return;
+    event.preventDefault();
+    const figures = livingCityScene?.figures ?? [];
+    if (figures.length === 0) return;
+    const currentId =
+      journeySurface.dataset["previewPersonId"] ?? selectedPersonId;
+    const currentIndex = Math.max(
+      0,
+      figures.findIndex((figure) => figure.personId === currentId),
+    );
+    const direction =
+      event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : -1;
+    const next =
+      figures[(currentIndex + direction + figures.length) % figures.length];
+    showPreview(next?.personId ?? null);
   });
+  journeySurface?.addEventListener("mousemove", (event) =>
+    showPreview(pickAt(event)),
+  );
+  journeySurface?.addEventListener("mouseleave", () => showPreview(null));
   root
     .querySelector('[data-action="festival"]')
     ?.addEventListener("click", () => {
@@ -1271,6 +1420,28 @@ function render(root: HTMLElement): void {
     ?.addEventListener("click", () => {
       stopClock();
       advanceLocalTime(root, 1);
+    });
+  root
+    .querySelector<HTMLInputElement>("[data-time-scrub]")
+    ?.addEventListener("change", (event) => {
+      const control = event.currentTarget;
+      if (!(control instanceof HTMLInputElement)) return;
+      const hour = Number(control.value);
+      if (!Number.isInteger(hour) || hour < 0 || hour >= FIELD_TICKS_PER_DAY)
+        return;
+      stopClock();
+      const dayStart =
+        selectedPersonTick - (selectedPersonTick % FIELD_TICKS_PER_DAY);
+      seekPlayback(dayStart + hour);
+      if (personA !== null) personA = queryPerson(snapshotA);
+      if (observerBEngine !== null)
+        personB = queryPerson(
+          createPlaceholderSnapshot(),
+          observerBEngine.itinerary,
+        );
+      replayResult = "Not run";
+      replayVerified = false;
+      render(root);
     });
   for (const control of root.querySelectorAll<HTMLButtonElement>(
     "[data-clock-rate]",
@@ -1506,6 +1677,23 @@ function render(root: HTMLElement): void {
       render(root);
     });
   }
+  root
+    .querySelector<HTMLSelectElement>("[data-person-tick-select]")
+    ?.addEventListener("change", (event) => {
+      const control = event.currentTarget;
+      if (!(control instanceof HTMLSelectElement)) return;
+      stopClock();
+      seekPlayback(Number(control.value));
+      personA = queryPerson(snapshotA);
+      if (observerBEngine !== null)
+        personB = queryPerson(
+          createPlaceholderSnapshot(),
+          observerBEngine.itinerary,
+        );
+      replayResult = "Not run";
+      replayVerified = false;
+      render(root);
+    });
   const canvas = root.querySelector<HTMLCanvasElement>(
     "[data-testid=debug-globe]",
   );

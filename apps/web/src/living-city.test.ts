@@ -54,6 +54,7 @@ describe("production living-city scene adapter", () => {
       time: createVisualTime(7n, 500_000),
       selectedPersonId,
       quality: "fallback" as const,
+      festivalPeakHour: 19,
     };
     const projectionA = project(observerA);
     const projectionB = project(observerB);
@@ -109,6 +110,37 @@ describe("production living-city scene adapter", () => {
       ),
     ).toBe(true);
     expect(independent).toEqual(cityScene);
+    const selectedFigure = cityScene.figures.find(
+      (figure) => figure.personId === selectedPersonId,
+    );
+    expect(cityScene.story.phase).toBe("commute");
+    expect(selectedFigure?.story).toMatchObject({
+      activity: "transit",
+      encounterGroupId: expect.stringMatching(/^encounter_/),
+      routeReason: "daily commute",
+    });
+    expect(selectedFigure?.story.eventIds).toEqual(
+      projectionA.events
+        .filter((event) => event.participantIds.includes(selectedPersonId))
+        .map((event) => event.id),
+    );
+    expect(
+      cityScene.story.activityGroups.reduce(
+        (total, group) => total + group.representedPeople,
+        cityScene.unsampledRemainder,
+      ),
+    ).toBe(cityScene.representedPeople);
+    const presentationWithoutEvents = createProductionLivingCityScene({
+      ...query,
+      projection: Object.freeze({
+        ...projectionA,
+        events: Object.freeze([]),
+      }),
+      itineraryAt: itineraryAt(observerA),
+      level: "city",
+    });
+    expect(presentationWithoutEvents.semanticKey).toBe(cityScene.semanticKey);
+    expect(presentationWithoutEvents.story.events).toEqual([]);
 
     const aliasedPersonId = "person_05iqcey_0p7mu3t";
     const aliasedState = stateAt(9n);

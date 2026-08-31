@@ -95,15 +95,51 @@ function fixedInput(): LivingCityRenderInput {
           pinned: true,
           pose: pose("person/ada", -1_200, -900, 0, 750_000),
           appearanceKey: 17,
+          story: {
+            activity: "transit",
+            locationId: "route/harbor",
+            encounterGroupId: "encounter/harbor/7",
+            encounterCount: 1,
+            eventIds: ["event/arrival/ada"],
+            routeReason: "daily commute",
+            routeEdgeCount: 1,
+          },
         },
         {
           personId: "person/bea",
           representedWeight: 49n,
           pinned: false,
-          pose: pose("person/bea", 1_600, 900, 250_000, 200_000),
+          pose: pose("person/bea", 1_600, 900, 250, 200_000),
           appearanceKey: 92,
+          story: {
+            activity: "transit",
+            locationId: "route/harbor",
+            encounterGroupId: "encounter/harbor/7",
+            encounterCount: 0,
+            eventIds: [],
+            routeReason: "daily commute",
+            routeEdgeCount: 1,
+          },
         },
       ],
+      story: {
+        phase: "commute",
+        events: [
+          {
+            id: "event/arrival/ada",
+            kind: "arrival",
+            locationId: "route/harbor",
+            participantIds: ["person/ada"],
+          },
+        ],
+        activityGroups: [
+          {
+            activity: "transit",
+            literalFigures: 2,
+            representedPeople: 50n,
+          },
+        ],
+      },
       selectedPersonId: "person/ada",
       representedPeople: 100n,
       unsampledRemainder: 50n,
@@ -132,6 +168,17 @@ describe("literal-person living-city renderer", () => {
     expect(first.fixedTime).toEqual({ tick: 7n, phasePermillion: 250_000 });
     expect(first.pickTable).toEqual(second.pickTable);
     expect(first.figures).toEqual(second.figures);
+    expect(first.flowMarks).toEqual(second.flowMarks);
+    expect(first.flowMarks).toHaveLength(2);
+    expect(first.flowMarks[0]).toMatchObject({
+      personId: "person/ada",
+      kind: "commute",
+      color: "#6ee7d0",
+      selected: true,
+    });
+    expect(
+      (first.flowMarks[0]?.end.x ?? 0) - (first.flowMarks[0]?.start.x ?? 0),
+    ).toBeGreaterThan(70);
     const selected = first.figures.find((figure) => figure.selected);
     expect(selected).toMatchObject({
       personId: "person/ada",

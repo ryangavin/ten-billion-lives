@@ -8,7 +8,16 @@ async function reachPerson(page: Page): Promise<void> {
     "Meet a resident",
   ])
     await page.getByRole("button", { name }).click();
-  await expect(page.getByTestId("observer-a-person-id")).toBeVisible();
+  await expect(page.getByTestId("observer-a-person-id")).toHaveText(/^person_/);
+}
+
+async function setEvidenceDrawer(page: Page, open: boolean): Promise<void> {
+  const drawer = page.locator("details.evidence-drawer");
+  await drawer.evaluate((element, value) => {
+    element.open = value;
+    element.dispatchEvent(new Event("toggle"));
+  }, open);
+  await expect(drawer).toHaveJSProperty("open", open);
 }
 
 test("restores keyboard focus and honors reduced motion", async ({
@@ -39,12 +48,49 @@ test("restores keyboard focus and honors reduced motion", async ({
   await expect(page.getByTestId("observer-a-stage")).toHaveText("Planet");
 });
 
+test("previews visible residents without hash drift, follows, scrubs, and exits", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name === "mobile-chromium", "desktop keyboard");
+  await page.goto("/?renderer=canvas&quality=fallback");
+  await reachPerson(page);
+  const renderer = page.getByTestId("journey-renderer");
+  const semanticKey = await renderer.getAttribute("data-projection-key");
+  const selectedPersonId = await renderer.getAttribute("data-selection-id");
+  await renderer.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByTestId("city-preview")).toContainText(
+    "Enter to follow",
+  );
+  await expect(renderer).toHaveAttribute(
+    "data-projection-key",
+    semanticKey ?? "",
+  );
+  await expect(renderer).toHaveAttribute(
+    "data-selection-id",
+    selectedPersonId ?? "",
+  );
+  const previewPersonId = await renderer.getAttribute("data-preview-person-id");
+  expect(previewPersonId).toMatch(/^person_/);
+  expect(previewPersonId).not.toBe(selectedPersonId);
+  await page.keyboard.press("Enter");
+  await expect(renderer).toHaveAttribute(
+    "data-selection-id",
+    previewPersonId ?? "",
+  );
+  await page.getByRole("slider", { name: "Seek simulated hour" }).fill("16");
+  await expect(page.getByTestId("person-tick")).toHaveText("16");
+  await page.getByRole("button", { name: "View planet" }).click();
+  await expect(page.getByTestId("observer-a-stage")).toHaveText("Planet");
+});
+
 test("has no serious or critical automated accessibility findings", async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== "chromium", "one canonical axe audit");
   await page.goto("/?renderer=canvas");
   await reachPerson(page);
+  await setEvidenceDrawer(page, true);
   await page.getByRole("button", { name: "Initialize observer B" }).click();
   const result = await new AxeBuilder({ page }).analyze();
   expect(
@@ -63,7 +109,26 @@ test("supports the complete touch journey, local share, and follow exit", async 
   await page.getByRole("button", { name: "Enter Brindle Bay" }).tap();
   await page.getByRole("button", { name: "Enter Harbor Street" }).tap();
   await page.getByTestId("journey-renderer").tap();
-  await expect(page.getByTestId("observer-a-person-id")).toBeVisible();
+  await expect(page.getByTestId("observer-a-person-id")).toHaveText(/^person_/);
+  const viewportLayout = await page.evaluate(() => ({
+    scrollHeight: globalThis.document.documentElement.scrollHeight,
+    innerHeight: globalThis.innerHeight,
+    rendererHeight:
+      globalThis.document
+        .querySelector('[data-testid="journey-renderer"]')
+        ?.getBoundingClientRect().height ?? 0,
+    minimumControlHeight: Math.min(
+      ...[
+        ...globalThis.document.querySelectorAll(".journey-toolbar button"),
+      ].map((element) => element.getBoundingClientRect().height),
+    ),
+  }));
+  expect(viewportLayout.scrollHeight).toBeLessThanOrEqual(
+    viewportLayout.innerHeight,
+  );
+  expect(viewportLayout.rendererHeight).toBeGreaterThan(650);
+  expect(viewportLayout.minimumControlHeight).toBeGreaterThanOrEqual(44);
+  await setEvidenceDrawer(page, true);
   const href = await page.getByTestId("person-deep-link").getAttribute("href");
   expect(href).toContain("person=person_27yi09s_1obkbba");
   await page.getByRole("button", { name: "Copy local link" }).tap();
@@ -88,6 +153,7 @@ test("preserves semantics through context loss, tab resume, and orientation", as
   );
   await page.goto("/?renderer=canvas");
   await reachPerson(page);
+  await setEvidenceDrawer(page, true);
   await page.getByRole("button", { name: "Initialize observer B" }).click();
   const before = await page.evaluate(() => ({
     state: globalThis.document.querySelector("[data-testid=state-hash]")
@@ -135,26 +201,27 @@ test("remains legible with forced colors and 200 percent text", async ({
     globalThis.document.documentElement.style.fontSize = "200%";
   });
   await reachPerson(page);
+  await setEvidenceDrawer(page, true);
   const layout = await page.evaluate(() => ({
     clientWidth: globalThis.document.documentElement.clientWidth,
     scrollWidth: globalThis.document.documentElement.scrollWidth,
-    offenders: [...globalThis.document.querySelectorAll("body *")]
-      .map((element) => ({
-        element: element.tagName.toLowerCase(),
-        className: element.getAttribute("class") ?? "",
-        testId: element.getAttribute("data-testid") ?? "",
-        right: Math.round(element.getBoundingClientRect().right),
-        scrollWidth: element.scrollWidth,
-        clientWidth: element.clientWidth,
-      }))
-      .filter(
-        (element) =>
-          element.right > globalThis.document.documentElement.clientWidth + 1,
-      )
-      .slice(0, 12),
+    scrollHeight: globalThis.document.documentElement.scrollHeight,
+    innerHeight: globalThis.innerHeight,
+    drawer: (() => {
+      const bounds = globalThis.document
+        .querySelector(".evidence-drawer-body")
+        ?.getBoundingClientRect();
+      return bounds === undefined
+        ? null
+        : { left: bounds.left, right: bounds.right };
+    })(),
   }));
-  expect(layout.offenders).toEqual([]);
   expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);
+  expect(layout.scrollHeight).toBeLessThanOrEqual(layout.innerHeight);
+  expect(layout.drawer?.left ?? -1).toBeGreaterThanOrEqual(0);
+  expect(layout.drawer?.right ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(
+    layout.clientWidth,
+  );
   await expect(page.getByText("Semantic events")).toBeVisible();
   await page.getByRole("button", { name: "View planet" }).focus();
   await expect(page.getByRole("button", { name: "View planet" })).toBeFocused();

@@ -8,8 +8,11 @@ import {
   type VisualTime,
 } from "@ten-billion-lives/manifest";
 import type {
+  LivingCityActivity,
+  LivingCityActivityGroup,
   LivingCityFigure,
   LivingCityScene,
+  LivingCityStory,
 } from "@ten-billion-lives/render";
 
 export type LivingCityLevel = "city" | "neighborhood" | "street" | "person";
@@ -23,10 +26,35 @@ export interface ProductionLivingCityQuery {
   readonly selectedPersonId: string;
   readonly level: LivingCityLevel;
   readonly quality: LivingCityQuality;
+  readonly festivalPeakHour: number;
   readonly itineraryAt: (
     personId: string,
     tick: bigint,
   ) => PersonItineraryPoint;
+}
+
+function storyPhase(
+  selected: PersonItineraryPoint,
+  projection: IllusionProjection,
+  festivalPeakHour: number,
+): LivingCityStory["phase"] {
+  if (selected.route?.reason === "closure detour") return "closure-detour";
+  if (selected.route?.reason === "festival convergence")
+    return "festival-arrival";
+  if (selected.route?.reason === "festival return") return "festival-departure";
+  if (
+    selected.route?.reason === "daily commute" ||
+    selected.route?.reason === "evening return"
+  )
+    return "commute";
+  if (
+    selected.hour === festivalPeakHour &&
+    projection.events.some((event) => event.kind === "festival")
+  )
+    return "festival-peak";
+  if (projection.events.some((event) => event.kind === "meeting"))
+    return "meeting";
+  return "daily-life";
 }
 
 const qualityLimits: Readonly<Record<LivingCityQuality, number>> =
@@ -368,12 +396,32 @@ export function createProductionLivingCityScene(
           { cause: error },
         );
       }
+      const currentPoint = itinerary.find(
+        (point) => point.tick === query.time.tick,
+      );
+      if (currentPoint === undefined)
+        throw new RangeError(
+          `missing current itinerary point for ${token.personId}`,
+        );
       return Object.freeze({
         personId: token.personId,
         representedWeight: token.weight,
         pinned: token.pinned,
         pose,
         appearanceKey: token.visualJitterKey,
+        story: Object.freeze({
+          activity: currentPoint.activity as LivingCityActivity,
+          locationId: currentPoint.location.semanticId,
+          encounterGroupId: currentPoint.encounterGroupId,
+          encounterCount: currentPoint.encounters.length,
+          eventIds: Object.freeze(
+            query.projection.events
+              .filter((event) => event.participantIds.includes(token.personId))
+              .map((event) => event.id),
+          ),
+          routeReason: currentPoint.route?.reason ?? null,
+          routeEdgeCount: currentPoint.route?.edgeIds.length ?? 0,
+        }),
       });
     }),
   );
@@ -402,6 +450,49 @@ export function createProductionLivingCityScene(
       figureSignature,
     ].join("\0"),
   )}`;
+  const selectedIndex = sampled.findIndex(
+    (token) => token.personId === query.selectedPersonId,
+  );
+  const selectedItinerary = itineraries[selectedIndex];
+  const selectedPoint = selectedItinerary?.find(
+    (point) => point.tick === query.time.tick,
+  );
+  if (selectedPoint === undefined)
+    throw new RangeError("selected person lacks a current itinerary point");
+  const activityGroups = new Map<
+    LivingCityActivity,
+    { literalFigures: number; representedPeople: bigint }
+  >();
+  for (const figure of figures) {
+    const current = activityGroups.get(figure.story.activity) ?? {
+      literalFigures: 0,
+      representedPeople: 0n,
+    };
+    activityGroups.set(figure.story.activity, {
+      literalFigures: current.literalFigures + 1,
+      representedPeople: current.representedPeople + figure.representedWeight,
+    });
+  }
+  const story = Object.freeze({
+    phase: storyPhase(selectedPoint, query.projection, query.festivalPeakHour),
+    events: Object.freeze(
+      query.projection.events.map((event) =>
+        Object.freeze({
+          id: event.id,
+          kind: event.kind,
+          locationId: event.locationId,
+          participantIds: Object.freeze([...event.participantIds]),
+        }),
+      ),
+    ),
+    activityGroups: Object.freeze(
+      [...activityGroups.entries()]
+        .sort(([left], [right]) => compareText(left, right))
+        .map(([activity, values]): LivingCityActivityGroup =>
+          Object.freeze({ activity, ...values }),
+        ),
+    ),
+  });
   return Object.freeze({
     schema: 1,
     context: Object.freeze({
@@ -414,6 +505,7 @@ export function createProductionLivingCityScene(
     }),
     city: query.city,
     figures,
+    story,
     selectedPersonId: query.selectedPersonId,
     representedPeople,
     unsampledRemainder: representedPeople - sampledPeople,
