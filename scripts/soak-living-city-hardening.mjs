@@ -93,7 +93,20 @@ async function exerciseMinute(page, context, minute, interactions) {
       before,
       { timeout: 20_000 },
     );
-    await page.getByRole("button", { name: "Pause local time" }).click();
+    await page.evaluate(() => {
+      const control = globalThis.document.querySelector(
+        '[data-action="clock-toggle"]',
+      );
+      if (control === null || control.tagName !== "BUTTON")
+        throw new Error("playback control unavailable while pausing");
+      control.click();
+    });
+    await page.waitForFunction(
+      () =>
+        globalThis.document
+          .querySelector('[data-action="clock-toggle"]')
+          ?.getAttribute("aria-label") === "Play local time",
+    );
     interactions.push({ minute, action: "playback-pause" });
   } else if (action === 2) {
     await page.getByRole("button", { name: "Orbit camera" }).click();
