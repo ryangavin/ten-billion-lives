@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "issue": 33,
-  "commit": "e7b5ac64fe58d28f83d860e075839b1ff930cbd7",
+  "commit": "0f63a873e62caa64dcae4a885f718bd70566e501",
   "profile": "apple-m1-max-32gb-chromium",
-  "generatedAt": "2026-08-31T06:56:54.127Z",
-  "capturedImplementationCommit": "e7b5ac64fe58d28f83d860e075839b1ff930cbd7",
+  "generatedAt": "2026-08-31T07:14:58.627Z",
+  "capturedImplementationCommit": "0f63a873e62caa64dcae4a885f718bd70566e501",
   "productionBackend": "canvas2d",
   "fallbackBackend": "canvas2d",
   "failures": [],
@@ -12,101 +12,229 @@
   "retries": [
     {
       "attempt": 1,
+      "scope": "evidence harness",
       "failure": "The hour-boundary still raced the expected renderer replacement.",
       "resolution": "Pause before stable still and video capture while retaining the transition in the recording."
     },
     {
       "attempt": 2,
+      "scope": "evidence harness",
       "failure": "A costly 60x playback frame skipped the exact intermediate tick-8 label.",
       "resolution": "Assert the authoritative tick advanced beyond tick 7, then validate exact pause and replay convergence."
     },
     {
       "attempt": 3,
+      "scope": "evidence harness",
       "failure": "Heap was sampled after deliberate context loss and the full-page screenshot.",
       "resolution": "Move retained application heap sampling before renderer loss and capture-tool allocation."
     },
     {
       "attempt": 4,
+      "scope": "evidence harness",
       "failure": "A single uncollected heap sample varied with pending garbage.",
       "resolution": "Request explicit page garbage collection and version the benchmark as living-city-integration-v2 without changing its 128 MiB budget."
     },
     {
       "attempt": 5,
+      "scope": "evidence harness",
       "failure": "Element screenshots contaminated the simultaneous journey recording with Playwright's isolation compositor.",
       "resolution": "Capture renderer clips from the page compositor after a stable transition."
     },
     {
       "attempt": 6,
+      "scope": "evidence harness",
       "failure": "A clipped renderer could be partly outside the viewport, and the full-page narrow screenshot contaminated the fallback recording.",
       "resolution": "Scroll the renderer fully into view before clipping and run the narrow audit in an independent non-recording browser context."
     }
   ],
   "externalRequests": [],
   "consoleErrors": [],
+  "verificationCommands": [
+    {
+      "id": "root-check",
+      "command": "CI=true pnpm check",
+      "scope": "contracts, docs, formatting, lint, types, unit tests, and production build"
+    },
+    {
+      "id": "replay-twice",
+      "command": "run world/city/trajectory/person/itinerary/projection/tracer vectors twice in independent Node processes and byte-compare stdout",
+      "scope": "canonical determinism and replay"
+    },
+    {
+      "id": "browser-matrix",
+      "command": "CI=true pnpm test:e2e",
+      "scope": "Chromium, WebKit, mobile, accessibility, local boundary, lifecycle, deep-link, and compatibility journeys"
+    },
+    {
+      "id": "integration-capture",
+      "command": "CI=true pnpm evidence:living-city-integration",
+      "scope": "production/fallback journey, semantic transcript, budgets, screenshots, recordings, narrow audit, and checksums"
+    }
+  ],
+  "criteria": [
+    {
+      "id": "integrated-readonly-seams",
+      "commands": ["root-check", "integration-capture"],
+      "artifacts": [
+        "benchmarks/results/living-city-integration.json",
+        "docs/evidence/issue-33/production-journey.webm",
+        "docs/evidence/issue-33/fallback-journey.webm"
+      ]
+    },
+    {
+      "id": "projection-place-and-trajectory-inputs",
+      "commands": ["root-check", "integration-capture"],
+      "artifacts": [
+        "benchmarks/results/living-city-integration.json",
+        "docs/evidence/issue-33/production-street.png"
+      ]
+    },
+    {
+      "id": "coherent-city-canvas-and-webgpu-paths",
+      "commands": ["root-check", "browser-matrix", "integration-capture"],
+      "artifacts": [
+        "docs/evidence/issue-33/production-city.png",
+        "docs/evidence/issue-33/fallback-city.png"
+      ]
+    },
+    {
+      "id": "continuous-pause-seek-and-rewind",
+      "commands": ["root-check", "browser-matrix", "integration-capture"],
+      "artifacts": [
+        "benchmarks/results/living-city-integration.json",
+        "docs/evidence/issue-33/production-walking-phase.png",
+        "docs/evidence/issue-33/production-hour-boundary.png",
+        "docs/evidence/issue-33/production-journey.webm"
+      ]
+    },
+    {
+      "id": "nested-semantic-zoom-and-conservation",
+      "commands": ["root-check", "integration-capture"],
+      "artifacts": [
+        "benchmarks/results/living-city-integration.json",
+        "docs/evidence/issue-33/production-city.png",
+        "docs/evidence/issue-33/production-neighborhood.png",
+        "docs/evidence/issue-33/production-street.png"
+      ]
+    },
+    {
+      "id": "selected-weight-one-and-stable-picking",
+      "commands": ["root-check", "browser-matrix", "integration-capture"],
+      "artifacts": [
+        "benchmarks/results/living-city-integration.json",
+        "docs/evidence/issue-33/production-selected.png",
+        "docs/evidence/issue-33/fallback-selected.png"
+      ]
+    },
+    {
+      "id": "presentation-independence",
+      "commands": ["replay-twice", "integration-capture"],
+      "artifacts": ["benchmarks/results/living-city-integration.json"]
+    },
+    {
+      "id": "independent-observer-equality",
+      "commands": ["root-check", "integration-capture"],
+      "artifacts": [
+        "benchmarks/results/living-city-integration.json",
+        "docs/evidence/issue-33/production-journey.webm"
+      ]
+    },
+    {
+      "id": "existing-product-behavior-preserved",
+      "commands": ["root-check", "replay-twice", "browser-matrix"],
+      "artifacts": ["benchmarks/results/living-city-integration.json"]
+    },
+    {
+      "id": "focused-tests-and-browser-evidence",
+      "commands": ["root-check", "browser-matrix", "integration-capture"],
+      "artifacts": [
+        "docs/evidence/issue-33/production-city.png",
+        "docs/evidence/issue-33/production-neighborhood.png",
+        "docs/evidence/issue-33/production-street.png",
+        "docs/evidence/issue-33/production-selected.png",
+        "docs/evidence/issue-33/production-walking-phase.png",
+        "docs/evidence/issue-33/production-hour-boundary.png",
+        "docs/evidence/issue-33/production-journey.webm",
+        "docs/evidence/issue-33/fallback-city.png",
+        "docs/evidence/issue-33/fallback-neighborhood.png",
+        "docs/evidence/issue-33/fallback-street.png",
+        "docs/evidence/issue-33/fallback-selected.png",
+        "docs/evidence/issue-33/fallback-walking-phase.png",
+        "docs/evidence/issue-33/fallback-hour-boundary.png",
+        "docs/evidence/issue-33/fallback-journey.webm",
+        "docs/evidence/issue-33/fallback-narrow.png"
+      ]
+    },
+    {
+      "id": "affected-benchmarks-and-root-check",
+      "commands": ["root-check", "integration-capture"],
+      "artifacts": ["benchmarks/results/living-city-integration.json"]
+    }
+  ],
   "artifacts": [
     {
       "path": "benchmarks/results/living-city-integration.json",
-      "sha256": "566706550ec9b7364c44e96ca694b2ef87110d925b1ddf9bc5755c33966ef9bf"
+      "sha256": "7de767e4662fffe1b4ef0b1922d0d4bd108e717e982e6cd94a502a5e44f697f3"
     },
     {
       "path": "docs/evidence/issue-33/production-city.png",
-      "sha256": "16f9ad59fae7bab1956f71f0c714e106060221407a06e98ece388fa8dc4eef90"
+      "sha256": "bc8e3ccfeda0f7dbe26b1cbf6dfa0a5c52bad0eb285aec0d0d8b7a60a3bfb736"
     },
     {
       "path": "docs/evidence/issue-33/production-neighborhood.png",
-      "sha256": "e70a7393ccec661124f6460f0c3edccb32ba7ecc0f474b2bc562219f75e29680"
+      "sha256": "8a9a53d7c53184b111b003d459118333f60f734781ad82e91decbb0c6536247a"
     },
     {
       "path": "docs/evidence/issue-33/production-street.png",
-      "sha256": "27e25161372bdb5e1fbde8b90fadaa8f7f4ca23442370b54ea048064f3e0d761"
+      "sha256": "0e70f7fb1a812d6ad4a7773c1fdc871843d7d8e87d48c39c16271a3293503ffe"
     },
     {
       "path": "docs/evidence/issue-33/production-selected.png",
-      "sha256": "21c02bb8c0739bd63c5b8642a994c2d80378eac93689ea9978d187c5d0eacbcc"
+      "sha256": "9a8a8734fa5b859d40d4beb36a24f766bd287465e594da6f7267f4ef1c04d2cd"
     },
     {
       "path": "docs/evidence/issue-33/production-walking-phase.png",
-      "sha256": "5d7aef317e0c8513792b135ddac897df66d9253318153146a50c402ae3156afe"
+      "sha256": "97a9c16063c3798907cdb6d6c5b2b355b4ab7d71924b61c82d049956bb02b1ad"
     },
     {
       "path": "docs/evidence/issue-33/production-hour-boundary.png",
-      "sha256": "562d2aa96092018808bf6de4cc8ce37e7ba6c357d7aafd9813420bb6cffcdbc6"
+      "sha256": "bfbed1e462d2710b655c5371d83113fd38c029881b4c60da34e1f1f589a46c75"
     },
     {
       "path": "docs/evidence/issue-33/production-journey.webm",
-      "sha256": "8da5e386dee54db241cf3a9467517e6cae6c84c682abe49430e010ded62a4f2f"
+      "sha256": "67088a3ec001147e0d8c619dc283b300269108a03da4662e4943a141d9866a6f"
     },
     {
       "path": "docs/evidence/issue-33/fallback-city.png",
-      "sha256": "4e2e8a9006aac3cc98815a3c8751b2a462eb8925e672ea7534825d99d35618f3"
+      "sha256": "df6588444f35ba0390d36cd3a74170b41d903379e844b2f0fb3958bd74b023ae"
     },
     {
       "path": "docs/evidence/issue-33/fallback-neighborhood.png",
-      "sha256": "614fa05e073b92e3b01cc76e33da917d9f9fdb49045f81aaf533885b0fb11b95"
+      "sha256": "b05d148455bc34e4a35ab9a021dbf7012e3c5efcc94188dd04056cf6824efabf"
     },
     {
       "path": "docs/evidence/issue-33/fallback-street.png",
-      "sha256": "5182ac00ee1cf562866d67682c12d0f2f641504cf19ae19b3b3c6f338808390a"
+      "sha256": "3e74596dda395908709b79e589a76b11aeeeaa9679cc9b50c572cfa17342eb4d"
     },
     {
       "path": "docs/evidence/issue-33/fallback-selected.png",
-      "sha256": "deac8e83d429de3bb8743ebd1cf47799fd6e8524b4c9ddd3a4fbead21c891c13"
+      "sha256": "6b0a7f471ac322678ad879e9ae7df18395b78c0fd03bd0760f5b218e23c9d2d7"
     },
     {
       "path": "docs/evidence/issue-33/fallback-walking-phase.png",
-      "sha256": "c874c6e14411deb9b195acba9dc7a8e9e42fa1543ef6f8ba46c6dde745c72810"
+      "sha256": "426862d674d8cda9cce4a8fccdd2fe8060510adab34a8d27e7a5475131d49a19"
     },
     {
       "path": "docs/evidence/issue-33/fallback-hour-boundary.png",
-      "sha256": "da0145083b252ae1e679e86409f24d6e3e0dff38b7e1114b00f443ba2521b71c"
+      "sha256": "bc22479028e54437ff59c1ee82e778923841a4bb227461cb42d32d684bde52d3"
     },
     {
       "path": "docs/evidence/issue-33/fallback-journey.webm",
-      "sha256": "da17513321eb61930ce159041f6a2f2889772d255b4a77c79ba9eb1468e5a795"
+      "sha256": "3ec574eea75ffedf28f729e3a85abc32057897a685d502927026c4ab42bd278e"
     },
     {
       "path": "docs/evidence/issue-33/fallback-narrow.png",
-      "sha256": "095e05736213e73bb383996993d543a01a7fb2840739880ec2885e682ff8e2d1"
+      "sha256": "9270ad0feacf1078ad326ea57f301e90731ea96dda8e75907d617656dacd8c68"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmarkVersion": "living-city-integration-v2",
-  "commit": "e7b5ac64fe58d28f83d860e075839b1ff930cbd7",
+  "commit": "0f63a873e62caa64dcae4a885f718bd70566e501",
   "profile": "apple-m1-max-32gb-chromium",
   "browser": "151.0.7922.34",
   "production": {
@@ -14,15 +14,15 @@
       "contextLosses": "1"
     },
     "timings": {
-      "cityMs": 2735.682041,
-      "neighborhoodMs": 1485.8065829999996,
-      "streetMs": 1783.6578339999996,
-      "pickMs": 1281.6927080000005,
-      "observerBMs": 2727.468666999999
+      "cityMs": 2988.372834,
+      "neighborhoodMs": 1583.5282500000003,
+      "streetMs": 1892.505916000001,
+      "pickMs": 1312.9779589999998,
+      "observerBMs": 2769.933417
     },
-    "frameMs": 1.17,
+    "frameMs": 0.81,
     "browserMetrics": {
-      "retainedHeapMiB": 82.3974609375,
+      "retainedHeapMiB": 64.849853515625,
       "gpuNavigatorPresent": true
     },
     "semantic": {
@@ -35,7 +35,7 @@
       "trajectoryComparison": "Semantic match · trajectory match",
       "directSeekKey": "living-city/fe9008bc3a7b22c5",
       "replayKey": "living-city/fe9008bc3a7b22c5",
-      "pausedKey": "living-city/87eebcd2fbea0ffc",
+      "pausedKey": "living-city/17ff949ef7613ef6",
       "population": {
         "figures": 256,
         "sampled": "818250",
@@ -70,13 +70,13 @@
       "contextLosses": "1"
     },
     "timings": {
-      "cityMs": 2740.766042000003,
-      "neighborhoodMs": 1507.5739170000015,
-      "streetMs": 1237.3764999999985,
-      "pickMs": 1306.4130000000005,
-      "observerBMs": 2117.714874999998
+      "cityMs": 2771.0354579999985,
+      "neighborhoodMs": 1529.0311250000013,
+      "streetMs": 1245.3343749999985,
+      "pickMs": 1319.8149170000033,
+      "observerBMs": 2125.673332999999
     },
-    "frameMs": 0.55,
+    "frameMs": 0.52,
     "browserMetrics": {
       "retainedHeapMiB": 35.572052001953125,
       "gpuNavigatorPresent": true
@@ -91,7 +91,7 @@
       "trajectoryComparison": "Semantic match · trajectory match",
       "directSeekKey": "living-city/ce8177a5153f8c0e",
       "replayKey": "living-city/ce8177a5153f8c0e",
-      "pausedKey": "living-city/9f071f053aec21d4",
+      "pausedKey": "living-city/f0f068185ed07bac",
       "population": {
         "figures": 128,
         "sampled": "407517",
@@ -122,13 +122,13 @@
     "externalRequests": []
   },
   "metrics": {
-    "coldCityMs": 2735.682041,
-    "zoomP95Ms": 1783.6578339999996,
-    "pickResponseMs": 1281.6927080000005,
-    "initializeObserverBMs": 2727.468666999999,
-    "productionFrameMs": 1.17,
-    "fallbackFrameMs": 0.55,
-    "maxRetainedHeapMiB": 82.3974609375
+    "coldCityMs": 2988.372834,
+    "zoomP95Ms": 1892.505916000001,
+    "pickResponseMs": 1312.9779589999998,
+    "initializeObserverBMs": 2769.933417,
+    "productionFrameMs": 0.81,
+    "fallbackFrameMs": 0.52,
+    "maxRetainedHeapMiB": 64.849853515625
   },
   "budgets": {
     "coldCityMsMax": 3500,

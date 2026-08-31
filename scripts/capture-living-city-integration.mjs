@@ -477,6 +477,106 @@ try {
   const artifacts = [];
   for (const path of artifactPaths)
     artifacts.push({ path, sha256: await sha256(path) });
+  const verificationCommands = [
+    {
+      id: "root-check",
+      command: "CI=true pnpm check",
+      scope:
+        "contracts, docs, formatting, lint, types, unit tests, and production build",
+    },
+    {
+      id: "replay-twice",
+      command:
+        "run world/city/trajectory/person/itinerary/projection/tracer vectors twice in independent Node processes and byte-compare stdout",
+      scope: "canonical determinism and replay",
+    },
+    {
+      id: "browser-matrix",
+      command: "CI=true pnpm test:e2e",
+      scope:
+        "Chromium, WebKit, mobile, accessibility, local boundary, lifecycle, deep-link, and compatibility journeys",
+    },
+    {
+      id: "integration-capture",
+      command: "CI=true pnpm evidence:living-city-integration",
+      scope:
+        "production/fallback journey, semantic transcript, budgets, screenshots, recordings, narrow audit, and checksums",
+    },
+  ];
+  const criteria = [
+    {
+      id: "integrated-readonly-seams",
+      commands: ["root-check", "integration-capture"],
+      artifacts: [benchmarkPath, production.recording, fallback.recording],
+    },
+    {
+      id: "projection-place-and-trajectory-inputs",
+      commands: ["root-check", "integration-capture"],
+      artifacts: [benchmarkPath, `${evidenceDirectory}/production-street.png`],
+    },
+    {
+      id: "coherent-city-canvas-and-webgpu-paths",
+      commands: ["root-check", "browser-matrix", "integration-capture"],
+      artifacts: [
+        `${evidenceDirectory}/production-city.png`,
+        `${evidenceDirectory}/fallback-city.png`,
+      ],
+    },
+    {
+      id: "continuous-pause-seek-and-rewind",
+      commands: ["root-check", "browser-matrix", "integration-capture"],
+      artifacts: [
+        benchmarkPath,
+        `${evidenceDirectory}/production-walking-phase.png`,
+        `${evidenceDirectory}/production-hour-boundary.png`,
+        production.recording,
+      ],
+    },
+    {
+      id: "nested-semantic-zoom-and-conservation",
+      commands: ["root-check", "integration-capture"],
+      artifacts: [
+        benchmarkPath,
+        `${evidenceDirectory}/production-city.png`,
+        `${evidenceDirectory}/production-neighborhood.png`,
+        `${evidenceDirectory}/production-street.png`,
+      ],
+    },
+    {
+      id: "selected-weight-one-and-stable-picking",
+      commands: ["root-check", "browser-matrix", "integration-capture"],
+      artifacts: [
+        benchmarkPath,
+        `${evidenceDirectory}/production-selected.png`,
+        `${evidenceDirectory}/fallback-selected.png`,
+      ],
+    },
+    {
+      id: "presentation-independence",
+      commands: ["replay-twice", "integration-capture"],
+      artifacts: [benchmarkPath],
+    },
+    {
+      id: "independent-observer-equality",
+      commands: ["root-check", "integration-capture"],
+      artifacts: [benchmarkPath, production.recording],
+    },
+    {
+      id: "existing-product-behavior-preserved",
+      commands: ["root-check", "replay-twice", "browser-matrix"],
+      artifacts: [benchmarkPath],
+    },
+    {
+      id: "focused-tests-and-browser-evidence",
+      commands: ["root-check", "browser-matrix", "integration-capture"],
+      artifacts: artifactPaths.filter((path) => path !== benchmarkPath),
+    },
+    {
+      id: "affected-benchmarks-and-root-check",
+      commands: ["root-check", "integration-capture"],
+      artifacts: [benchmarkPath],
+    },
+  ];
   const index = {
     schemaVersion: 1,
     issue: 33,
@@ -492,6 +592,8 @@ try {
     retries: [],
     externalRequests: [],
     consoleErrors: [],
+    verificationCommands,
+    criteria,
     artifacts,
   };
   await writeFile(
