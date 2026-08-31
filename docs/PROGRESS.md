@@ -1,8 +1,8 @@
 # Progress
 
-- Current issue: none — the local MVP is complete and issue #27 closed at `2026-08-30T23:16:57Z`.
-- Last green commit: `46b998a` (final #27 evidence, README claim, and recovery log; `pnpm check` passed before commit).
-- Evidence produced: Frozen install, root check (15 files/76 tests/build), byte-identical two-run replay, 24 applicable browser checks, current benchmark budgets, retained 30-minute soak, production launch, exact signature recording, observer equality, visual inspection, and live issue/scope/dependency audits all pass. The post-close query returned zero open P0 issues. See `docs/evidence/issue-27/INDEX.md`.
-- Next action: none in local-MVP scope. Issue #28 remains explicitly `phase:deferred` and requires a separate future decision.
-- Decisions: The final recording follows issue #27 order exactly: Planet → Settlement → Festival → Street → Person → second observer → replay → field reveal. Generated benchmark changes remained isolated in the temporary validation checkout; measured summaries were copied into the evidence directory.
+- Current issue: none — M4 planning is complete; #29 is the next unblocked issue and has not been started.
+- Last green commit: `8bc6b55` (completed local MVP recovery record; main clean and synchronized after #27 closure).
+- Evidence produced: The local MVP remains complete at `docs/evidence/issue-27/INDEX.md`. GitHub milestone `M4 — Living City`, phase label `phase:visualization`, and issues #29–#37 now define the visualization work and final gate.
+- Next action: feed `GOAL.md` to a fresh agent with `/goal`; inspect live state, post the #29 start comment, and freeze the living-city visual/time/architecture contract before starting implementation waves.
+- Decisions: Keep 24 authoritative hourly ticks and derive continuous walking from explicit presentation phase. Use a visually dominant 2.5D Brindle Bay city. Parallel wave 1 is #30/#31/#32 after #29; #33 integrates; parallel wave 2 is #34/#35; #36 hardens; #37 independently gates. Issue #28 remains deferred and untouched.
 - Blockers: none. Server deployment is outside the local-MVP goal.
