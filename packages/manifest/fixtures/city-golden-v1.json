@@ -1,0 +1,1718 @@
+{
+  "schema": 1,
+  "seed": "ten-billion-lives/baseline/v1",
+  "settlementId": "place/brindle-bay",
+  "bounds": {
+    "min": { "eastCm": 0, "northCm": 0, "upCm": 0 },
+    "max": { "eastCm": 120000, "northCm": 100000, "upCm": 9000 }
+  },
+  "roads": [
+    {
+      "id": "road/garden",
+      "name": "Garden Road",
+      "centerline": [
+        { "eastCm": 80000, "northCm": 12000, "upCm": 0 },
+        { "eastCm": 80000, "northCm": 95000, "upCm": 0 }
+      ],
+      "widthCm": 8000,
+      "sidewalkIds": ["sidewalk/garden-east", "sidewalk/garden-west"]
+    },
+    {
+      "id": "road/harbor",
+      "name": "Harbor Street",
+      "centerline": [
+        { "eastCm": 6000, "northCm": 35000, "upCm": 0 },
+        { "eastCm": 114000, "northCm": 35000, "upCm": 0 }
+      ],
+      "widthCm": 8000,
+      "sidewalkIds": ["sidewalk/harbor-north", "sidewalk/harbor-south"]
+    },
+    {
+      "id": "road/market",
+      "name": "Market Way",
+      "centerline": [
+        { "eastCm": 6000, "northCm": 65000, "upCm": 0 },
+        { "eastCm": 114000, "northCm": 65000, "upCm": 0 }
+      ],
+      "widthCm": 8000,
+      "sidewalkIds": ["sidewalk/market-north", "sidewalk/market-south"]
+    },
+    {
+      "id": "road/quay",
+      "name": "Lantern Quay",
+      "centerline": [
+        { "eastCm": 40000, "northCm": 12000, "upCm": 0 },
+        { "eastCm": 40000, "northCm": 95000, "upCm": 0 }
+      ],
+      "widthCm": 8000,
+      "sidewalkIds": ["sidewalk/quay-east", "sidewalk/quay-west"]
+    }
+  ],
+  "sidewalks": [
+    {
+      "id": "sidewalk/garden-east",
+      "path": [
+        { "eastCm": 86000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 91000, "upCm": 0 }
+      ],
+      "widthCm": 450,
+      "roadIds": ["road/garden"],
+      "pedestrianEdgeIds": [
+        "ped-edge/e086000-n016000>e086000-n029000",
+        "ped-edge/e086000-n029000>e086000-n041000",
+        "ped-edge/e086000-n041000>e086000-n059000",
+        "ped-edge/e086000-n059000>e086000-n071000",
+        "ped-edge/e086000-n071000>e086000-n091000"
+      ]
+    },
+    {
+      "id": "sidewalk/garden-west",
+      "path": [
+        { "eastCm": 74000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 91000, "upCm": 0 }
+      ],
+      "widthCm": 450,
+      "roadIds": ["road/garden"],
+      "pedestrianEdgeIds": [
+        "ped-edge/e074000-n016000>e074000-n029000",
+        "ped-edge/e074000-n029000>e074000-n041000",
+        "ped-edge/e074000-n041000>e074000-n059000",
+        "ped-edge/e074000-n059000>e074000-n071000",
+        "ped-edge/e074000-n071000>e074000-n091000"
+      ]
+    },
+    {
+      "id": "sidewalk/harbor-north",
+      "path": [
+        { "eastCm": 10000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 41000, "upCm": 0 }
+      ],
+      "widthCm": 450,
+      "roadIds": ["road/harbor"],
+      "pedestrianEdgeIds": [
+        "ped-edge/e010000-n041000>e034000-n041000",
+        "ped-edge/e034000-n041000>e046000-n041000",
+        "ped-edge/e046000-n041000>e074000-n041000",
+        "ped-edge/e074000-n041000>e086000-n041000",
+        "ped-edge/e086000-n041000>e110000-n041000"
+      ]
+    },
+    {
+      "id": "sidewalk/harbor-south",
+      "path": [
+        { "eastCm": 10000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 29000, "upCm": 0 }
+      ],
+      "widthCm": 450,
+      "roadIds": ["road/harbor"],
+      "pedestrianEdgeIds": [
+        "ped-edge/e010000-n029000>e034000-n029000",
+        "ped-edge/e034000-n029000>e046000-n029000",
+        "ped-edge/e046000-n029000>e074000-n029000",
+        "ped-edge/e074000-n029000>e086000-n029000",
+        "ped-edge/e086000-n029000>e110000-n029000"
+      ]
+    },
+    {
+      "id": "sidewalk/market-north",
+      "path": [
+        { "eastCm": 10000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 71000, "upCm": 0 }
+      ],
+      "widthCm": 450,
+      "roadIds": ["road/market"],
+      "pedestrianEdgeIds": [
+        "ped-edge/e010000-n071000>e034000-n071000",
+        "ped-edge/e034000-n071000>e046000-n071000",
+        "ped-edge/e046000-n071000>e074000-n071000",
+        "ped-edge/e074000-n071000>e086000-n071000",
+        "ped-edge/e086000-n071000>e110000-n071000"
+      ]
+    },
+    {
+      "id": "sidewalk/market-south",
+      "path": [
+        { "eastCm": 10000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 59000, "upCm": 0 }
+      ],
+      "widthCm": 450,
+      "roadIds": ["road/market"],
+      "pedestrianEdgeIds": [
+        "ped-edge/e010000-n059000>e034000-n059000",
+        "ped-edge/e034000-n059000>e046000-n059000",
+        "ped-edge/e046000-n059000>e074000-n059000",
+        "ped-edge/e074000-n059000>e086000-n059000",
+        "ped-edge/e086000-n059000>e110000-n059000"
+      ]
+    },
+    {
+      "id": "sidewalk/north-promenade",
+      "path": [
+        { "eastCm": 10000, "northCm": 91000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 91000, "upCm": 0 }
+      ],
+      "widthCm": 450,
+      "roadIds": [],
+      "pedestrianEdgeIds": [
+        "ped-edge/e010000-n091000>e034000-n091000",
+        "ped-edge/e034000-n091000>e046000-n091000",
+        "ped-edge/e046000-n091000>e074000-n091000",
+        "ped-edge/e074000-n091000>e086000-n091000",
+        "ped-edge/e086000-n091000>e110000-n091000"
+      ]
+    },
+    {
+      "id": "sidewalk/quay-east",
+      "path": [
+        { "eastCm": 46000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 91000, "upCm": 0 }
+      ],
+      "widthCm": 450,
+      "roadIds": ["road/quay"],
+      "pedestrianEdgeIds": [
+        "ped-edge/e046000-n016000>e046000-n029000",
+        "ped-edge/e046000-n029000>e046000-n041000",
+        "ped-edge/e046000-n041000>e046000-n059000",
+        "ped-edge/e046000-n059000>e046000-n071000",
+        "ped-edge/e046000-n071000>e046000-n091000"
+      ]
+    },
+    {
+      "id": "sidewalk/quay-west",
+      "path": [
+        { "eastCm": 34000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 91000, "upCm": 0 }
+      ],
+      "widthCm": 450,
+      "roadIds": ["road/quay"],
+      "pedestrianEdgeIds": [
+        "ped-edge/e034000-n016000>e034000-n029000",
+        "ped-edge/e034000-n029000>e034000-n041000",
+        "ped-edge/e034000-n041000>e034000-n059000",
+        "ped-edge/e034000-n059000>e034000-n071000",
+        "ped-edge/e034000-n071000>e034000-n091000"
+      ]
+    },
+    {
+      "id": "sidewalk/waterfront-promenade",
+      "path": [
+        { "eastCm": 10000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 16000, "upCm": 0 }
+      ],
+      "widthCm": 450,
+      "roadIds": [],
+      "pedestrianEdgeIds": [
+        "ped-edge/e010000-n016000>e034000-n016000",
+        "ped-edge/e034000-n016000>e046000-n016000",
+        "ped-edge/e046000-n016000>e074000-n016000",
+        "ped-edge/e074000-n016000>e086000-n016000",
+        "ped-edge/e086000-n016000>e110000-n016000"
+      ]
+    }
+  ],
+  "crossings": [
+    {
+      "id": "crossing/garden-n016000",
+      "path": [
+        { "eastCm": 74000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 16000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/garden",
+      "sidewalkIds": ["sidewalk/garden-east", "sidewalk/garden-west"],
+      "pedestrianEdgeId": "ped-edge/e074000-n016000>e086000-n016000"
+    },
+    {
+      "id": "crossing/garden-n029000",
+      "path": [
+        { "eastCm": 74000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 29000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/garden",
+      "sidewalkIds": ["sidewalk/garden-east", "sidewalk/garden-west"],
+      "pedestrianEdgeId": "ped-edge/e074000-n029000>e086000-n029000"
+    },
+    {
+      "id": "crossing/garden-n041000",
+      "path": [
+        { "eastCm": 74000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 41000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/garden",
+      "sidewalkIds": ["sidewalk/garden-east", "sidewalk/garden-west"],
+      "pedestrianEdgeId": "ped-edge/e074000-n041000>e086000-n041000"
+    },
+    {
+      "id": "crossing/garden-n059000",
+      "path": [
+        { "eastCm": 74000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 59000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/garden",
+      "sidewalkIds": ["sidewalk/garden-east", "sidewalk/garden-west"],
+      "pedestrianEdgeId": "ped-edge/e074000-n059000>e086000-n059000"
+    },
+    {
+      "id": "crossing/garden-n071000",
+      "path": [
+        { "eastCm": 74000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 71000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/garden",
+      "sidewalkIds": ["sidewalk/garden-east", "sidewalk/garden-west"],
+      "pedestrianEdgeId": "ped-edge/e074000-n071000>e086000-n071000"
+    },
+    {
+      "id": "crossing/garden-n091000",
+      "path": [
+        { "eastCm": 74000, "northCm": 91000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 91000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/garden",
+      "sidewalkIds": ["sidewalk/garden-east", "sidewalk/garden-west"],
+      "pedestrianEdgeId": "ped-edge/e074000-n091000>e086000-n091000"
+    },
+    {
+      "id": "crossing/harbor-e010000",
+      "path": [
+        { "eastCm": 10000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 10000, "northCm": 41000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/harbor",
+      "sidewalkIds": ["sidewalk/harbor-north", "sidewalk/harbor-south"],
+      "pedestrianEdgeId": "ped-edge/e010000-n029000>e010000-n041000"
+    },
+    {
+      "id": "crossing/harbor-e034000",
+      "path": [
+        { "eastCm": 34000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 41000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/harbor",
+      "sidewalkIds": ["sidewalk/harbor-north", "sidewalk/harbor-south"],
+      "pedestrianEdgeId": "ped-edge/e034000-n029000>e034000-n041000"
+    },
+    {
+      "id": "crossing/harbor-e046000",
+      "path": [
+        { "eastCm": 46000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 41000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/harbor",
+      "sidewalkIds": ["sidewalk/harbor-north", "sidewalk/harbor-south"],
+      "pedestrianEdgeId": "ped-edge/e046000-n029000>e046000-n041000"
+    },
+    {
+      "id": "crossing/harbor-e074000",
+      "path": [
+        { "eastCm": 74000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 41000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/harbor",
+      "sidewalkIds": ["sidewalk/harbor-north", "sidewalk/harbor-south"],
+      "pedestrianEdgeId": "ped-edge/e074000-n029000>e074000-n041000"
+    },
+    {
+      "id": "crossing/harbor-e086000",
+      "path": [
+        { "eastCm": 86000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 41000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/harbor",
+      "sidewalkIds": ["sidewalk/harbor-north", "sidewalk/harbor-south"],
+      "pedestrianEdgeId": "ped-edge/e086000-n029000>e086000-n041000"
+    },
+    {
+      "id": "crossing/harbor-e110000",
+      "path": [
+        { "eastCm": 110000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 41000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/harbor",
+      "sidewalkIds": ["sidewalk/harbor-north", "sidewalk/harbor-south"],
+      "pedestrianEdgeId": "ped-edge/e110000-n029000>e110000-n041000"
+    },
+    {
+      "id": "crossing/market-e010000",
+      "path": [
+        { "eastCm": 10000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 10000, "northCm": 71000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/market",
+      "sidewalkIds": ["sidewalk/market-north", "sidewalk/market-south"],
+      "pedestrianEdgeId": "ped-edge/e010000-n059000>e010000-n071000"
+    },
+    {
+      "id": "crossing/market-e034000",
+      "path": [
+        { "eastCm": 34000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 71000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/market",
+      "sidewalkIds": ["sidewalk/market-north", "sidewalk/market-south"],
+      "pedestrianEdgeId": "ped-edge/e034000-n059000>e034000-n071000"
+    },
+    {
+      "id": "crossing/market-e046000",
+      "path": [
+        { "eastCm": 46000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 71000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/market",
+      "sidewalkIds": ["sidewalk/market-north", "sidewalk/market-south"],
+      "pedestrianEdgeId": "ped-edge/e046000-n059000>e046000-n071000"
+    },
+    {
+      "id": "crossing/market-e074000",
+      "path": [
+        { "eastCm": 74000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 71000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/market",
+      "sidewalkIds": ["sidewalk/market-north", "sidewalk/market-south"],
+      "pedestrianEdgeId": "ped-edge/e074000-n059000>e074000-n071000"
+    },
+    {
+      "id": "crossing/market-e086000",
+      "path": [
+        { "eastCm": 86000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 71000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/market",
+      "sidewalkIds": ["sidewalk/market-north", "sidewalk/market-south"],
+      "pedestrianEdgeId": "ped-edge/e086000-n059000>e086000-n071000"
+    },
+    {
+      "id": "crossing/market-e110000",
+      "path": [
+        { "eastCm": 110000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 71000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/market",
+      "sidewalkIds": ["sidewalk/market-north", "sidewalk/market-south"],
+      "pedestrianEdgeId": "ped-edge/e110000-n059000>e110000-n071000"
+    },
+    {
+      "id": "crossing/quay-n016000",
+      "path": [
+        { "eastCm": 34000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 16000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/quay",
+      "sidewalkIds": ["sidewalk/quay-east", "sidewalk/quay-west"],
+      "pedestrianEdgeId": "ped-edge/e034000-n016000>e046000-n016000"
+    },
+    {
+      "id": "crossing/quay-n029000",
+      "path": [
+        { "eastCm": 34000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 29000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/quay",
+      "sidewalkIds": ["sidewalk/quay-east", "sidewalk/quay-west"],
+      "pedestrianEdgeId": "ped-edge/e034000-n029000>e046000-n029000"
+    },
+    {
+      "id": "crossing/quay-n041000",
+      "path": [
+        { "eastCm": 34000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 41000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/quay",
+      "sidewalkIds": ["sidewalk/quay-east", "sidewalk/quay-west"],
+      "pedestrianEdgeId": "ped-edge/e034000-n041000>e046000-n041000"
+    },
+    {
+      "id": "crossing/quay-n059000",
+      "path": [
+        { "eastCm": 34000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 59000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/quay",
+      "sidewalkIds": ["sidewalk/quay-east", "sidewalk/quay-west"],
+      "pedestrianEdgeId": "ped-edge/e034000-n059000>e046000-n059000"
+    },
+    {
+      "id": "crossing/quay-n071000",
+      "path": [
+        { "eastCm": 34000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 71000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/quay",
+      "sidewalkIds": ["sidewalk/quay-east", "sidewalk/quay-west"],
+      "pedestrianEdgeId": "ped-edge/e034000-n071000>e046000-n071000"
+    },
+    {
+      "id": "crossing/quay-n091000",
+      "path": [
+        { "eastCm": 34000, "northCm": 91000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 91000, "upCm": 0 }
+      ],
+      "widthCm": 600,
+      "roadId": "road/quay",
+      "sidewalkIds": ["sidewalk/quay-east", "sidewalk/quay-west"],
+      "pedestrianEdgeId": "ped-edge/e034000-n091000>e046000-n091000"
+    }
+  ],
+  "buildings": [
+    {
+      "id": "building/academy",
+      "footprint": [
+        { "eastCm": 88000, "northCm": 73000, "upCm": 0 },
+        { "eastCm": 108000, "northCm": 73000, "upCm": 0 },
+        { "eastCm": 108000, "northCm": 89000, "upCm": 0 },
+        { "eastCm": 88000, "northCm": 89000, "upCm": 0 }
+      ],
+      "heightCm": 7891,
+      "entranceNodeIds": ["ped-node/e086000-n071000"],
+      "placeIds": ["place_sch_2v4lghskcaryh_0rhzadh"]
+    },
+    {
+      "id": "building/harbor-homes",
+      "footprint": [
+        { "eastCm": 12000, "northCm": 43000, "upCm": 0 },
+        { "eastCm": 20000, "northCm": 43000, "upCm": 0 },
+        { "eastCm": 20000, "northCm": 57000, "upCm": 0 },
+        { "eastCm": 12000, "northCm": 57000, "upCm": 0 }
+      ],
+      "heightCm": 4661,
+      "entranceNodeIds": ["ped-node/e034000-n041000"],
+      "placeIds": ["household_0yojqkh51f1hk_0b9jrcl"]
+    },
+    {
+      "id": "building/market-hall",
+      "footprint": [
+        { "eastCm": 48000, "northCm": 43000, "upCm": 0 },
+        { "eastCm": 72000, "northCm": 43000, "upCm": 0 },
+        { "eastCm": 72000, "northCm": 57000, "upCm": 0 },
+        { "eastCm": 48000, "northCm": 57000, "upCm": 0 }
+      ],
+      "heightCm": 6232,
+      "entranceNodeIds": ["ped-node/e046000-n059000"],
+      "placeIds": ["community/L5/0/38"]
+    },
+    {
+      "id": "building/north-works",
+      "footprint": [
+        { "eastCm": 48000, "northCm": 73000, "upCm": 0 },
+        { "eastCm": 72000, "northCm": 73000, "upCm": 0 },
+        { "eastCm": 72000, "northCm": 89000, "upCm": 0 },
+        { "eastCm": 48000, "northCm": 89000, "upCm": 0 }
+      ],
+      "heightCm": 7803,
+      "entranceNodeIds": ["ped-node/e074000-n071000"],
+      "placeIds": ["place_wrk_0vq6m09loyw26_0eqbbr9"]
+    },
+    {
+      "id": "building/quay-atelier",
+      "footprint": [
+        { "eastCm": 88000, "northCm": 18000, "upCm": 0 },
+        { "eastCm": 108000, "northCm": 18000, "upCm": 0 },
+        { "eastCm": 108000, "northCm": 27000, "upCm": 0 },
+        { "eastCm": 88000, "northCm": 27000, "upCm": 0 }
+      ],
+      "heightCm": 6408,
+      "entranceNodeIds": ["ped-node/e086000-n029000"],
+      "placeIds": []
+    },
+    {
+      "id": "building/service-house",
+      "footprint": [
+        { "eastCm": 22000, "northCm": 43000, "upCm": 0 },
+        { "eastCm": 30000, "northCm": 43000, "upCm": 0 },
+        { "eastCm": 30000, "northCm": 57000, "upCm": 0 },
+        { "eastCm": 22000, "northCm": 57000, "upCm": 0 }
+      ],
+      "heightCm": 7979,
+      "entranceNodeIds": ["ped-node/e034000-n059000"],
+      "placeIds": ["place_svc_0u99a3yc1d8bf_0j1ywjx"]
+    },
+    {
+      "id": "building/waterfront-store",
+      "footprint": [
+        { "eastCm": 12000, "northCm": 18000, "upCm": 0 },
+        { "eastCm": 30000, "northCm": 18000, "upCm": 0 },
+        { "eastCm": 30000, "northCm": 27000, "upCm": 0 },
+        { "eastCm": 12000, "northCm": 27000, "upCm": 0 }
+      ],
+      "heightCm": 4749,
+      "entranceNodeIds": ["ped-node/e034000-n029000"],
+      "placeIds": []
+    }
+  ],
+  "publicSpaces": [
+    {
+      "id": "public-space/lantern-tide-plaza",
+      "kind": "plaza",
+      "boundary": [
+        { "eastCm": 86000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 112000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 112000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 59000, "upCm": 0 }
+      ],
+      "pedestrianNodeIds": [
+        "ped-node/e086000-n041000",
+        "ped-node/e086000-n059000",
+        "ped-node/e110000-n041000",
+        "ped-node/e110000-n059000"
+      ],
+      "placeIds": ["festival/lantern-confluence"]
+    },
+    {
+      "id": "public-space/mariners-garden",
+      "kind": "park",
+      "boundary": [
+        { "eastCm": 8000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 94000, "upCm": 0 },
+        { "eastCm": 8000, "northCm": 94000, "upCm": 0 }
+      ],
+      "pedestrianNodeIds": [
+        "ped-node/e010000-n071000",
+        "ped-node/e010000-n091000",
+        "ped-node/e034000-n071000",
+        "ped-node/e034000-n091000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "public-space/transit-square",
+      "kind": "transit-square",
+      "boundary": [
+        { "eastCm": 46000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 29000, "upCm": 0 }
+      ],
+      "pedestrianNodeIds": [
+        "ped-node/e046000-n016000",
+        "ped-node/e046000-n029000",
+        "ped-node/e074000-n016000",
+        "ped-node/e074000-n029000"
+      ],
+      "placeIds": ["anchor-settlement-00"]
+    },
+    {
+      "id": "public-space/waterfront",
+      "kind": "waterfront",
+      "boundary": [
+        { "eastCm": 0, "northCm": 0, "upCm": 0 },
+        { "eastCm": 120000, "northCm": 0, "upCm": 0 },
+        { "eastCm": 120000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 0, "northCm": 16000, "upCm": 0 }
+      ],
+      "pedestrianNodeIds": [
+        "ped-node/e010000-n016000",
+        "ped-node/e034000-n016000",
+        "ped-node/e046000-n016000",
+        "ped-node/e074000-n016000",
+        "ped-node/e086000-n016000",
+        "ped-node/e110000-n016000"
+      ],
+      "placeIds": []
+    }
+  ],
+  "places": [
+    {
+      "id": "anchor-settlement-00",
+      "kind": "transport",
+      "name": "Brindle Bay Transit",
+      "entranceNodeId": "ped-node/e046000-n029000"
+    },
+    {
+      "id": "community/L5/0/38",
+      "kind": "community",
+      "name": "Market Hall Commons",
+      "entranceNodeId": "ped-node/e046000-n059000"
+    },
+    {
+      "id": "festival/lantern-confluence",
+      "kind": "festival",
+      "name": "Lantern Tide Plaza",
+      "entranceNodeId": "ped-node/e086000-n059000"
+    },
+    {
+      "id": "household_0yojqkh51f1hk_0b9jrcl",
+      "kind": "household",
+      "name": "Harbor Row Homes",
+      "entranceNodeId": "ped-node/e034000-n041000"
+    },
+    {
+      "id": "place_sch_2v4lghskcaryh_0rhzadh",
+      "kind": "school",
+      "name": "Yarrow Learning House",
+      "entranceNodeId": "ped-node/e086000-n071000"
+    },
+    {
+      "id": "place_svc_0u99a3yc1d8bf_0j1ywjx",
+      "kind": "service",
+      "name": "Briar Circle",
+      "entranceNodeId": "ped-node/e034000-n059000"
+    },
+    {
+      "id": "place_wrk_0vq6m09loyw26_0eqbbr9",
+      "kind": "workplace",
+      "name": "Reed Works",
+      "entranceNodeId": "ped-node/e074000-n071000"
+    }
+  ],
+  "pedestrianNodes": [
+    {
+      "id": "ped-node/e010000-n016000",
+      "position": { "eastCm": 10000, "northCm": 16000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n016000>e010000-n029000",
+        "ped-edge/e010000-n016000>e034000-n016000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e010000-n029000",
+      "position": { "eastCm": 10000, "northCm": 29000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n016000>e010000-n029000",
+        "ped-edge/e010000-n029000>e010000-n041000",
+        "ped-edge/e010000-n029000>e034000-n029000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e010000-n041000",
+      "position": { "eastCm": 10000, "northCm": 41000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n029000>e010000-n041000",
+        "ped-edge/e010000-n041000>e010000-n059000",
+        "ped-edge/e010000-n041000>e034000-n041000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e010000-n059000",
+      "position": { "eastCm": 10000, "northCm": 59000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n041000>e010000-n059000",
+        "ped-edge/e010000-n059000>e010000-n071000",
+        "ped-edge/e010000-n059000>e034000-n059000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e010000-n071000",
+      "position": { "eastCm": 10000, "northCm": 71000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n059000>e010000-n071000",
+        "ped-edge/e010000-n071000>e010000-n091000",
+        "ped-edge/e010000-n071000>e034000-n071000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e010000-n091000",
+      "position": { "eastCm": 10000, "northCm": 91000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n071000>e010000-n091000",
+        "ped-edge/e010000-n091000>e034000-n091000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e034000-n016000",
+      "position": { "eastCm": 34000, "northCm": 16000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n016000>e034000-n016000",
+        "ped-edge/e034000-n016000>e034000-n029000",
+        "ped-edge/e034000-n016000>e046000-n016000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e034000-n029000",
+      "position": { "eastCm": 34000, "northCm": 29000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n029000>e034000-n029000",
+        "ped-edge/e034000-n016000>e034000-n029000",
+        "ped-edge/e034000-n029000>e034000-n041000",
+        "ped-edge/e034000-n029000>e046000-n029000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e034000-n041000",
+      "position": { "eastCm": 34000, "northCm": 41000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n041000>e034000-n041000",
+        "ped-edge/e034000-n029000>e034000-n041000",
+        "ped-edge/e034000-n041000>e034000-n059000",
+        "ped-edge/e034000-n041000>e046000-n041000"
+      ],
+      "placeIds": ["household_0yojqkh51f1hk_0b9jrcl"]
+    },
+    {
+      "id": "ped-node/e034000-n059000",
+      "position": { "eastCm": 34000, "northCm": 59000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n059000>e034000-n059000",
+        "ped-edge/e034000-n041000>e034000-n059000",
+        "ped-edge/e034000-n059000>e034000-n071000",
+        "ped-edge/e034000-n059000>e046000-n059000"
+      ],
+      "placeIds": ["place_svc_0u99a3yc1d8bf_0j1ywjx"]
+    },
+    {
+      "id": "ped-node/e034000-n071000",
+      "position": { "eastCm": 34000, "northCm": 71000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n071000>e034000-n071000",
+        "ped-edge/e034000-n059000>e034000-n071000",
+        "ped-edge/e034000-n071000>e034000-n091000",
+        "ped-edge/e034000-n071000>e046000-n071000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e034000-n091000",
+      "position": { "eastCm": 34000, "northCm": 91000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e010000-n091000>e034000-n091000",
+        "ped-edge/e034000-n071000>e034000-n091000",
+        "ped-edge/e034000-n091000>e046000-n091000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e046000-n016000",
+      "position": { "eastCm": 46000, "northCm": 16000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e034000-n016000>e046000-n016000",
+        "ped-edge/e046000-n016000>e046000-n029000",
+        "ped-edge/e046000-n016000>e074000-n016000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e046000-n029000",
+      "position": { "eastCm": 46000, "northCm": 29000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e034000-n029000>e046000-n029000",
+        "ped-edge/e046000-n016000>e046000-n029000",
+        "ped-edge/e046000-n029000>e046000-n041000",
+        "ped-edge/e046000-n029000>e074000-n029000"
+      ],
+      "placeIds": ["anchor-settlement-00"]
+    },
+    {
+      "id": "ped-node/e046000-n041000",
+      "position": { "eastCm": 46000, "northCm": 41000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e034000-n041000>e046000-n041000",
+        "ped-edge/e046000-n029000>e046000-n041000",
+        "ped-edge/e046000-n041000>e046000-n059000",
+        "ped-edge/e046000-n041000>e074000-n041000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e046000-n059000",
+      "position": { "eastCm": 46000, "northCm": 59000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e034000-n059000>e046000-n059000",
+        "ped-edge/e046000-n041000>e046000-n059000",
+        "ped-edge/e046000-n059000>e046000-n071000",
+        "ped-edge/e046000-n059000>e074000-n059000"
+      ],
+      "placeIds": ["community/L5/0/38"]
+    },
+    {
+      "id": "ped-node/e046000-n071000",
+      "position": { "eastCm": 46000, "northCm": 71000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e034000-n071000>e046000-n071000",
+        "ped-edge/e046000-n059000>e046000-n071000",
+        "ped-edge/e046000-n071000>e046000-n091000",
+        "ped-edge/e046000-n071000>e074000-n071000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e046000-n091000",
+      "position": { "eastCm": 46000, "northCm": 91000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e034000-n091000>e046000-n091000",
+        "ped-edge/e046000-n071000>e046000-n091000",
+        "ped-edge/e046000-n091000>e074000-n091000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e074000-n016000",
+      "position": { "eastCm": 74000, "northCm": 16000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e046000-n016000>e074000-n016000",
+        "ped-edge/e074000-n016000>e074000-n029000",
+        "ped-edge/e074000-n016000>e086000-n016000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e074000-n029000",
+      "position": { "eastCm": 74000, "northCm": 29000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e046000-n029000>e074000-n029000",
+        "ped-edge/e074000-n016000>e074000-n029000",
+        "ped-edge/e074000-n029000>e074000-n041000",
+        "ped-edge/e074000-n029000>e086000-n029000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e074000-n041000",
+      "position": { "eastCm": 74000, "northCm": 41000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e046000-n041000>e074000-n041000",
+        "ped-edge/e074000-n029000>e074000-n041000",
+        "ped-edge/e074000-n041000>e074000-n059000",
+        "ped-edge/e074000-n041000>e086000-n041000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e074000-n059000",
+      "position": { "eastCm": 74000, "northCm": 59000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e046000-n059000>e074000-n059000",
+        "ped-edge/e074000-n041000>e074000-n059000",
+        "ped-edge/e074000-n059000>e074000-n071000",
+        "ped-edge/e074000-n059000>e086000-n059000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e074000-n071000",
+      "position": { "eastCm": 74000, "northCm": 71000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e046000-n071000>e074000-n071000",
+        "ped-edge/e074000-n059000>e074000-n071000",
+        "ped-edge/e074000-n071000>e074000-n091000",
+        "ped-edge/e074000-n071000>e086000-n071000"
+      ],
+      "placeIds": ["place_wrk_0vq6m09loyw26_0eqbbr9"]
+    },
+    {
+      "id": "ped-node/e074000-n091000",
+      "position": { "eastCm": 74000, "northCm": 91000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e046000-n091000>e074000-n091000",
+        "ped-edge/e074000-n071000>e074000-n091000",
+        "ped-edge/e074000-n091000>e086000-n091000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e086000-n016000",
+      "position": { "eastCm": 86000, "northCm": 16000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e074000-n016000>e086000-n016000",
+        "ped-edge/e086000-n016000>e086000-n029000",
+        "ped-edge/e086000-n016000>e110000-n016000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e086000-n029000",
+      "position": { "eastCm": 86000, "northCm": 29000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e074000-n029000>e086000-n029000",
+        "ped-edge/e086000-n016000>e086000-n029000",
+        "ped-edge/e086000-n029000>e086000-n041000",
+        "ped-edge/e086000-n029000>e110000-n029000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e086000-n041000",
+      "position": { "eastCm": 86000, "northCm": 41000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e074000-n041000>e086000-n041000",
+        "ped-edge/e086000-n029000>e086000-n041000",
+        "ped-edge/e086000-n041000>e086000-n059000",
+        "ped-edge/e086000-n041000>e110000-n041000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e086000-n059000",
+      "position": { "eastCm": 86000, "northCm": 59000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e074000-n059000>e086000-n059000",
+        "ped-edge/e086000-n041000>e086000-n059000",
+        "ped-edge/e086000-n059000>e086000-n071000",
+        "ped-edge/e086000-n059000>e110000-n059000"
+      ],
+      "placeIds": ["festival/lantern-confluence"]
+    },
+    {
+      "id": "ped-node/e086000-n071000",
+      "position": { "eastCm": 86000, "northCm": 71000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e074000-n071000>e086000-n071000",
+        "ped-edge/e086000-n059000>e086000-n071000",
+        "ped-edge/e086000-n071000>e086000-n091000",
+        "ped-edge/e086000-n071000>e110000-n071000"
+      ],
+      "placeIds": ["place_sch_2v4lghskcaryh_0rhzadh"]
+    },
+    {
+      "id": "ped-node/e086000-n091000",
+      "position": { "eastCm": 86000, "northCm": 91000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e074000-n091000>e086000-n091000",
+        "ped-edge/e086000-n071000>e086000-n091000",
+        "ped-edge/e086000-n091000>e110000-n091000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e110000-n016000",
+      "position": { "eastCm": 110000, "northCm": 16000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e086000-n016000>e110000-n016000",
+        "ped-edge/e110000-n016000>e110000-n029000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e110000-n029000",
+      "position": { "eastCm": 110000, "northCm": 29000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e086000-n029000>e110000-n029000",
+        "ped-edge/e110000-n016000>e110000-n029000",
+        "ped-edge/e110000-n029000>e110000-n041000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e110000-n041000",
+      "position": { "eastCm": 110000, "northCm": 41000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e086000-n041000>e110000-n041000",
+        "ped-edge/e110000-n029000>e110000-n041000",
+        "ped-edge/e110000-n041000>e110000-n059000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e110000-n059000",
+      "position": { "eastCm": 110000, "northCm": 59000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e086000-n059000>e110000-n059000",
+        "ped-edge/e110000-n041000>e110000-n059000",
+        "ped-edge/e110000-n059000>e110000-n071000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e110000-n071000",
+      "position": { "eastCm": 110000, "northCm": 71000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e086000-n071000>e110000-n071000",
+        "ped-edge/e110000-n059000>e110000-n071000",
+        "ped-edge/e110000-n071000>e110000-n091000"
+      ],
+      "placeIds": []
+    },
+    {
+      "id": "ped-node/e110000-n091000",
+      "position": { "eastCm": 110000, "northCm": 91000, "upCm": 0 },
+      "adjacentEdgeIds": [
+        "ped-edge/e086000-n091000>e110000-n091000",
+        "ped-edge/e110000-n071000>e110000-n091000"
+      ],
+      "placeIds": []
+    }
+  ],
+  "pedestrianEdges": [
+    {
+      "id": "ped-edge/e010000-n016000>e010000-n029000",
+      "fromNodeId": "ped-node/e010000-n016000",
+      "toNodeId": "ped-node/e010000-n029000",
+      "kind": "promenade",
+      "path": [
+        { "eastCm": 10000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 10000, "northCm": 29000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e010000-n016000>e034000-n016000",
+      "fromNodeId": "ped-node/e010000-n016000",
+      "toNodeId": "ped-node/e034000-n016000",
+      "kind": "promenade",
+      "path": [
+        { "eastCm": 10000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 16000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e010000-n029000>e010000-n041000",
+      "fromNodeId": "ped-node/e010000-n029000",
+      "toNodeId": "ped-node/e010000-n041000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 10000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 10000, "northCm": 41000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e010000-n029000>e034000-n029000",
+      "fromNodeId": "ped-node/e010000-n029000",
+      "toNodeId": "ped-node/e034000-n029000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 10000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 29000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e010000-n041000>e010000-n059000",
+      "fromNodeId": "ped-node/e010000-n041000",
+      "toNodeId": "ped-node/e010000-n059000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 10000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 10000, "northCm": 59000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e010000-n041000>e034000-n041000",
+      "fromNodeId": "ped-node/e010000-n041000",
+      "toNodeId": "ped-node/e034000-n041000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 10000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 41000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e010000-n059000>e010000-n071000",
+      "fromNodeId": "ped-node/e010000-n059000",
+      "toNodeId": "ped-node/e010000-n071000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 10000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 10000, "northCm": 71000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e010000-n059000>e034000-n059000",
+      "fromNodeId": "ped-node/e010000-n059000",
+      "toNodeId": "ped-node/e034000-n059000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 10000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 59000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e010000-n071000>e010000-n091000",
+      "fromNodeId": "ped-node/e010000-n071000",
+      "toNodeId": "ped-node/e010000-n091000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 10000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 10000, "northCm": 91000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e010000-n071000>e034000-n071000",
+      "fromNodeId": "ped-node/e010000-n071000",
+      "toNodeId": "ped-node/e034000-n071000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 10000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 71000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e010000-n091000>e034000-n091000",
+      "fromNodeId": "ped-node/e010000-n091000",
+      "toNodeId": "ped-node/e034000-n091000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 10000, "northCm": 91000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 91000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e034000-n016000>e034000-n029000",
+      "fromNodeId": "ped-node/e034000-n016000",
+      "toNodeId": "ped-node/e034000-n029000",
+      "kind": "promenade",
+      "path": [
+        { "eastCm": 34000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 29000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e034000-n016000>e046000-n016000",
+      "fromNodeId": "ped-node/e034000-n016000",
+      "toNodeId": "ped-node/e046000-n016000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 34000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 16000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e034000-n029000>e034000-n041000",
+      "fromNodeId": "ped-node/e034000-n029000",
+      "toNodeId": "ped-node/e034000-n041000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 34000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 41000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e034000-n029000>e046000-n029000",
+      "fromNodeId": "ped-node/e034000-n029000",
+      "toNodeId": "ped-node/e046000-n029000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 34000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 29000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e034000-n041000>e034000-n059000",
+      "fromNodeId": "ped-node/e034000-n041000",
+      "toNodeId": "ped-node/e034000-n059000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 34000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 59000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e034000-n041000>e046000-n041000",
+      "fromNodeId": "ped-node/e034000-n041000",
+      "toNodeId": "ped-node/e046000-n041000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 34000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 41000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e034000-n059000>e034000-n071000",
+      "fromNodeId": "ped-node/e034000-n059000",
+      "toNodeId": "ped-node/e034000-n071000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 34000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 71000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e034000-n059000>e046000-n059000",
+      "fromNodeId": "ped-node/e034000-n059000",
+      "toNodeId": "ped-node/e046000-n059000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 34000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 59000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e034000-n071000>e034000-n091000",
+      "fromNodeId": "ped-node/e034000-n071000",
+      "toNodeId": "ped-node/e034000-n091000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 34000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 34000, "northCm": 91000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e034000-n071000>e046000-n071000",
+      "fromNodeId": "ped-node/e034000-n071000",
+      "toNodeId": "ped-node/e046000-n071000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 34000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 71000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e034000-n091000>e046000-n091000",
+      "fromNodeId": "ped-node/e034000-n091000",
+      "toNodeId": "ped-node/e046000-n091000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 34000, "northCm": 91000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 91000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e046000-n016000>e046000-n029000",
+      "fromNodeId": "ped-node/e046000-n016000",
+      "toNodeId": "ped-node/e046000-n029000",
+      "kind": "promenade",
+      "path": [
+        { "eastCm": 46000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 29000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e046000-n016000>e074000-n016000",
+      "fromNodeId": "ped-node/e046000-n016000",
+      "toNodeId": "ped-node/e074000-n016000",
+      "kind": "promenade",
+      "path": [
+        { "eastCm": 46000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 16000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e046000-n029000>e046000-n041000",
+      "fromNodeId": "ped-node/e046000-n029000",
+      "toNodeId": "ped-node/e046000-n041000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 46000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 41000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e046000-n029000>e074000-n029000",
+      "fromNodeId": "ped-node/e046000-n029000",
+      "toNodeId": "ped-node/e074000-n029000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 46000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 29000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e046000-n041000>e046000-n059000",
+      "fromNodeId": "ped-node/e046000-n041000",
+      "toNodeId": "ped-node/e046000-n059000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 46000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 59000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e046000-n041000>e074000-n041000",
+      "fromNodeId": "ped-node/e046000-n041000",
+      "toNodeId": "ped-node/e074000-n041000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 46000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 41000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e046000-n059000>e046000-n071000",
+      "fromNodeId": "ped-node/e046000-n059000",
+      "toNodeId": "ped-node/e046000-n071000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 46000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 71000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e046000-n059000>e074000-n059000",
+      "fromNodeId": "ped-node/e046000-n059000",
+      "toNodeId": "ped-node/e074000-n059000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 46000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 59000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e046000-n071000>e046000-n091000",
+      "fromNodeId": "ped-node/e046000-n071000",
+      "toNodeId": "ped-node/e046000-n091000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 46000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 46000, "northCm": 91000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e046000-n071000>e074000-n071000",
+      "fromNodeId": "ped-node/e046000-n071000",
+      "toNodeId": "ped-node/e074000-n071000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 46000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 71000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e046000-n091000>e074000-n091000",
+      "fromNodeId": "ped-node/e046000-n091000",
+      "toNodeId": "ped-node/e074000-n091000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 46000, "northCm": 91000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 91000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e074000-n016000>e074000-n029000",
+      "fromNodeId": "ped-node/e074000-n016000",
+      "toNodeId": "ped-node/e074000-n029000",
+      "kind": "promenade",
+      "path": [
+        { "eastCm": 74000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 29000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e074000-n016000>e086000-n016000",
+      "fromNodeId": "ped-node/e074000-n016000",
+      "toNodeId": "ped-node/e086000-n016000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 74000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 16000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e074000-n029000>e074000-n041000",
+      "fromNodeId": "ped-node/e074000-n029000",
+      "toNodeId": "ped-node/e074000-n041000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 74000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 41000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e074000-n029000>e086000-n029000",
+      "fromNodeId": "ped-node/e074000-n029000",
+      "toNodeId": "ped-node/e086000-n029000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 74000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 29000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e074000-n041000>e074000-n059000",
+      "fromNodeId": "ped-node/e074000-n041000",
+      "toNodeId": "ped-node/e074000-n059000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 74000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 59000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e074000-n041000>e086000-n041000",
+      "fromNodeId": "ped-node/e074000-n041000",
+      "toNodeId": "ped-node/e086000-n041000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 74000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 41000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e074000-n059000>e074000-n071000",
+      "fromNodeId": "ped-node/e074000-n059000",
+      "toNodeId": "ped-node/e074000-n071000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 74000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 71000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e074000-n059000>e086000-n059000",
+      "fromNodeId": "ped-node/e074000-n059000",
+      "toNodeId": "ped-node/e086000-n059000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 74000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 59000, "upCm": 0 }
+      ],
+      "closedInBranch": "closure"
+    },
+    {
+      "id": "ped-edge/e074000-n071000>e074000-n091000",
+      "fromNodeId": "ped-node/e074000-n071000",
+      "toNodeId": "ped-node/e074000-n091000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 74000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 74000, "northCm": 91000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e074000-n071000>e086000-n071000",
+      "fromNodeId": "ped-node/e074000-n071000",
+      "toNodeId": "ped-node/e086000-n071000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 74000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 71000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e074000-n091000>e086000-n091000",
+      "fromNodeId": "ped-node/e074000-n091000",
+      "toNodeId": "ped-node/e086000-n091000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 74000, "northCm": 91000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 91000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e086000-n016000>e086000-n029000",
+      "fromNodeId": "ped-node/e086000-n016000",
+      "toNodeId": "ped-node/e086000-n029000",
+      "kind": "promenade",
+      "path": [
+        { "eastCm": 86000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 29000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e086000-n016000>e110000-n016000",
+      "fromNodeId": "ped-node/e086000-n016000",
+      "toNodeId": "ped-node/e110000-n016000",
+      "kind": "promenade",
+      "path": [
+        { "eastCm": 86000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 16000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e086000-n029000>e086000-n041000",
+      "fromNodeId": "ped-node/e086000-n029000",
+      "toNodeId": "ped-node/e086000-n041000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 86000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 41000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e086000-n029000>e110000-n029000",
+      "fromNodeId": "ped-node/e086000-n029000",
+      "toNodeId": "ped-node/e110000-n029000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 86000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 29000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e086000-n041000>e086000-n059000",
+      "fromNodeId": "ped-node/e086000-n041000",
+      "toNodeId": "ped-node/e086000-n059000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 86000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 59000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e086000-n041000>e110000-n041000",
+      "fromNodeId": "ped-node/e086000-n041000",
+      "toNodeId": "ped-node/e110000-n041000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 86000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 41000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e086000-n059000>e086000-n071000",
+      "fromNodeId": "ped-node/e086000-n059000",
+      "toNodeId": "ped-node/e086000-n071000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 86000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 71000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e086000-n059000>e110000-n059000",
+      "fromNodeId": "ped-node/e086000-n059000",
+      "toNodeId": "ped-node/e110000-n059000",
+      "kind": "plaza-path",
+      "path": [
+        { "eastCm": 86000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 59000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e086000-n071000>e086000-n091000",
+      "fromNodeId": "ped-node/e086000-n071000",
+      "toNodeId": "ped-node/e086000-n091000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 86000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 86000, "northCm": 91000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e086000-n071000>e110000-n071000",
+      "fromNodeId": "ped-node/e086000-n071000",
+      "toNodeId": "ped-node/e110000-n071000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 86000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 71000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e086000-n091000>e110000-n091000",
+      "fromNodeId": "ped-node/e086000-n091000",
+      "toNodeId": "ped-node/e110000-n091000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 86000, "northCm": 91000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 91000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e110000-n016000>e110000-n029000",
+      "fromNodeId": "ped-node/e110000-n016000",
+      "toNodeId": "ped-node/e110000-n029000",
+      "kind": "promenade",
+      "path": [
+        { "eastCm": 110000, "northCm": 16000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 29000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e110000-n029000>e110000-n041000",
+      "fromNodeId": "ped-node/e110000-n029000",
+      "toNodeId": "ped-node/e110000-n041000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 110000, "northCm": 29000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 41000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e110000-n041000>e110000-n059000",
+      "fromNodeId": "ped-node/e110000-n041000",
+      "toNodeId": "ped-node/e110000-n059000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 110000, "northCm": 41000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 59000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e110000-n059000>e110000-n071000",
+      "fromNodeId": "ped-node/e110000-n059000",
+      "toNodeId": "ped-node/e110000-n071000",
+      "kind": "crossing",
+      "path": [
+        { "eastCm": 110000, "northCm": 59000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 71000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    },
+    {
+      "id": "ped-edge/e110000-n071000>e110000-n091000",
+      "fromNodeId": "ped-node/e110000-n071000",
+      "toNodeId": "ped-node/e110000-n091000",
+      "kind": "sidewalk",
+      "path": [
+        { "eastCm": 110000, "northCm": 71000, "upCm": 0 },
+        { "eastCm": 110000, "northCm": 91000, "upCm": 0 }
+      ],
+      "closedInBranch": null
+    }
+  ],
+  "cityHash": "bc0c9ac7fa5ed058"
+}

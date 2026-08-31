@@ -1,5 +1,25 @@
 export const MANIFEST_PACKAGE = "manifest" as const;
 
+export {
+  cityProjectionHash,
+  createCityProjection,
+  validateCityProjection,
+} from "./city";
+export type {
+  CityBuilding,
+  CityCrossing,
+  CityPlace,
+  CityPlaceKind,
+  CityProjection,
+  CityProjectionQuery,
+  CityPublicSpace,
+  CityRoad,
+  CitySidewalk,
+  MapPoint,
+  PedestrianEdge,
+  PedestrianNode,
+} from "./city";
+
 export interface ManifestQueryContext {
   readonly seed: string;
   readonly tick: number;
